@@ -24,5 +24,6 @@ struct ModelProcessor
 		model_strategy->set_suffix(model);
 		model_strategy->set_sys_size(model);
 		model_strategy->set_hamiltonian(model);
+		model_strategy->set_dissipators(model);
 	}
 };

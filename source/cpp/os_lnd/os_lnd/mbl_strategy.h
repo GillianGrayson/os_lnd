@@ -112,13 +112,50 @@ struct MBLModelStrategy : ModelStrategy
 
 	void set_hamiltonian(Model& model) override
 	{
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
 		model.hamiltonian = get_disorder_mtx(model) + get_interaction_mtx(model) + get_hopping_mtx(model);
 
 		auto fn = "hamiltonian_mtx" + model.suffix;
 		save_sp_mtx(model.hamiltonian, fn, save_precision);
+	}
+
+	void set_dissipators(Model& model) override
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const int diss_type = model.ini.GetInteger("mbl", "diss_type", 0);
+		int num_diss;
+		if (diss_type == 0)
+		{
+			num_diss = num_spins;
+		}
+		else if (diss_type == 1)
+		{
+			num_diss = num_spins - 1;
+		}
+		else
+		{
+			throw std::runtime_error("Unsupported dissipator type");
+		}
+
+		for (int diss_id = 0; diss_id < num_diss; diss_id++)
+		{
+			sp_mtx diss;
+			if (diss_type == 0)
+			{
+				diss = get_diss_mtx_type_0(model, diss_id);
+			}
+			else if (diss_type == 1)
+			{
+				diss = get_diss_mtx_type_1(model, diss_id);
+			}
+			else
+			{
+				throw std::runtime_error("Unsupported dissipator type");
+			}
+
+			model.dissipators.push_back(diss);	
+		}
 	}
 
 	void init_aux_data(Model& model)
@@ -161,7 +198,7 @@ struct MBLModelStrategy : ModelStrategy
 
 	sp_mtx get_disorder_mtx(Model& model)
 	{
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		const int seed = model.ini.GetInteger("mbl", "seed", 0);
@@ -207,7 +244,7 @@ struct MBLModelStrategy : ModelStrategy
 
 	sp_mtx get_interaction_mtx(Model& model)
 	{
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto U = model.ini.GetReal("mbl", "U", 0.0);
 
@@ -234,11 +271,10 @@ struct MBLModelStrategy : ModelStrategy
 
 	sp_mtx get_hopping_mtx(Model& model)
 	{
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto J = model.ini.GetReal("mbl", "J", 0.0);
 
-		std::vector<int> num_in_rows(model.sys_size, 0);
 		std::vector<int> rows;
 		std::vector<int> cols;
 		std::vector<double> vals;
@@ -269,6 +305,132 @@ struct MBLModelStrategy : ModelStrategy
 		if (debug_dump)
 		{
 			auto fn = "hopping_mtx" + model.suffix;
+			save_sp_mtx(mtx, fn, save_precision);
+		}
+
+		return mtx;
+	}
+
+	sp_mtx get_diss_mtx_type_0(Model& model, const int diss_id)
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+
+		std::vector<triplet> vec_triplets;
+		vec_triplets.reserve(model.sys_size);
+		for (int st_id = 0; st_id < model.sys_size; st_id++)
+		{
+			double val = double(bit_at(id_to_x[st_id], diss_id));
+
+			vec_triplets.push_back(triplet(st_id, st_id, std::complex<double>(val, 0.0)));
+		}
+
+		sp_mtx mtx(model.sys_size, model.sys_size);
+		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+		if (debug_dump)
+		{
+			auto fn = "diss_type_0_mtx_" + std::to_string(diss_id) + model.suffix;
+			save_sp_mtx(mtx, fn, save_precision);
+		}
+
+		return mtx;
+	}
+
+	sp_mtx get_diss_mtx_type_1(Model& model, const int diss_id)
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const auto diss_phase = model.ini.GetReal("mbl", "diss_phase", 0.0);
+
+		std::vector<int> rows;
+		std::vector<int> cols;
+		std::vector<std::complex<double>> vals;
+
+		for (int st_id_1 = 0; st_id_1 < model.sys_size; st_id_1++)
+		{
+			std::complex<double> val(double(bit_at(id_to_x[st_id_1], diss_id)) - double(bit_at(id_to_x[st_id_1], diss_id + 1)), 0.0);
+			vals.push_back(val);
+			rows.push_back(st_id_1);
+			cols.push_back(st_id_1);
+		}
+
+		int tmp;
+		for (int state_id_1 = 0; state_id_1 < model.sys_size; state_id_1++)
+		{
+			int row_id = state_id_1;
+
+			tmp = bit_at(id_to_x[state_id_1], diss_id) - bit_at(id_to_x[state_id_1], diss_id + 1);
+
+			int col_id = 0;
+
+			if (tmp == 0)
+			{
+				col_id = state_id_1;
+			}
+			else
+			{
+				for (int state_id_2 = 0; state_id_2 < model.sys_size; state_id_2++)
+				{
+					if (adjacement[id_to_x[state_id_1] ^ id_to_x[state_id_2]])
+					{
+						std::vector<int> adjacency_bits = convert_int_to_vector_of_bits(id_to_x[state_id_1] ^ id_to_x[state_id_2], num_spins);
+						std::vector<int> hop;
+						for (int cell_id = 0; cell_id < num_spins; cell_id++)
+						{
+							if (adjacency_bits[cell_id])
+							{
+								hop.push_back(cell_id);
+							}
+						}
+
+						for (int ad_cell_id = 0; ad_cell_id < hop.size(); ad_cell_id++)
+						{
+							hop[ad_cell_id] = (num_spins - 1) - hop[ad_cell_id];
+						}
+
+						if (hop[1] == diss_id)
+						{
+							if (bit_at(id_to_x[state_id_1], diss_id))
+							{
+								col_id = state_id_2;
+								std::complex<double> val(-cos(-diss_phase), -sin(-diss_phase));
+
+								vals.push_back(val);
+								rows.push_back(row_id);
+								cols.push_back(col_id);
+							}
+							else
+							{
+								col_id = state_id_2;
+								std::complex<double> val(cos(diss_phase), sin(diss_phase));
+								vals.push_back(val);
+								rows.push_back(row_id);
+								cols.push_back(col_id);
+							}
+						}
+
+						adjacency_bits.clear();
+						hop.clear();
+					}
+				}
+			}
+		}
+
+		std::vector<triplet> vec_triplets;
+		vec_triplets.reserve(vals.size());
+		for (int st_id = 0; st_id < vals.size(); st_id++)
+		{
+			vec_triplets.push_back(triplet(rows[st_id], cols[st_id], vals[st_id]));
+		}
+
+		sp_mtx mtx(model.sys_size, model.sys_size);
+		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+		if (debug_dump)
+		{
+			auto fn = "diss_type_1_mtx_" + std::to_string(diss_id) + model.suffix;
 			save_sp_mtx(mtx, fn, save_precision);
 		}
 
