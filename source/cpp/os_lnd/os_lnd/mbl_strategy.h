@@ -171,6 +171,7 @@ struct MBLModelStrategy : ModelStrategy
 		
 		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
 
+		std::cout << "Number of non-zero elements: " << model.lindbladian.nonZeros() << std::endl;
 		std::cout << "Part of non-zero elements: " << double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0)) << std::endl;
 
 		for (const auto& diss : model.dissipators)
