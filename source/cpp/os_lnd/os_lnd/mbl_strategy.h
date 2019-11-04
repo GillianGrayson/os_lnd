@@ -7,6 +7,8 @@
 #include <iomanip>
 #include "save.h"
 #include "model_strategy.h"
+#include <unsupported/Eigen/KroneckerProduct>
+#include "routines.h"
 
 
 inline int bit_count(int value)
@@ -156,6 +158,22 @@ struct MBLModelStrategy : ModelStrategy
 
 			model.dissipators.push_back(diss);	
 		}
+	}
+
+	void set_lindbladian(Model& model) override
+	{
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+
+		const std::complex<double> i1(0.0, 1.0);
+		const sp_mtx eye = get_sp_eye(model.sys_size);
+		const sp_mtx hamiltonian_transposed(model.hamiltonian.transpose());
+		
+		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
+
+		std::cout << "Percentage of non-zero elements: " << double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0)) << std::endl;
+
+		auto fn = "lindbladian_mtx" + model.suffix;
+		save_sp_mtx(model.lindbladian, fn, save_precision);
 	}
 
 	void init_aux_data(Model& model)
