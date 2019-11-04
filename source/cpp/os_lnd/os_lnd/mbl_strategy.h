@@ -1,0 +1,277 @@
+#pragma once
+#include "init.h"
+#include "model.h"
+#include <gcem.hpp>
+#include <iostream>
+#include <mkl.h>
+#include <iomanip>
+#include "save.h"
+#include "model_strategy.h"
+
+
+inline int bit_count(int value)
+{
+	auto count = 0;
+
+	while (value > 0)
+	{
+		if ((value & 1) == 1)
+		{
+			count++;
+		}
+		value >>= 1;
+	}
+
+	return count;
+}
+
+inline int bit_at(const int value, const int position)
+{
+	if ((value >> position) & 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+inline std::vector<int> convert_int_to_vector_of_bits(int x, const int size)
+{
+	std::vector<int> res;
+
+	auto id = 0;
+
+	while (id < size)
+	{
+		if (x & 1)
+		{
+			res.push_back(1);
+		}
+		else
+		{
+			res.push_back(0);
+		}
+
+		x >>= 1;
+		id++;
+	}
+
+	reverse(res.begin(), res.end());
+
+	return res;
+}
+
+struct MBLModelStrategy : ModelStrategy
+{
+	std::vector<int> adjacement;
+	std::vector<int> x_to_id;
+	std::vector<int> id_to_x;
+	std::vector<double> energies;
+
+	void set_suffix(Model& model) override
+	{
+		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
+
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+
+		const int seed = model.ini.GetInteger("mbl", "seed", 0);
+
+		const int diss_type = model.ini.GetInteger("mbl", "diss_type", 0);
+		const auto diss_phase = model.ini.GetReal("mbl", "diss_phase", 0.0);
+		const auto diss_gamma = model.ini.GetReal("mbl", "diss_gamma", 0.0);
+
+		const auto W = model.ini.GetReal("mbl", "W", 0.0);
+		const auto U = model.ini.GetReal("mbl", "U", 0.0);
+		const auto J = model.ini.GetReal("mbl", "J", 0.0);
+
+		std::stringstream fns;
+		fns << "_ns(" << num_spins << ")";
+		fns << "_seed(" << seed << ")";
+		fns << "_diss(" << diss_type << "_" << std::setprecision(name_precision) << std::fixed << diss_phase << "_" << diss_gamma << ")";
+		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << W << "_" << U << "_" << J << ")";
+		fns << ".txt";
+
+		model.suffix = fns.str();
+	}
+
+	void set_sys_size(Model& model) override
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		if (std::div(num_spins, 2).rem != 0)
+		{
+			throw std::runtime_error("num_spins must be divided by 2 without remainder");
+		}
+		
+		model.sys_size = gcem::binomial_coef(num_spins, num_spins / 2);
+		std::cout << "sys_size = " << model.sys_size << std::endl;
+
+		init_aux_data(model);
+	}
+
+	void set_hamiltonian(Model& model) override
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+
+		model.hamiltonian = get_disorder_mtx(model) + get_interaction_mtx(model) + get_hopping_mtx(model);
+
+		auto fn = "hamiltonian_mtx" + model.suffix;
+		save_sp_mtx(model.hamiltonian, fn, save_precision);
+	}
+
+	void init_aux_data(Model& model)
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const int num_global_states = std::pow(2, num_spins);
+		adjacement = std::vector<int>(num_global_states, 0);
+		x_to_id = std::vector<int>(num_global_states, 0);
+		id_to_x = std::vector<int>(model.sys_size, 0);
+
+		int state_id = 0;
+		for (int g_state_id = 0; g_state_id < num_global_states; g_state_id++)
+		{
+			if ((bit_count(g_state_id) == 2) && (bit_count(g_state_id & (g_state_id << 1)) == 1))
+			{
+				adjacement[g_state_id] = 1;
+			}
+			else
+			{
+				adjacement[g_state_id] = 0;
+			}
+
+			if (bit_count(g_state_id) == num_spins / 2)
+			{
+				x_to_id[g_state_id] = state_id + 1;
+				id_to_x[state_id] = g_state_id;
+				state_id++;
+			}
+			else
+			{
+				x_to_id[g_state_id] = 0;
+			}
+		}
+
+		if (state_id != model.sys_size)
+		{
+			throw std::runtime_error("Something wrong with MBL generation");
+		}
+	}
+
+	sp_mtx get_disorder_mtx(Model& model)
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const int seed = model.ini.GetInteger("mbl", "seed", 0);
+		const int num_seeds = model.ini.GetInteger("mbl", "num_seeds", 0);
+		const auto W = model.ini.GetReal("mbl", "W", 0.0);
+
+		energies = std::vector<double>(num_spins, 0.0);
+
+		VSLStreamStatePtr stream;
+		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
+		vslLeapfrogStream(stream, seed, num_seeds);
+		vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, num_spins, energies.data(), -1.0, 1.0);
+
+		auto fn = "energies" + model.suffix;
+		save_vector(energies, fn, save_precision);
+
+		std::vector<triplet> vec_triplets;
+		vec_triplets.reserve(model.sys_size);
+		for (int st_id = 0; st_id < model.sys_size; st_id++)
+		{
+			std::vector<int> vb = convert_int_to_vector_of_bits(id_to_x[st_id], num_spins);
+			double sum = 0.0;
+			for (int cell_id = 0; cell_id < num_spins; cell_id++)
+			{
+				sum += double(vb[cell_id]) * energies[cell_id];
+			}
+			sum *= 1.0 * W;
+
+			vec_triplets.push_back(triplet(st_id, st_id, std::complex<double>(sum, 0.0)));
+		}
+
+		sp_mtx mtx(model.sys_size, model.sys_size);
+		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+		if (debug_dump)
+		{
+			fn = "disorder_mtx" + model.suffix;
+			save_sp_mtx(mtx, fn, save_precision);
+		}
+		
+		return mtx;
+	}
+
+	sp_mtx get_interaction_mtx(Model& model)
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto U = model.ini.GetReal("mbl", "U", 0.0);
+
+		std::vector<triplet> vec_triplets;
+		vec_triplets.reserve(model.sys_size);
+		for (int st_id = 0; st_id < model.sys_size; st_id++)
+		{
+			double val = U * bit_count(id_to_x[st_id] & (id_to_x[st_id] << 1));
+
+			vec_triplets.push_back(triplet(st_id, st_id, std::complex<double>(val, 0.0)));
+		}
+
+		sp_mtx mtx(model.sys_size, model.sys_size);
+		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+		if (debug_dump)
+		{
+			auto fn = "interaction_mtx" + model.suffix;
+			save_sp_mtx(mtx, fn, save_precision);
+		}
+
+		return mtx;
+	}
+
+	sp_mtx get_hopping_mtx(Model& model)
+	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", 0);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto J = model.ini.GetReal("mbl", "J", 0.0);
+
+		std::vector<int> num_in_rows(model.sys_size, 0);
+		std::vector<int> rows;
+		std::vector<int> cols;
+		std::vector<double> vals;
+
+		for (int id_1 = 0; id_1 < model.sys_size; id_1++)
+		{
+			for (int id_2 = 0; id_2 < model.sys_size; id_2++)
+			{
+				if (adjacement[id_to_x[id_1] ^ id_to_x[id_2]] > 0)
+				{
+					vals.push_back(-J);
+					rows.push_back(id_1);
+					cols.push_back(id_2);
+				}
+			}
+		}
+
+		std::vector<triplet> vec_triplets;
+		vec_triplets.reserve(vals.size());
+		for (int st_id = 0; st_id < vals.size(); st_id++)
+		{
+			vec_triplets.push_back(triplet(rows[st_id], cols[st_id], std::complex<double>(vals[st_id], 0.0)));
+		}
+
+		sp_mtx mtx(model.sys_size, model.sys_size);
+		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+		if (debug_dump)
+		{
+			auto fn = "hopping_mtx" + model.suffix;
+			save_sp_mtx(mtx, fn, save_precision);
+		}
+
+		return mtx;
+	}
+};
