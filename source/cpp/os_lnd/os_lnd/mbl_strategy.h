@@ -163,6 +163,7 @@ struct MBLModelStrategy : ModelStrategy
 	void set_lindbladian(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto diss_gamma = model.ini.GetReal("mbl", "diss_gamma", 0.0);
 
 		const std::complex<double> i1(0.0, 1.0);
 		const sp_mtx eye = get_sp_eye(model.sys_size);
@@ -170,7 +171,20 @@ struct MBLModelStrategy : ModelStrategy
 		
 		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
 
-		std::cout << "Percentage of non-zero elements: " << double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0)) << std::endl;
+		std::cout << "Part of non-zero elements: " << double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0)) << std::endl;
+
+		for (const auto& diss : model.dissipators)
+		{
+			sp_mtx diss_tmp_1((diss.adjoint()).transpose());
+			sp_mtx diss_tmp_2(diss.adjoint() * diss);
+			sp_mtx diss_tmp_3(diss_tmp_2.transpose());
+
+			model.lindbladian += 0.5 * diss_gamma * (2.0 * 
+				Eigen::kroneckerProduct(eye, diss) * 
+				Eigen::kroneckerProduct(diss_tmp_1, eye) - 
+				Eigen::kroneckerProduct(diss_tmp_3, eye) - 
+				Eigen::kroneckerProduct(eye, diss_tmp_2));
+		}
 
 		auto fn = "lindbladian_mtx" + model.suffix;
 		save_sp_mtx(model.lindbladian, fn, save_precision);
