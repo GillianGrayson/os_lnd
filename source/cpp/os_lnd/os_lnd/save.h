@@ -37,9 +37,15 @@ void save_sp_mtx(Eigen::SparseMatrix<T>& m, const std::string& fn, int precision
 }
 
 template <typename Derived>
-void save_dense(const Eigen::DenseBase<Derived>& dense, const std::string& fn, int precision = 16)
+void save_dense_mtx(const Eigen::DenseBase<Derived>& dense, const std::string& fn, int precision = 16)
 {
-	const Eigen::IOFormat fmt(precision, 0, "\n", "", "", "", "", "");
-	std::ofstream file(fn.c_str());
-	file << dense.format(fmt);
+	std::ofstream f_out(fn);
+	f_out << std::setprecision(precision) << std::scientific;
+	
+	for (auto x : dense.reshaped())
+	{
+		f_out << x << std::endl;
+	}
+
+	f_out.close();
 }

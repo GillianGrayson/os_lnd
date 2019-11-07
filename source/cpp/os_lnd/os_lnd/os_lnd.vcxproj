@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -164,14 +164,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.h" />
+    <ClInclude Include="lindbladian_int_model_run_strategy.h" />
     <ClInclude Include="mbl_model_setup_strategy.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="model_run_processor.h" />
     <ClInclude Include="model_setup_processor.h" />
     <ClInclude Include="model_setup_strategy.h" />
-    <ClInclude Include="slss_model_run_strategy.h" />
+    <ClInclude Include="lindbladian_lu_model_run_strategy.h" />
+    <ClInclude Include="observer.h" />
+    <ClInclude Include="odeint_init.h" />
     <ClInclude Include="routines.h" />
     <ClInclude Include="save.h" />
+    <ClInclude Include="system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

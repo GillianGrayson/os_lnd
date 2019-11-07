@@ -122,6 +122,10 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 		save_sp_mtx(model.hamiltonian, fn, save_precision);
 	}
 
+	void setup_hamiltonian_drv(Model& model) override
+	{
+	}
+
 	void setup_dissipators(Model& model) override
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
@@ -193,6 +197,10 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 			auto fn = "lindbladian_mtx" + model.suffix;
 			save_sp_mtx(model.lindbladian, fn, save_precision);
 		}
+	}
+
+	void setup_lindbladian_drv(Model& model) override
+	{
 	}
 
 	void init_aux_data(Model& model)

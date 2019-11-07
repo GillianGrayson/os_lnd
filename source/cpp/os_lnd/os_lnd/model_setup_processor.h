@@ -24,7 +24,9 @@ struct ModelSetupProcessor
 		model_strategy->setup_suffix(model);
 		model_strategy->setup_sys_size(model);
 		model_strategy->setup_hamiltonian(model);
+		model_strategy->setup_hamiltonian_drv(model);
 		model_strategy->setup_dissipators(model);
 		model_strategy->setup_lindbladian(model);
+		model_strategy->setup_lindbladian_drv(model);
 	}
 };

@@ -22,6 +22,15 @@
     <Filter Include="Header Files\strategy\run">
       <UniqueIdentifier>{3f5adcb4-0ef3-483f-b021-a1190ebf5b0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\odeint">
+      <UniqueIdentifier>{9556fa02-ea11-4501-a192-b41806394091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\odeint\system">
+      <UniqueIdentifier>{63cae1b4-8ca8-467e-8f87-5ae5986a9397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\odeint\observer">
+      <UniqueIdentifier>{e989f765-afe7-4302-80bb-3cd9b29a6cd4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,11 +62,23 @@
     <ClInclude Include="mbl_model_setup_strategy.h">
       <Filter>Header Files\strategy\setup</Filter>
     </ClInclude>
-    <ClInclude Include="slss_model_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
     <ClInclude Include="model_run_processor.h">
       <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="lindbladian_lu_model_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="system.h">
+      <Filter>Header Files\odeint\system</Filter>
+    </ClInclude>
+    <ClInclude Include="observer.h">
+      <Filter>Header Files\odeint\observer</Filter>
+    </ClInclude>
+    <ClInclude Include="lindbladian_int_model_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="odeint_init.h">
+      <Filter>Header Files\odeint</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

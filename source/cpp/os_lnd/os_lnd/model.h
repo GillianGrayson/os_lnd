@@ -1,6 +1,5 @@
 #pragma once
 #include <INIReader.h>
-#include <Eigen/SparseCore>
 #include <vector>
 #include "init.h"
 
@@ -10,8 +9,10 @@ struct Model
 	std::string suffix;
 	int sys_size;
 	sp_mtx hamiltonian;
+	sp_mtx hamiltonian_drv;
 	std::vector<sp_mtx> dissipators;
 	sp_mtx lindbladian;
+	sp_mtx lindbladian_drv;
 	Eigen::MatrixXcd rho;
 
 	Model(INIReader& ini) : ini(ini)

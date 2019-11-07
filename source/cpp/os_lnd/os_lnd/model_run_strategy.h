@@ -4,5 +4,5 @@
 struct ModelRunStrategy
 {
 	virtual ~ModelRunStrategy() = default;
-	virtual void run_asymptotic_rho(Model& model) = 0;
+	virtual void run(Model& model) = 0;
 };

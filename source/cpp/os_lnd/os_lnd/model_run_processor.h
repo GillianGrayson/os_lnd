@@ -1,5 +1,6 @@
 #pragma once
-#include "slss_model_run_strategy.h"
+#include "lindbladian_lu_model_run_strategy.h"
+#include "lindbladian_int_model_run_strategy.h"
 
 
 struct ModelRunProcessor
@@ -9,9 +10,13 @@ struct ModelRunProcessor
 	void set_model_strategy(Model& model)
 	{
 		const std::string system = model.ini.Get("global", "task", "unknown");
-		if (system == "lu")
+		if (system == "lindbladian_lu")
 		{
-			model_strategy = std::make_unique<LUModelRunStrategy>();
+			model_strategy = std::make_unique<LindbladianLUModelRunStrategy>();
+		}
+		else if (system == "lindbladian_int")
+		{
+			model_strategy = std::make_unique<LindbladianIntModelRunStrategy>();
 		}
 		else
 		{
@@ -21,6 +26,6 @@ struct ModelRunProcessor
 
 	void process_model(Model& model) const
 	{
-		model_strategy->run_asymptotic_rho(model);
+		model_strategy->run(model);
 	}
 };
