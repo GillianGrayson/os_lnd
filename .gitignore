@@ -55,8 +55,3 @@ source/cpp/os_lnd/os_lnd/My Advisor Results - os_lnd/
 
 *.txt
 
-*.vcxproj
-
-*.filters
-
-*.user

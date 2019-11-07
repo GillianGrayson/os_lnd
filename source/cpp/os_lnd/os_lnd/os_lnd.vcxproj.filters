@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\strategy">
+      <UniqueIdentifier>{c33a6d52-7e99-43c5-a5e9-e3305898e71e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\strategy\setup">
+      <UniqueIdentifier>{9e8b679e-af3d-44e8-984a-64979ea8fcbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\strategy\run">
+      <UniqueIdentifier>{3f5adcb4-0ef3-483f-b021-a1190ebf5b0d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="init.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="routines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model_setup_strategy.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="model_setup_processor.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="mbl_model_setup_strategy.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="slss_model_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="model_run_processor.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
