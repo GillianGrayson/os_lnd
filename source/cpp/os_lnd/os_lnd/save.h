@@ -4,7 +4,7 @@
 #include <fstream>
 
 template <class T>
-void save_vector(const std::vector<T>& v, std::string fn, int precision = 16)
+void save_vector(const std::vector<T>& v, const std::string& fn, int precision = 16)
 {
 	std::ofstream f_out(fn);
 	f_out << std::setprecision(precision) << std::scientific;
@@ -18,7 +18,7 @@ void save_vector(const std::vector<T>& v, std::string fn, int precision = 16)
 }
 
 template <class T>
-void save_sp_mtx(Eigen::SparseMatrix<T> m, std::string fn, int precision = 16)
+void save_sp_mtx(Eigen::SparseMatrix<T>& m, const std::string& fn, int precision = 16)
 {
 	std::ofstream f_out(fn);
 	f_out << std::setprecision(precision) << std::scientific;
@@ -34,4 +34,12 @@ void save_sp_mtx(Eigen::SparseMatrix<T> m, std::string fn, int precision = 16)
 	}
 
 	f_out.close();
+}
+
+template <typename Derived>
+void save_dense(const Eigen::DenseBase<Derived>& dense, const std::string& fn, int precision = 16)
+{
+	const Eigen::IOFormat fmt(precision, 0, "\n", "", "", "", "", "");
+	std::ofstream file(fn.c_str());
+	file << dense.format(fmt);
 }

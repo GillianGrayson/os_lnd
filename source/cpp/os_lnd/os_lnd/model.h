@@ -12,6 +12,7 @@ struct Model
 	sp_mtx hamiltonian;
 	std::vector<sp_mtx> dissipators;
 	sp_mtx lindbladian;
+	Eigen::MatrixXcd rho;
 
 	Model(INIReader& ini) : ini(ini)
 	{

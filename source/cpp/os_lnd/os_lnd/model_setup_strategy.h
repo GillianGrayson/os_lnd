@@ -1,0 +1,12 @@
+#pragma once
+#include "model.h"
+
+struct ModelSetupStrategy
+{
+	virtual ~ModelSetupStrategy() = default;
+	virtual void setup_suffix(Model& model) = 0;
+	virtual void setup_sys_size(Model& model) = 0;
+	virtual void setup_hamiltonian(Model& model) = 0;
+	virtual void setup_dissipators(Model& model) = 0;
+	virtual void setup_lindbladian(Model& model) = 0;
+};

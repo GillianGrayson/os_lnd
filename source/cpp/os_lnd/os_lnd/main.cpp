@@ -1,4 +1,5 @@
-#include "model_processor.h"
+#include "model_setup_processor.h"
+#include "model_run_processor.h"
 
 
 int main(int argc, char* argv[])
@@ -11,7 +12,11 @@ int main(int argc, char* argv[])
 
 	Model model(ini);
 
-	ModelProcessor model_processor;
-	model_processor.set_model_strategy(model);
-	model_processor.process_model(model);
+	ModelSetupProcessor setup_processor;
+	setup_processor.set_model_strategy(model);
+	setup_processor.process_model(model);
+
+	ModelRunProcessor run_processor;
+	run_processor.set_model_strategy(model);
+	run_processor.process_model(model);
 }

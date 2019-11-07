@@ -6,7 +6,7 @@
 #include <mkl.h>
 #include <iomanip>
 #include "save.h"
-#include "model_strategy.h"
+#include "model_setup_strategy.h"
 #include <unsupported/Eigen/KroneckerProduct>
 #include "routines.h"
 
@@ -65,14 +65,14 @@ inline std::vector<int> convert_int_to_vector_of_bits(int x, const int size)
 	return res;
 }
 
-struct MBLModelStrategy : ModelStrategy
+struct MBLModelSetupStrategy : ModelSetupStrategy
 {
 	std::vector<int> adjacement;
 	std::vector<int> x_to_id;
 	std::vector<int> id_to_x;
 	std::vector<double> energies;
 
-	void set_suffix(Model& model) override
+	void setup_suffix(Model& model) override
 	{
 		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
 
@@ -98,7 +98,7 @@ struct MBLModelStrategy : ModelStrategy
 		model.suffix = fns.str();
 	}
 
-	void set_sys_size(Model& model) override
+	void setup_sys_size(Model& model) override
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		if (std::div(num_spins, 2).rem != 0)
@@ -112,7 +112,7 @@ struct MBLModelStrategy : ModelStrategy
 		init_aux_data(model);
 	}
 
-	void set_hamiltonian(Model& model) override
+	void setup_hamiltonian(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
@@ -122,7 +122,7 @@ struct MBLModelStrategy : ModelStrategy
 		save_sp_mtx(model.hamiltonian, fn, save_precision);
 	}
 
-	void set_dissipators(Model& model) override
+	void setup_dissipators(Model& model) override
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		const int diss_type = model.ini.GetInteger("mbl", "diss_type", 0);
@@ -160,8 +160,9 @@ struct MBLModelStrategy : ModelStrategy
 		}
 	}
 
-	void set_lindbladian(Model& model) override
+	void setup_lindbladian(Model& model) override
 	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto diss_gamma = model.ini.GetReal("mbl", "diss_gamma", 0.0);
 
@@ -187,8 +188,11 @@ struct MBLModelStrategy : ModelStrategy
 				Eigen::kroneckerProduct(eye, diss_tmp_2));
 		}
 
-		auto fn = "lindbladian_mtx" + model.suffix;
-		save_sp_mtx(model.lindbladian, fn, save_precision);
+		if (debug_dump)
+		{
+			auto fn = "lindbladian_mtx" + model.suffix;
+			save_sp_mtx(model.lindbladian, fn, save_precision);
+		}
 	}
 
 	void init_aux_data(Model& model)
