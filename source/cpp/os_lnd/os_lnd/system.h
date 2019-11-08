@@ -1,5 +1,6 @@
 #pragma once
 #include "model.h"
+#include "init.h"
 
 struct BaseSystem
 {
