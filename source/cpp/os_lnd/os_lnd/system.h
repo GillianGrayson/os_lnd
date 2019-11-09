@@ -23,6 +23,9 @@ struct MBLSystem : BaseSystem
 
 	void operator()(const Eigen::VectorXcd& x, Eigen::VectorXcd& dxdt, const double t) override
 	{
+		std::cout << x.size() << std::endl;
+		std::cout << dxdt.size() << std::endl;
 		dxdt.noalias() = model.lindbladian * x;
+		std::cout << dxdt.size() << std::endl;
 	}
 };
