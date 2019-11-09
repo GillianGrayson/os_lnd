@@ -29,7 +29,11 @@ struct MBLObserver : BaseObserver
 		const int precision = model.ini.GetInteger("global", "save_precision", 0);
 
 		const Eigen::VectorXcd state_diff = x - prev_state;
-		std::cout << std::setprecision(precision) << std::scientific << "time = " << t << "    diff = " << state_diff.norm() << std::endl;
 		prev_state = x;
+
+		const auto run_time = std::chrono::high_resolution_clock::now();
+		const auto duration = std::chrono::duration<double>(run_time - model.run_time).count();
+		std::cout << std::setprecision(precision) << std::scientific << "time = " << t << "    diff = " << state_diff.norm() << std::endl;
+		std::cout << "run_time = " << duration << " seconds" << std::endl << std::endl;
 	}
 };

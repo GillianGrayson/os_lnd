@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\spdlog-1.x\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\spdlog-1.x\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\spdlog-1.x\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\spdlog-1.x\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\spectra-0.8.1;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>

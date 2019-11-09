@@ -14,9 +14,9 @@ struct ModelRunProcessor
 		{
 			model_strategy = std::make_unique<LindbladianLUModelRunStrategy>();
 		}
-		else if (system == "lindbladian_int")
+		else if (system == "lindbladian_odeint_rk4")
 		{
-			model_strategy = std::make_unique<LindbladianIntModelRunStrategy>();
+			model_strategy = std::make_unique<LindbladianODEIntRK4ModelRunStrategy>();
 		}
 		else
 		{
