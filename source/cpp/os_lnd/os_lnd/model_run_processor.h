@@ -1,6 +1,6 @@
 #pragma once
 #include "lindbladian_lu_model_run_strategy.h"
-#include "lindbladian_int_model_run_strategy.h"
+#include "lindbladian_odeint_rk4_model_run_strategy.h"
 
 
 struct ModelRunProcessor

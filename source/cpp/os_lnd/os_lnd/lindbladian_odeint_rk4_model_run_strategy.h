@@ -1,8 +1,6 @@
 #pragma once
 #include "model_run_strategy.h"
-#include <Eigen/SparseLU>
 #include "save.h"
-#include <iostream>
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
 #include "system.h"
@@ -33,7 +31,7 @@ struct LindbladianODEIntRK4ModelRunStrategy : ModelRunStrategy
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(start_state.data(), model.sys_size, model.sys_size);
 
-		auto fn = "rho_mtx" + model.suffix;
+		const auto fn = "rho_mtx" + model.suffix;
 		save_dense_mtx(model.rho, fn, save_precision);
 	}
 };

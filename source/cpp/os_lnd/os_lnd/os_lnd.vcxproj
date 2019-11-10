@@ -164,7 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.h" />
-    <ClInclude Include="lindbladian_int_model_run_strategy.h" />
+    <ClInclude Include="lindbladian_odeint_rk4_model_run_strategy.h" />
     <ClInclude Include="mbl_model_setup_strategy.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="model_run_processor.h" />

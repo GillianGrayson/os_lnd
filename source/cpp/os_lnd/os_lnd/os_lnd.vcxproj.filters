@@ -74,11 +74,11 @@
     <ClInclude Include="observer.h">
       <Filter>Header Files\odeint\observer</Filter>
     </ClInclude>
-    <ClInclude Include="lindbladian_int_model_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
     <ClInclude Include="odeint_init.h">
       <Filter>Header Files\odeint</Filter>
+    </ClInclude>
+    <ClInclude Include="lindbladian_odeint_rk4_model_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
