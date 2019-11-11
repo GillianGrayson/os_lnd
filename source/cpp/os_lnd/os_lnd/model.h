@@ -33,7 +33,7 @@ struct Model
 		auto logger = spdlog::stdout_color_mt(logger_type);
 	}
 
-	void throw_error(const std::string message)
+	void throw_error(const std::string message) const
 	{
 		if(!silent)
 		{
@@ -42,7 +42,7 @@ struct Model
 		throw std::runtime_error(message);
 	}
 
-	void log_message(const std::string message)
+	void log_message(const std::string message) const
 	{
 		if (!silent)
 		{
@@ -50,10 +50,30 @@ struct Model
 		}
 	}
 
-	void log_time_duration()
+	void log_time_duration() const
 	{
-		const auto curr_time = std::chrono::high_resolution_clock::now();
-		const auto duration = std::chrono::duration<double>(curr_time - start_run_time).count();
+		const auto run_time = std::chrono::high_resolution_clock::now();
+		const auto duration = std::chrono::duration<double>(run_time - start_run_time).count();
 		log_message(fmt::format("run_time = {:.16e} seconds", duration));
+	}
+
+
+	void log_setup_info() const
+	{
+		log_message(fmt::format("sys_size = {}", sys_size));
+
+		const auto lindbladian_non_zeros = lindbladian.nonZeros();
+		if (lindbladian_non_zeros > 0)
+		{
+			log_message(fmt::format("Number of non-zero elements in lindbladian = {}", lindbladian_non_zeros));
+			log_message(fmt::format("Part of non-zero elements in lindbladian = {:.16e}\n", double(lindbladian_non_zeros) / (std::pow(double(sys_size), 4.0))));
+		}
+
+		const auto lindbladian_drv_non_zeros = lindbladian_drv.nonZeros();
+		if (lindbladian_drv_non_zeros > 0)
+		{
+			log_message(fmt::format("Number of non-zero elements in lindbladian_drv = {}", lindbladian_drv_non_zeros));
+			log_message(fmt::format("Part of non-zero elements in lindbladian_drv = {:.16e}\n", double(lindbladian_drv_non_zeros) / (std::pow(double(sys_size), 4.0))));
+		}
 	}
 };
