@@ -4,7 +4,7 @@
 
 struct BaseSystem
 {
-	Model model;
+	Model& model;
 
 	BaseSystem(Model& model) : model(model)
 	{

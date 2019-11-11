@@ -4,10 +4,10 @@
 
 struct IntegrateStrategy
 {
-	Model model;
-	std::vector<double> times;
-	double step;
-	Eigen::VectorXcd start_state;
+	Model& model;
+	std::vector<double>& times;
+	double& step;
+	Eigen::VectorXcd& start_state;
 
 	IntegrateStrategy(Model& model, std::vector<double>& times, double& step, Eigen::VectorXcd& start_state) : model(model), times(times), step(step), start_state(start_state)
 	{

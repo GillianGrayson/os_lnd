@@ -18,19 +18,32 @@ struct MBLIntegrateStrategy : IntegrateStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
+		MBLSystem system(model);
+		
+		std::vector<double> diffs;
+		MBLObserver observer(
+			model,
+			times,
+			start_state,
+			diffs
+		);
+
 		const runge_kutta4_stepper rk4_stepper;
 		boost::numeric::odeint::integrate_times(
 			rk4_stepper,
-			MBLSystem(model),
+			system,
 			start_state,
 			times,
 			step,
-			MBLObserver(model, times, start_state)
+			observer
 		);
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(start_state.data(), model.sys_size, model.sys_size);
 
-		const auto fn = "rho_mtx" + model.suffix;
+		auto fn = "rho_mtx" + model.suffix;
 		save_dense_mtx(model.rho, fn, save_precision);
+
+		fn = "diffs" + model.suffix;
+		save_vector(diffs, fn, save_precision);
 	}
 };

@@ -67,7 +67,7 @@ inline std::vector<int> convert_int_to_vector_of_bits(int x, const int size)
 
 struct MBLSetupStrategy : SetupStrategy
 {
-	std::vector<int> adjacement;
+	std::vector<int> adj;
 	std::vector<int> x_to_id;
 	std::vector<int> id_to_x;
 	std::vector<double> energies;
@@ -204,7 +204,7 @@ struct MBLSetupStrategy : SetupStrategy
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		const int num_global_states = std::pow(2, num_spins);
-		adjacement = std::vector<int>(num_global_states, 0);
+		adj = std::vector<int>(num_global_states, 0);
 		x_to_id = std::vector<int>(num_global_states, 0);
 		id_to_x = std::vector<int>(model.sys_size, 0);
 
@@ -213,11 +213,11 @@ struct MBLSetupStrategy : SetupStrategy
 		{
 			if ((bit_count(g_state_id) == 2) && (bit_count(g_state_id & (g_state_id << 1)) == 1))
 			{
-				adjacement[g_state_id] = 1;
+				adj[g_state_id] = 1;
 			}
 			else
 			{
-				adjacement[g_state_id] = 0;
+				adj[g_state_id] = 0;
 			}
 
 			if (bit_count(g_state_id) == num_spins / 2)
@@ -325,7 +325,7 @@ struct MBLSetupStrategy : SetupStrategy
 		{
 			for (int id_2 = 0; id_2 < model.sys_size; id_2++)
 			{
-				if (adjacement[id_to_x[id_1] ^ id_to_x[id_2]] > 0)
+				if (adj[id_to_x[id_1] ^ id_to_x[id_2]] > 0)
 				{
 					vals.push_back(-J);
 					rows.push_back(id_1);
@@ -415,7 +415,7 @@ struct MBLSetupStrategy : SetupStrategy
 			{
 				for (int state_id_2 = 0; state_id_2 < model.sys_size; state_id_2++)
 				{
-					if (adjacement[id_to_x[state_id_1] ^ id_to_x[state_id_2]])
+					if (adj[id_to_x[state_id_1] ^ id_to_x[state_id_2]])
 					{
 						std::vector<int> adjacency_bits = convert_int_to_vector_of_bits(id_to_x[state_id_1] ^ id_to_x[state_id_2], num_spins);
 						std::vector<int> hop;

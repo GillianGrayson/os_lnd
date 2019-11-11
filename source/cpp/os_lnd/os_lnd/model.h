@@ -57,7 +57,6 @@ struct Model
 		log_message(fmt::format("run_time = {:.16e} seconds", duration));
 	}
 
-
 	void log_setup_info() const
 	{
 		log_message(fmt::format("sys_size = {}", sys_size));

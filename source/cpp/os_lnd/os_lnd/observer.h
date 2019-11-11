@@ -3,8 +3,9 @@
 
 struct BaseObserver
 {
-	Model model;
-	std::vector<double> times;
+	Model& model;
+	std::vector<double>& times;
+	
 	Eigen::VectorXcd base_state;
 
 	BaseObserver(Model& model, std::vector<double>& times, Eigen::VectorXcd& base_state) : model(model), times(times), base_state(base_state)

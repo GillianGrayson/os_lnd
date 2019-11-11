@@ -3,7 +3,7 @@
 #include "lindbladian_odeint_rk4_run_strategy.h"
 
 
-struct ModelRunProcessor
+struct RunProcessor
 {
 	std::unique_ptr<RunStrategy> run_strategy;
 
