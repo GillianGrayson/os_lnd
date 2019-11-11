@@ -21,10 +21,5 @@ struct LindbladianODEIntRK4RunStrategy : RunStrategy
 		IntegrateProcessor integrate_processor;
 		integrate_processor.set_strategy(model, times, step, start_state);
 		integrate_processor.process();
-
-		model.rho = Eigen::Map<Eigen::MatrixXcd>(start_state.data(), model.sys_size, model.sys_size);
-
-		const auto fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
 	}
 };
