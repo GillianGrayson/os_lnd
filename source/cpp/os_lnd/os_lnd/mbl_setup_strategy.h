@@ -6,7 +6,7 @@
 #include <mkl.h>
 #include <iomanip>
 #include "save.h"
-#include "model_setup_strategy.h"
+#include "setup_strategy.h"
 #include <unsupported/Eigen/KroneckerProduct>
 #include "routines.h"
 
@@ -65,7 +65,7 @@ inline std::vector<int> convert_int_to_vector_of_bits(int x, const int size)
 	return res;
 }
 
-struct MBLModelSetupStrategy : ModelSetupStrategy
+struct MBLSetupStrategy : SetupStrategy
 {
 	std::vector<int> adjacement;
 	std::vector<int> x_to_id;

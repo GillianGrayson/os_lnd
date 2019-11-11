@@ -1,9 +1,9 @@
 #pragma once
-#include "model_run_strategy.h"
+#include "run_strategy.h"
 #include <Eigen/SparseLU>
 #include "save.h"
 
-struct LindbladianLUModelRunStrategy : ModelRunStrategy
+struct LindbladianLURunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{

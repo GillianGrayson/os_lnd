@@ -1,12 +1,12 @@
 #pragma once
-#include "model_run_strategy.h"
+#include "run_strategy.h"
 #include "save.h"
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
 #include "system.h"
 #include "observer.h"
 
-struct LindbladianODEIntRK4ModelRunStrategy : ModelRunStrategy
+struct LindbladianODEIntRK4RunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{

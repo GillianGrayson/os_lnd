@@ -36,7 +36,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="model_run_strategy.h">
+    <ClCompile Include="run_strategy.h">
       <Filter>Header Files\strategy\run</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,21 +53,6 @@
     <ClInclude Include="routines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model_setup_strategy.h">
-      <Filter>Header Files\strategy\setup</Filter>
-    </ClInclude>
-    <ClInclude Include="model_setup_processor.h">
-      <Filter>Header Files\strategy\setup</Filter>
-    </ClInclude>
-    <ClInclude Include="mbl_model_setup_strategy.h">
-      <Filter>Header Files\strategy\setup</Filter>
-    </ClInclude>
-    <ClInclude Include="model_run_processor.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
-    <ClInclude Include="lindbladian_lu_model_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
     <ClInclude Include="system.h">
       <Filter>Header Files\odeint\system</Filter>
     </ClInclude>
@@ -77,8 +62,23 @@
     <ClInclude Include="odeint_init.h">
       <Filter>Header Files\odeint</Filter>
     </ClInclude>
-    <ClInclude Include="lindbladian_odeint_rk4_model_run_strategy.h">
+    <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h">
       <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="lindbladian_lu_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="run_processor.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="mbl_setup_strategy.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="setup_processor.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="setup_strategy.h">
+      <Filter>Header Files\strategy\setup</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

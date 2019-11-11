@@ -160,17 +160,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="model_run_strategy.h" />
+    <ClCompile Include="run_strategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.h" />
-    <ClInclude Include="lindbladian_odeint_rk4_model_run_strategy.h" />
-    <ClInclude Include="mbl_model_setup_strategy.h" />
+    <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h" />
+    <ClInclude Include="mbl_setup_strategy.h" />
     <ClInclude Include="model.h" />
-    <ClInclude Include="model_run_processor.h" />
-    <ClInclude Include="model_setup_processor.h" />
-    <ClInclude Include="model_setup_strategy.h" />
-    <ClInclude Include="lindbladian_lu_model_run_strategy.h" />
+    <ClInclude Include="run_processor.h" />
+    <ClInclude Include="setup_processor.h" />
+    <ClInclude Include="setup_strategy.h" />
+    <ClInclude Include="lindbladian_lu_run_strategy.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="odeint_init.h" />
     <ClInclude Include="routines.h" />

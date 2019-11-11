@@ -1,9 +1,9 @@
 #pragma once
 #include "model.h"
 
-struct ModelSetupStrategy
+struct SetupStrategy
 {
-	virtual ~ModelSetupStrategy() = default;
+	virtual ~SetupStrategy() = default;
 	virtual void setup_suffix(Model& model) = 0;
 	virtual void setup_sys_size(Model& model) = 0;
 	virtual void setup_hamiltonian(Model& model) = 0;

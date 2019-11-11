@@ -1,8 +1,8 @@
 #pragma once
 #include "model.h"
 
-struct ModelRunStrategy
+struct RunStrategy
 {
-	virtual ~ModelRunStrategy() = default;
+	virtual ~RunStrategy() = default;
 	virtual void run(Model& model) = 0;
 };

@@ -1,8 +1,8 @@
 #define FMT_HEADER_ONLY
 #define FMT_DEPRECATED 
 
-#include "model_setup_processor.h"
-#include "model_run_processor.h"
+#include "setup_processor.h"
+#include "run_processor.h"
 
 int main(int argc, char* argv[])
 {
@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 
 	Model model(ini);
 
-	ModelSetupProcessor setup_processor;
+	SetupProcessor setup_processor;
 	setup_processor.set_model_strategy(model);
 	setup_processor.process_model(model);
 
