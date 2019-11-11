@@ -1,0 +1,22 @@
+#pragma once
+#include "observer.h"
+
+
+struct MBLObserver : BaseObserver
+{
+	MBLObserver(Model& model, std::vector<double>& times, Eigen::VectorXcd& base_state) : BaseObserver(model, times, base_state)
+	{
+	}
+
+	void operator()(const Eigen::VectorXcd& x, double t) override
+	{
+		const int precision = model.ini.GetInteger("global", "save_precision", 0);
+
+		const Eigen::VectorXcd state_diff = x - base_state;
+		base_state = x;
+
+		model.log_time_duration();
+		model.log_message(fmt::format("time = {:.16e}", t));
+		model.log_message(fmt::format("diff = {:.16e}\n", state_diff.norm()));
+	}
+};

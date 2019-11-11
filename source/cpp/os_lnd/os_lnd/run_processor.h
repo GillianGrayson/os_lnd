@@ -7,7 +7,7 @@ struct ModelRunProcessor
 {
 	std::unique_ptr<RunStrategy> run_strategy;
 
-	void set_model_strategy(Model& model)
+	void set_strategy(Model& model)
 	{
 		const std::string system = model.ini.Get("global", "task", "unknown");
 		if (system == "lindbladian_lu")
@@ -24,7 +24,7 @@ struct ModelRunProcessor
 		}
 	}
 
-	void process_model(Model& model) const
+	void process(Model& model) const
 	{
 		run_strategy->run(model);
 	}

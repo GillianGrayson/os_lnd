@@ -31,6 +31,9 @@
     <Filter Include="Header Files\odeint\observer">
       <UniqueIdentifier>{e989f765-afe7-4302-80bb-3cd9b29a6cd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\odeint\integrator">
+      <UniqueIdentifier>{b795a3f8-c671-4a87-86a3-ae588613abc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -79,6 +82,21 @@
     </ClInclude>
     <ClInclude Include="setup_strategy.h">
       <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
+    <ClInclude Include="integrate_strategy.h">
+      <Filter>Header Files\odeint\integrator</Filter>
+    </ClInclude>
+    <ClInclude Include="integrate_processor.h">
+      <Filter>Header Files\odeint\integrator</Filter>
+    </ClInclude>
+    <ClInclude Include="mbl_system.h">
+      <Filter>Header Files\odeint\system</Filter>
+    </ClInclude>
+    <ClInclude Include="mbl_observer.h">
+      <Filter>Header Files\odeint\observer</Filter>
+    </ClInclude>
+    <ClInclude Include="mbl_integrate_strategy.h">
+      <Filter>Header Files\odeint\integrator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

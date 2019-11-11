@@ -32,7 +32,6 @@ struct LindbladianLURunStrategy : RunStrategy
 		}
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(rho_vec.data(), model.sys_size, model.sys_size);
-
 		auto fn = "rho_mtx" + model.suffix;
 		save_dense_mtx(model.rho, fn, save_precision);
 	}

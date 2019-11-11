@@ -164,8 +164,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.h" />
+    <ClInclude Include="integrate_strategy.h" />
+    <ClInclude Include="integrate_processor.h" />
     <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h" />
+    <ClInclude Include="mbl_integrate_strategy.h" />
+    <ClInclude Include="mbl_observer.h" />
     <ClInclude Include="mbl_setup_strategy.h" />
+    <ClInclude Include="mbl_system.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="run_processor.h" />
     <ClInclude Include="setup_processor.h" />

@@ -1,13 +1,13 @@
 #pragma once
-#include "mbl_setup_strategy.h"
+#include "integrate_strategy.h"
 #include "routines.h"
 
 
-struct SetupProcessor
+struct IntegrateProcessor
 {
-	std::unique_ptr<SetupStrategy> setup_strategy;
+	std::unique_ptr<IntegrateStrategy> intergate;
 
-	void set_strategy(Model& model)
+	void set_model_strategy(Model& model)
 	{
 		const std::string system = model.ini.Get("global", "system", "unknown");
 		if (system == "mbl")
@@ -20,7 +20,7 @@ struct SetupProcessor
 		}
 	}
 
-	void process(Model& model) const
+	void process_model(Model& model) const
 	{
 		setup_strategy->setup_suffix(model);
 		setup_strategy->setup_sys_size(model);

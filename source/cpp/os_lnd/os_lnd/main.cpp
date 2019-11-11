@@ -15,12 +15,12 @@ int main(int argc, char* argv[])
 	Model model(ini);
 
 	SetupProcessor setup_processor;
-	setup_processor.set_model_strategy(model);
-	setup_processor.process_model(model);
+	setup_processor.set_strategy(model);
+	setup_processor.process(model);
 
 	ModelRunProcessor run_processor;
-	run_processor.set_model_strategy(model);
-	run_processor.process_model(model);
+	run_processor.set_strategy(model);
+	run_processor.process(model);
 }
 
 

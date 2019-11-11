@@ -15,14 +15,3 @@ struct BaseSystem
 	virtual void operator()(const Eigen::VectorXcd& x, Eigen::VectorXcd& dxdt, const double t) = 0;
 };
 
-struct MBLSystem : BaseSystem
-{
-	MBLSystem(Model& model) : BaseSystem(model)
-	{
-	}
-
-	void operator()(const Eigen::VectorXcd& x, Eigen::VectorXcd& dxdt, const double t) override
-	{
-		dxdt.noalias() = model.lindbladian * x;
-	}
-};
