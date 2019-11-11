@@ -103,12 +103,10 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		if (std::div(num_spins, 2).rem != 0)
 		{
-			throw std::runtime_error("num_spins must be divided by 2 without remainder");
+			model.throw_error("num_spins must be divided by 2 without remainder");
 		}
 		
 		model.sys_size = gcem::binomial_coef(num_spins, num_spins / 2);
-		std::cout << "sys_size = " << model.sys_size << std::endl;
-
 		init_aux_data(model);
 	}
 
@@ -124,6 +122,7 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 
 	void setup_hamiltonian_drv(Model& model) override
 	{
+		model.log_message("hamiltonian_drv is absent in this model");
 	}
 
 	void setup_dissipators(Model& model) override
@@ -141,7 +140,7 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 		}
 		else
 		{
-			throw std::runtime_error("Unsupported dissipator type");
+			model.throw_error("Unsupported dissipator type");
 		}
 
 		for (int diss_id = 0; diss_id < num_diss; diss_id++)
@@ -157,7 +156,7 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 			}
 			else
 			{
-				throw std::runtime_error("Unsupported dissipator type");
+				model.throw_error("Unsupported dissipator type");
 			}
 
 			model.dissipators.push_back(diss);	
@@ -175,9 +174,6 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 		const sp_mtx hamiltonian_transposed(model.hamiltonian.transpose());
 		
 		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
-
-		std::cout << "Number of non-zero elements: " << model.lindbladian.nonZeros() << std::endl;
-		std::cout << "Part of non-zero elements: " << double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0)) << std::endl;
 
 		for (const auto& diss : model.dissipators)
 		{
@@ -201,6 +197,7 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 
 	void setup_lindbladian_drv(Model& model) override
 	{
+		model.log_message("lindbladian_drv is absent in this model");
 	}
 
 	void init_aux_data(Model& model)
@@ -237,7 +234,7 @@ struct MBLModelSetupStrategy : ModelSetupStrategy
 
 		if (state_id != model.sys_size)
 		{
-			throw std::runtime_error("Something wrong with MBL generation");
+			model.throw_error("Something wrong with MBL generation");
 		}
 	}
 

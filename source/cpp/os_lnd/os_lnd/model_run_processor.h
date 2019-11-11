@@ -20,7 +20,7 @@ struct ModelRunProcessor
 		}
 		else
 		{
-			throw std::runtime_error("Unsupported model strategy");
+			model.throw_error("Unsupported model strategy");
 		}
 	}
 

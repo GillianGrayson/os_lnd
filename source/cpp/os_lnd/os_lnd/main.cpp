@@ -1,6 +1,8 @@
+#define FMT_HEADER_ONLY
+#define FMT_DEPRECATED 
+
 #include "model_setup_processor.h"
 #include "model_run_processor.h"
-
 
 int main(int argc, char* argv[])
 {

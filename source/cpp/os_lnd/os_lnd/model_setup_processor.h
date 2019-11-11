@@ -1,5 +1,6 @@
 #pragma once
 #include "mbl_model_setup_strategy.h"
+#include "routines.h"
 
 
 struct ModelSetupProcessor
@@ -15,7 +16,7 @@ struct ModelSetupProcessor
 		}
 		else
 		{
-			throw std::runtime_error("Unsupported model strategy");
+			model.throw_error("Unsupported model strategy");
 		}
 	}
 
@@ -28,5 +29,9 @@ struct ModelSetupProcessor
 		model_strategy->setup_dissipators(model);
 		model_strategy->setup_lindbladian(model);
 		model_strategy->setup_lindbladian_drv(model);
+
+		model.log_message(fmt::format("sys_size = {}", model.sys_size));
+		model.log_message(fmt::format("Number of non-zero elements in lindbladian = {}", model.lindbladian.nonZeros()));
+		model.log_message(fmt::format("Part of non-zero elements in lindbladian = {:.16e}\n", double(model.lindbladian.nonZeros()) / (std::pow(double(model.sys_size), 4.0))));
 	}
 };

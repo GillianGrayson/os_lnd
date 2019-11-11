@@ -32,13 +32,11 @@ inline std::vector<double> get_times_vector(Model& model)
 	}
 	else if (dump_type == "log")
 	{
-		const std::string message = "Unsupported dump_type";
-		throw std::runtime_error(message);
+		model.throw_error("Unsupported dump_type");
 	}
 	else
 	{
-		const std::string message = "Unsupported dump_type";
-		throw std::runtime_error(message);
+		model.throw_error("Unsupported dump_type");
 	}
 
 	return times;

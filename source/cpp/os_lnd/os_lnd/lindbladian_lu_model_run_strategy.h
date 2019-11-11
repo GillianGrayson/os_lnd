@@ -13,22 +13,22 @@ struct LindbladianLUModelRunStrategy : ModelRunStrategy
 		solver.compute(model.lindbladian);
 		if (solver.info() != Eigen::Success)
 		{
-			throw std::runtime_error("Decomposition failed");
+			model.throw_error("Decomposition failed");
 		}
 		else
 		{
-			std::cout << "Decomposition complete!" << std::endl;
+			model.log_message("Decomposition complete!");
 		}
 
 		Eigen::VectorXcd right_part = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
 		Eigen::VectorXcd rho_vec = solver.solve(right_part);
 		if (solver.info() != Eigen::Success)
 		{
-			throw std::runtime_error("Solving failed");
+			model.throw_error("Solving failed");
 		}
 		else
 		{
-			std::cout << "Solving complete!" << std::endl;
+			model.log_message("Solving complete!");
 		}
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(rho_vec.data(), model.sys_size, model.sys_size);

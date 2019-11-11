@@ -2,6 +2,8 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
+#include <Eigen/SparseCore>
+#include <Eigen/Core>
 
 template <class T>
 void save_vector(const std::vector<T>& v, const std::string& fn, int precision = 16)
