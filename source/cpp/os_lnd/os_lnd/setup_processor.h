@@ -1,6 +1,6 @@
 #pragma once
 #include "mbl_setup_strategy.h"
-#include "routines.h"
+#include "dimer_setup_strategy.h"
 
 
 struct SetupProcessor
@@ -13,6 +13,10 @@ struct SetupProcessor
 		if (system == "mbl")
 		{
 			setup_strategy = std::make_unique<MBLSetupStrategy>();
+		}
+		else if (system == "dimer")
+		{
+			setup_strategy = std::make_unique<DimerSetupStrategy>();
 		}
 		else
 		{

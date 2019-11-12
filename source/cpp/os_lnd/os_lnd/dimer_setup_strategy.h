@@ -58,18 +58,29 @@ struct DimerSetupStrategy : SetupStrategy
 	void setup_hamiltonian(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-		const auto U = model.ini.GetReal("dimer", "U", 0.0);
+		const int num_particles = model.ini.GetInteger("dimer", "num_particles", 0);
+		auto U = model.ini.GetReal("dimer", "U", 0.0);
+		U /= double(num_particles);
 		const auto J = model.ini.GetReal("dimer", "J", 0.0);
 
 		std::vector<int> rows;
 		std::vector<int> cols;
 		std::vector<double> vals;
 
+		double trace = 0.0;
 		for (int id = 0; id < model.sys_size; id++)
 		{
-			vals.push_back(2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1)));
+			double curr_val = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
+			trace += curr_val;
+			vals.push_back(curr_val);
 			rows.push_back(id);
 			cols.push_back(id);
+		}
+		trace /= double(model.sys_size);
+
+		for (int id = 0; id < model.sys_size; id++)
+		{
+			vals[id] -= trace;
 		}
 
 		for (int id = 0; id < (model.sys_size - 1); id++)
@@ -107,7 +118,7 @@ struct DimerSetupStrategy : SetupStrategy
 
 		for (int id = 0; id < model.sys_size; id++)
 		{
-			vals.push_back(double((model.sys_size - (id + 1)) - id));
+			vals.push_back(-1.0 * double((model.sys_size - (id + 1)) - id));
 			rows.push_back(id);
 			cols.push_back(id);
 		}
@@ -130,9 +141,9 @@ struct DimerSetupStrategy : SetupStrategy
 	{
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-		const int diss_type = model.ini.GetInteger("mbl", "diss_type", 0);
+		const int diss_type = model.ini.GetInteger("dimer", "diss_type", 0);
 		
-		if (diss_type == 0)
+		if (diss_type == 1)
 		{
 			std::vector<int> rows;
 			std::vector<int> cols;
@@ -184,7 +195,9 @@ struct DimerSetupStrategy : SetupStrategy
 	{
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-		const auto diss_gamma = model.ini.GetReal("mbl", "diss_gamma", 0.0);
+		const int num_particles = model.ini.GetInteger("dimer", "num_particles", 0);
+		double diss_gamma = model.ini.GetReal("dimer", "diss_gamma", 0.0);
+		diss_gamma /= double(num_particles);
 
 		const std::complex<double> i1(0.0, 1.0);
 		const sp_mtx eye = get_sp_eye(model.sys_size);

@@ -3,9 +3,9 @@
 #include "model.h"
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
-#include "mbl_system.h"
-#include "mbl_observer.h"
+#include "dimer_system.h"
 #include "save.h"
+#include "dimer_observer.h"
 
 
 struct DimerIntegrateStrategy : IntegrateStrategy
@@ -18,10 +18,10 @@ struct DimerIntegrateStrategy : IntegrateStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
-		MBLSystem system(model);
+		DimerSystem system(model);
 
 		std::vector<double> diffs;
-		MBLObserver observer(
+		DimerObserver observer(
 			model,
 			times,
 			start_state,

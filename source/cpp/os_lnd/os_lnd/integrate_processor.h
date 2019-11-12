@@ -1,5 +1,6 @@
 #pragma once
 #include "mbl_integrate_strategy.h"
+#include "dimer_integrate_strategy.h"
 
 
 struct IntegrateProcessor
@@ -12,6 +13,10 @@ struct IntegrateProcessor
 		if (system == "mbl")
 		{
 			integrate_strategy = std::make_unique<MBLIntegrateStrategy>(model, times, step, start_state);
+		}
+		else if (system == "dimer")
+		{
+			integrate_strategy = std::make_unique<DimerIntegrateStrategy>(model, times, step, start_state);
 		}
 		else
 		{
