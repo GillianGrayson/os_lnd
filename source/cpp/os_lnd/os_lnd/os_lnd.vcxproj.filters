@@ -98,5 +98,8 @@
     <ClInclude Include="mbl_integrate_strategy.h">
       <Filter>Header Files\odeint\integrator</Filter>
     </ClInclude>
+    <ClInclude Include="dimer_setup_strategy.h">
+      <Filter>Header Files\strategy\setup</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

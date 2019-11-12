@@ -24,6 +24,7 @@ struct SetupProcessor
 	{
 		setup_strategy->setup_suffix(model);
 		setup_strategy->setup_sys_size(model);
+		setup_strategy->setup_period(model);
 		setup_strategy->setup_hamiltonian(model);
 		setup_strategy->setup_hamiltonian_drv(model);
 		setup_strategy->setup_dissipators(model);

@@ -163,6 +163,7 @@
     <ClCompile Include="run_strategy.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dimer_setup_strategy.h" />
     <ClInclude Include="init.h" />
     <ClInclude Include="integrate_strategy.h" />
     <ClInclude Include="integrate_processor.h" />

@@ -16,6 +16,7 @@ struct Model
 
 	std::string suffix;
 	int sys_size;
+	double period;
 	sp_mtx hamiltonian;
 	sp_mtx hamiltonian_drv;
 	std::vector<sp_mtx> dissipators;

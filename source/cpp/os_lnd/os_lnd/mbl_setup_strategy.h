@@ -110,6 +110,11 @@ struct MBLSetupStrategy : SetupStrategy
 		init_aux_data(model);
 	}
 
+	void setup_period(Model& model) override
+	{
+		model.period = 1.0;
+	}
+
 	void setup_hamiltonian(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
