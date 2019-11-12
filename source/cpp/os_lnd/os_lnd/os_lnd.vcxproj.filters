@@ -101,5 +101,14 @@
     <ClInclude Include="dimer_setup_strategy.h">
       <Filter>Header Files\strategy\setup</Filter>
     </ClInclude>
+    <ClInclude Include="dimer_integrate_strategy.h">
+      <Filter>Header Files\odeint\integrator</Filter>
+    </ClInclude>
+    <ClInclude Include="dimer_observer.h">
+      <Filter>Header Files\odeint\observer</Filter>
+    </ClInclude>
+    <ClInclude Include="dimer_system.h">
+      <Filter>Header Files\odeint\system</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,9 +8,9 @@
 #include "save.h"
 
 
-struct MBLIntegrateStrategy : IntegrateStrategy
+struct DimerIntegrateStrategy : IntegrateStrategy
 {
-	MBLIntegrateStrategy(Model& model, std::vector<double>& times, double& step, Eigen::VectorXcd& start_state) : IntegrateStrategy(model, times, step, start_state)
+	DimerIntegrateStrategy(Model& model, std::vector<double>& times, double& step, Eigen::VectorXcd& start_state) : IntegrateStrategy(model, times, step, start_state)
 	{
 	}
 
@@ -19,7 +19,7 @@ struct MBLIntegrateStrategy : IntegrateStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
 		MBLSystem system(model);
-		
+
 		std::vector<double> diffs;
 		MBLObserver observer(
 			model,

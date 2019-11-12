@@ -2,11 +2,11 @@
 #include "observer.h"
 
 
-struct MBLObserver : BaseObserver
+struct DimerObserver : BaseObserver
 {
 	std::vector<double>& diffs;
-	
-	MBLObserver(
+
+	DimerObserver(
 		Model& model,
 		std::vector<double>& times,
 		Eigen::VectorXcd& base_state,
