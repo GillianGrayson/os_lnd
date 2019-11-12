@@ -21,6 +21,12 @@ struct MBLObserver : BaseObserver
 		base_state = x;
 
 		double diff = state_diff.norm();
+
+		if (std::isnan(diff))
+		{
+			model.throw_error("Integration failed. Try to decrease integration step");
+		}
+		
 		diffs.push_back(diff);
 
 		model.log_time_duration();
