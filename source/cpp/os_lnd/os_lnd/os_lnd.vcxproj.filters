@@ -110,5 +110,8 @@
     <ClInclude Include="dimer_system.h">
       <Filter>Header Files\odeint\system</Filter>
     </ClInclude>
+    <ClInclude Include="lindbladian_smaller_eigen_vector_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

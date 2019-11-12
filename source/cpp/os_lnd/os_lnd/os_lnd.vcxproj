@@ -32,6 +32,7 @@
     <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
+    <UseIntelIPP>false</UseIntelIPP>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -40,6 +41,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
+    <UseIntelIPP>false</UseIntelIPP>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -47,6 +49,7 @@
     <PlatformToolset>Intel C++ Compiler 19.0</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
+    <UseIntelIPP>false</UseIntelIPP>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -55,6 +58,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseIntelMKL>Sequential</UseIntelMKL>
+    <UseIntelIPP>false</UseIntelIPP>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -93,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -109,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -127,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -147,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\headmyshoulder-odeint-v2-db8b39a\include;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;E:\YandexDisk\Work\libs\eigen-eigen-b58ba8bfb096;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -171,6 +175,7 @@
     <ClInclude Include="integrate_strategy.h" />
     <ClInclude Include="integrate_processor.h" />
     <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h" />
+    <ClInclude Include="lindbladian_smaller_eigen_vector_run_strategy.h" />
     <ClInclude Include="mbl_integrate_strategy.h" />
     <ClInclude Include="mbl_observer.h" />
     <ClInclude Include="mbl_setup_strategy.h" />
