@@ -113,5 +113,8 @@
     <ClInclude Include="lindbladian_smaller_eigen_vector_run_strategy.h">
       <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
+    <ClInclude Include="memory_usage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

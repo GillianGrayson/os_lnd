@@ -8,6 +8,7 @@
 #include <spdlog/spdlog.h>
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "save.h"
+#include "memory_usage.h"
 
 struct Model
 {
@@ -63,7 +64,7 @@ struct Model
 	{
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 		
-		log_message(fmt::format("sys_size = {}", sys_size));
+		log_message(fmt::format("sys_size = {}\n", sys_size));
 
 		const auto lindbladian_non_zeros = lindbladian.nonZeros();
 		const auto lindbladian_non_zeros_part = double(lindbladian_non_zeros) / (std::pow(double(sys_size), 4.0));
