@@ -19,6 +19,8 @@ struct MBLObserver : BaseObserver
 	{
 		if (t > std::numeric_limits<double>::epsilon())
 		{
+			model.log_time_duration();
+			
 			const Eigen::VectorXcd state_diff = x - base_state;
 			base_state = x;
 
@@ -31,7 +33,6 @@ struct MBLObserver : BaseObserver
 
 			diffs.push_back(diff);
 
-			model.log_time_duration();
 			model.log_message(fmt::format("time = {:.16e}", t));
 			model.log_message(fmt::format("diff = {:.16e}\n", diff));
 
