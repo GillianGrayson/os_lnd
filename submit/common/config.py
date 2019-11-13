@@ -17,6 +17,7 @@ def get_odeint_config(step, start_observed_period, finish_observed_period):
     config_list = []
     config_list.append('[odeint]')
     config_list.append('start_state_id = 0')
+    config_list.append('step = ' + str(step))
     config_list.append('dump_type = linear')
     config_list.append('start_observed_period = ' + str(start_observed_period))
     config_list.append('finish_observed_period = ' + str(finish_observed_period))
