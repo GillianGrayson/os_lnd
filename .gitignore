@@ -55,3 +55,11 @@ source/cpp/os_lnd/os_lnd/My Advisor Results - os_lnd/
 
 *.txt
 
+source/cpp/os_lnd/os_lnd/boost_1_71_0/
+source/cpp/os_lnd/os_lnd/eigen/
+source/cpp/os_lnd/os_lnd/fmt/
+source/cpp/os_lnd/os_lnd/gcem/
+source/cpp/os_lnd/os_lnd/inih/
+source/cpp/os_lnd/os_lnd/odeint/
+source/cpp/os_lnd/os_lnd/spdlog/
+
