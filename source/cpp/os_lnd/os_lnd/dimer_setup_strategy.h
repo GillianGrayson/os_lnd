@@ -70,9 +70,9 @@ struct DimerSetupStrategy : SetupStrategy
 		double trace = 0.0;
 		for (int id = 0; id < model.sys_size; id++)
 		{
-			double curr_val = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
-			trace += curr_val;
-			vals.push_back(curr_val);
+			double val_U = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
+			trace += val_U;
+			vals.push_back(val_U);
 			rows.push_back(id);
 			cols.push_back(id);
 		}

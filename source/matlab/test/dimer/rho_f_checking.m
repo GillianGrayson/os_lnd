@@ -4,6 +4,8 @@ global N J E0 A0 w U g HE HU HJ A phi0 Ps Pd
 
 imag1=sqrt(-1);
 
+num_periods = 10;
+
 N=10; % number of particles, system size = N+1
 Ns = N + 1;
 
@@ -132,7 +134,7 @@ for st_1 = 1:N+1
 end
 
 t0 = 0.0;
-t1 = 10.0 * 2*pi/w;
+t1 = num_periods * 2*pi/w;
 
 options = odeset('RelTol', 1e-10, 'AbsTol', 1e-12);
 [t,Y]=ode45('sysLind',[t0:pi/w:t1], rho_before, options);

@@ -1,5 +1,6 @@
 #define FMT_HEADER_ONLY
 #define FMT_DEPRECATED
+#define EIGEN_USE_MKL_ALL
 
 #include "setup_processor.h"
 #include "run_processor.h"

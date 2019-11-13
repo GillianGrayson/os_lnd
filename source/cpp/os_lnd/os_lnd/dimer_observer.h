@@ -32,5 +32,7 @@ struct DimerObserver : BaseObserver
 		model.log_time_duration();
 		model.log_message(fmt::format("time = {:.16e}", t));
 		model.log_message(fmt::format("diff = {:.16e}\n", diff));
+
+		dump_current_state(t, diff);
 	}
 };
