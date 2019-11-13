@@ -5,14 +5,14 @@ figures_path = '/home/denysov/yusipov/os_lnd/figures/dimer';
 
 task = 'lindbladian_odeint_rk4';
 
-num_particles = 10;
+num_particles = 100;
 
 diss_type = 1;
 diss_gamma = 0.1;
 
 E = 0.0;
-Us = [0.01 : 0.01 : 1.0];
-J = 1.0
+Us = [0.01 : 0.01 : 1.0]';
+J = 1.0;
 
 drv_type = 1;
 drv_ampl = 3.4;
@@ -21,7 +21,7 @@ drv_phase = 0.0;
 
 num_states = num_particles + 1;
 states = [0:1:num_particles]';
-diag_rho = zeros(Us, num_particles + 1);
+diag_rho = zeros(size(Us, 1), num_particles + 1);
 
 for U_id = 1 : size(Us, 1)
     
@@ -40,7 +40,7 @@ for U_id = 1 : size(Us, 1)
         drv_freq, ...
         drv_phase);
     
-    suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_%0.4f_%0.4f)_drv(%d_%0.4f_%0.4f_%0.4f).txt', ...
+    suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_%0.4f_%0.4f)_drv(%d_%0.4f_%0.4f_%0.4f)', ...
         num_particles, ...
         diss_type, ...
         diss_gamma, ...
@@ -52,7 +52,7 @@ for U_id = 1 : size(Us, 1)
         drv_freq, ...
         drv_phase);
     
-    fn = sprintf('%s/%s/%s.txt', data_path, local_path, suffix);
+    fn = sprintf('%s/%s/rho_mtx_%s.txt', data_path, local_path, suffix);
     mtx_data = importdata(fn);
     rho = zeros(num_states);
     for st_id_1 = 1:num_states
@@ -82,7 +82,7 @@ set(gca, 'FontSize', 30);
 title(h, '$PDF$','Interpreter', 'latex');
 set(gca,'YDir','normal');
 
-suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_var_%0.4f)_drv(%d_%0.4f_%0.4f_%0.4f).txt', ...
+suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_var_%0.4f)_drv(%d_%0.4f_%0.4f_%0.4f)', ...
     num_particles, ...
     diss_type, ...
     diss_gamma, ...
@@ -93,10 +93,10 @@ suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_var_%0.4f)_drv(%d_%0.4f_%0.4f_
     drv_freq, ...
     drv_phase);
 
-savefig(sprintf('%s/diag_rho_from_U_%s.fig', figures_path, suffix));
+savefig(sprintf('%s/%s/diag_rho_from_U_%s.fig', figures_path, task, suffix));
 
 h=gcf;
 set(h,'PaperOrientation','landscape');
 set(h,'PaperUnits','normalized');
 set(h,'PaperPosition', [0 0 1 1]);
-print(gcf, '-dpdf', sprintf('%s/diag_rho_from_U_%s.pdf', figures_path, suffix));
+print(gcf, '-dpdf', sprintf('%s/%s/diag_rho_from_U_%s.pdf', figures_path, task, suffix));
