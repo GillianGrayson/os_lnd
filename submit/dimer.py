@@ -4,16 +4,16 @@ from common.config import get_global_config,  get_odeint_config
 import os.path
 import numpy as np
 
-segment = 'short'
+segment = 'medium'
 
 system = 'dimer'
 task = 'lindbladian_odeint_rk4'
 
-step = 0.001
+step = 0.0001
 start_observed_period = 0
-finish_observed_period = 10
+finish_observed_period = 100
 
-Us = list(np.linspace(0.5, 0.5, 1, dtype=float))
+Us = list(np.linspace(0.01, 1.00, 100, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1
@@ -50,6 +50,7 @@ for N in Ns:
         config_list += get_odeint_config(step, start_observed_period, finish_observed_period)
 
         local_path = \
+            '/' + system + '/' + task + \
             '/np_' + str(N) + \
             '/diss_' + str(diss_type) + '_' + str(format(diss_gamma, '0.4f')) + \
             '/prm_' + str(format(E, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + \
