@@ -3,17 +3,18 @@ from common.file_system import get_root
 from common.config import get_global_config,  get_odeint_config
 import os.path
 import numpy as np
+import math
 
 segment = 'medium'
 
 system = 'dimer'
 task = 'lindbladian_odeint_rk4'
 
-step = 0.0001
+step = (2.0 * math.pi) * 0.0001
 start_observed_period = 0
-finish_observed_period = 100
+finish_observed_period = 1
 
-Us = list(np.linspace(0.01, 1.00, 100, dtype=float))
+Us = list(np.linspace(0.5, 0.5, 1, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1
@@ -70,7 +71,7 @@ for N in Ns:
             'drv(' + str(drv_type) + '_' + str(format(drv_ampl, '0.4f')) + '_' + str(
                 format(drv_freq, '0.4f')) + '_' + str(format(drv_phase, '0.4f')) + ')'
 
-        fn_test = data_path + '/rho_mtx_' + fn_suffix
+        fn_test = data_path + '/rho_mtx_' + fn_suffix + '.txt'
 
         if not os.path.isfile(fn_test):
             if segment == 'short':
