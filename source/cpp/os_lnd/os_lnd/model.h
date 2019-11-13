@@ -55,9 +55,17 @@ struct Model
 
 	void log_time_duration() const
 	{
+		const int save_precision = ini.GetInteger("global", "save_precision", 0);
+		
 		const auto run_time = std::chrono::high_resolution_clock::now();
 		const auto duration = std::chrono::duration<double>(run_time - start_run_time).count();
 		log_message(fmt::format("run_time = {:.16e} seconds", duration));
+
+		std::vector<double> time;
+		time.push_back(duration);
+
+		auto fn = "run_time" + suffix;
+		save_vector(time, fn, save_precision);
 	}
 
 	void log_setup_info() const
@@ -88,5 +96,26 @@ struct Model
 
 		auto fn = "non_zeros_parts" + suffix;
 		save_vector(non_zeros_parts, fn, save_precision);
+
+		log_time_duration();
+		log_memory_usage();
+	}
+
+	void log_memory_usage() const
+	{
+		const int save_precision = ini.GetInteger("global", "save_precision", 0);
+
+		double currentSize = double(getCurrentRSS()) / std::pow(1024.0, 2);
+		double peakSize = double(getPeakRSS()) / std::pow(1024.0, 2);
+
+		log_message(fmt::format("Current RSS (physical memory use) = {:.2f} Mb", currentSize));
+		log_message(fmt::format("Peak RSS (physical memory use) = {:.2f} Mb\n", peakSize));
+
+		std::vector<double> mem_info;
+		mem_info.push_back(currentSize);
+		mem_info.push_back(peakSize);
+
+		auto fn = "mem_info" + suffix;
+		save_vector(mem_info, fn, save_precision);
 	}
 };

@@ -32,5 +32,6 @@ struct RunProcessor
 	void process(Model& model) const
 	{
 		run_strategy->run(model);
+		model.log_memory_usage();
 	}
 };
