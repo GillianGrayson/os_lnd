@@ -71,7 +71,7 @@ for U_id = 1 : size(Us, 1)
 end
 
 fig = figure;
-hLine = imagesc(states, Us, diag_rho');
+hLine = imagesc(Us, states, diag_rho');
 set(gca, 'FontSize', 30);
 xlabel('$U$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 30);
