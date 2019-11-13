@@ -26,6 +26,7 @@ struct Model
 	sp_mtx lindbladian_drv;
 	Eigen::MatrixXcd rho;
 	std::chrono::high_resolution_clock::time_point start_run_time;
+	std::vector<double> run_times;
 
 	Model(INIReader& ini) : ini(ini)
 	{
@@ -53,22 +54,21 @@ struct Model
 		}
 	}
 
-	void log_time_duration() const
+	void log_time_duration()
 	{
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 		
 		const auto run_time = std::chrono::high_resolution_clock::now();
-		const auto duration = std::chrono::duration<double>(run_time - start_run_time).count();
+		double duration = std::chrono::duration<double>(run_time - start_run_time).count();
 		log_message(fmt::format("run_time = {:.16e} seconds", duration));
 
-		std::vector<double> time;
-		time.push_back(duration);
+		run_times.push_back(duration);
 
-		auto fn = "run_time" + suffix;
-		save_vector(time, fn, save_precision);
+		auto fn = "run_times" + suffix;
+		save_vector(run_times, fn, save_precision);
 	}
 
-	void log_setup_info() const
+	void log_setup_info()
 	{
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 		
