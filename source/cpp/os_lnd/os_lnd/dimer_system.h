@@ -29,16 +29,16 @@ struct DimerSystem : BaseSystem
 			double half_period = model.period * 0.5;
 			if (mod_time < half_period)
 			{
-				driving = E + drv_ampl;
+				driving = drv_ampl;
 			}
 			else
 			{
-				driving = E - drv_ampl;
+				driving = -drv_ampl;
 			}
 		}
 		else if (drv_type == 1)
 		{
-			driving = E + drv_ampl * std::sin(drv_freq * t + drv_phase);
+			driving = drv_ampl * std::sin(drv_freq * t + drv_phase);
 		}
 		else
 		{

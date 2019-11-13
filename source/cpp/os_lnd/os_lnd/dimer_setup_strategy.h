@@ -59,6 +59,7 @@ struct DimerSetupStrategy : SetupStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const int num_particles = model.ini.GetInteger("dimer", "num_particles", 0);
+		auto E = model.ini.GetReal("dimer", "E", 0.0);
 		auto U = model.ini.GetReal("dimer", "U", 0.0);
 		U /= double(num_particles);
 		const auto J = model.ini.GetReal("dimer", "J", 0.0);
@@ -70,9 +71,10 @@ struct DimerSetupStrategy : SetupStrategy
 		double trace = 0.0;
 		for (int id = 0; id < model.sys_size; id++)
 		{
-			double val_U = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
-			trace += val_U;
-			vals.push_back(val_U);
+			const double val_U = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
+			const double val_E = -E * double((model.sys_size - (id + 1)) - id);
+			trace += (val_U + val_E);
+			vals.push_back(val_U + val_E);
 			rows.push_back(id);
 			cols.push_back(id);
 		}
