@@ -64,7 +64,7 @@ for U_id = 1 : size(Us, 1)
         end
     end
     
-    curr_diag_rho = abs(diag(rho)));
+    curr_diag_rho = abs(diag(rho));
     curr_diag_rho = curr_diag_rho / max(curr_diag_rho);
     
     diag_rho(U_id, :) = curr_diag_rho;
