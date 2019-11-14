@@ -12,9 +12,9 @@ task = 'lindbladian_odeint_rk4'
 
 start_observed_period = 0
 finish_observed_period = 1000
-step = (2.0 * math.pi) * 0.001
+step = (2.0 * math.pi) * 0.0001
 
-Us = list(np.linspace(0.01, 0.01, 1, dtype=float))
+Us = list(np.linspace(0.01, 1.00, 100, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1
@@ -50,13 +50,13 @@ for N in Ns:
         config_list += get_global_config(system, task)
         config_list += get_odeint_config(step, start_observed_period, finish_observed_period)
 
+        local_path = '/' + system
         if task == 'lindbladian_odeint_rk4':
-            local_path = '/task_' + str(start_observed_period) + '_' + str(finish_observed_period) + '_' + str(format(step, '0.2e'))
+            local_path += '/' + task + '_' + str(start_observed_period) + '_' + str(finish_observed_period) + '_' + str(format(step, '0.2e'))
         else:
-            local_path = ''
+            local_path += '/' + task
 
         local_path += \
-            '/' + system + '/' + task + \
             '/np_' + str(N) + \
             '/diss_' + str(diss_type) + '_' + str(format(diss_gamma, '0.4f')) + \
             '/prm_' + str(format(E, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + \
