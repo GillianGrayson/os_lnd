@@ -4,7 +4,7 @@
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
 #include "integrate_processor.h"
-#include <experimental/filesystem>
+#include "third_party/filesystem/include/ghc/filesystem.hpp"
 
 struct LindbladianODEIntRK4RunStrategy : RunStrategy
 {
@@ -20,7 +20,7 @@ struct LindbladianODEIntRK4RunStrategy : RunStrategy
 		auto fn_curr_dump = continue_path + "curr_dump" + model.suffix;
 		auto fn_rho_mtx = continue_path + "rho_mtx" + model.suffix;
 		
-		if (is_continue && std::experimental::filesystem::exists(fn_curr_dump) && std::experimental::filesystem::exists(fn_rho_mtx))
+		if (is_continue && ghc::filesystem::exists(fn_curr_dump) && ghc::filesystem::exists(fn_rho_mtx))
 		{
 			auto fn = continue_path + "curr_dump" + model.suffix;
 			std::vector<double> last_dump_info;
