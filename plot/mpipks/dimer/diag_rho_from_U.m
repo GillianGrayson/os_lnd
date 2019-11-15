@@ -5,6 +5,10 @@ figures_path = '/home/denysov/yusipov/os_lnd/figures/dimer';
 
 task = 'lindbladian_odeint_rk4';
 
+start_observed_period = 0;
+finish_observed_period = 1000;
+step = (2.0 * pi) * 0.0001;
+
 num_particles = 100;
 
 diss_type = 1;
@@ -27,8 +31,11 @@ for U_id = 1 : size(Us, 1)
     
     U = Us(U_id)
     
-    local_path = sprintf('%s/np_%d/diss_%d_%0.4f/prm_%0.4f_%0.4f_%0.4f/drv_%d_%0.4f_%0.4f_%0.4f', ...
+    local_path = sprintf('%s_%d_%d_%0.2e/np_%d/diss_%d_%0.4f/prm_%0.4f_%0.4f_%0.4f/drv_%d_%0.4f_%0.4f_%0.4f', ...
         task, ...
+		start_observed_period, ...
+		finish_observed_period, ...
+		step, ...
         num_particles, ...
         diss_type, ...
         diss_gamma, ...
@@ -65,6 +72,7 @@ for U_id = 1 : size(Us, 1)
     end
     
     curr_diag_rho = abs(diag(rho));
+	trace_rho_diff = 1 - trace(abs(rho))
     curr_diag_rho = curr_diag_rho / max(curr_diag_rho);
     
     diag_rho(U_id, :) = curr_diag_rho;
@@ -82,6 +90,15 @@ set(gca, 'FontSize', 30);
 title(h, '$PDF$','Interpreter', 'latex');
 set(gca,'YDir','normal');
 
+task_path = sprintf('%s(%d_%d_%0.2e)', ...
+	task, ...
+	start_observed_period, ...
+	finish_observed_period, ...
+	step);
+
+new_dir = sprintf('%s/%s', figures_path, task_path);
+mkdir(new_dir);
+
 suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_var_%0.4f)_drv(%d_%0.4f_%0.4f_%0.4f)', ...
     num_particles, ...
     diss_type, ...
@@ -93,10 +110,10 @@ suffix = sprintf('np(%d)_diss(%d_%0.4f)_prm(%0.4f_var_%0.4f)_drv(%d_%0.4f_%0.4f_
     drv_freq, ...
     drv_phase);
 
-savefig(sprintf('%s/%s/diag_rho_from_U_%s.fig', figures_path, task, suffix));
+savefig(sprintf('%s/%s/diag_rho_from_U_%s.fig', figures_path, task_path, suffix));
 
 h=gcf;
 set(h,'PaperOrientation','landscape');
 set(h,'PaperUnits','normalized');
 set(h,'PaperPosition', [0 0 1 1]);
-print(gcf, '-dpdf', sprintf('%s/%s/diag_rho_from_U_%s.pdf', figures_path, task, suffix));
+print(gcf, '-dpdf', sprintf('%s/%s/diag_rho_from_U_%s.pdf', figures_path, task_path, suffix));
