@@ -43,10 +43,10 @@ struct DimerIntegrateStrategy : IntegrateStrategy
 		auto fn = "rho_mtx" + model.suffix;
 		save_dense_mtx(model.rho, fn, save_precision);
 
-		fn = "diffs" + model.suffix;
+		fn = "diffs" + suffix + model.suffix;
 		save_vector(diffs, fn, save_precision);
 
-		fn = "times" + model.suffix;
+		fn = "times" + suffix + model.suffix;
 		save_vector(times, fn, save_precision);
 	}
 };

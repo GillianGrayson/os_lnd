@@ -4,7 +4,7 @@ global N J E0 A0 w U g HE HU HJ A phi0 Ps Pd
 
 imag1=sqrt(-1);
 
-num_periods = 20;
+num_periods = 40;
 
 N=10; % number of particles, system size = N+1
 Ns = N + 1;

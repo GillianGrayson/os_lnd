@@ -9,13 +9,14 @@ segment = 'medium'
 
 system = 'dimer'
 task = 'lindbladian_odeint_rk4'
+is_continue = 'true'
 
 start_observed_period = 0
-finish_observed_period = 1000
+finish_observed_period = 10
 step = (2.0 * math.pi) * 0.0001
 
 Us = list(np.linspace(0.01, 1.00, 100, dtype=float))
-Ns = list(np.linspace(100, 100, 1, dtype=int))
+Ns = list(np.linspace(200, 200, 1, dtype=int))
 
 diss_type = 1
 diss_gamma = 0.1
@@ -33,6 +34,19 @@ for N in Ns:
 
         print("N = " + str(N))
         print("U = " + str(U))
+        local_path = '/' + system
+        if task == 'lindbladian_odeint_rk4':
+            local_path += '/' + task + '_' + str(start_observed_period) + '_' + str(finish_observed_period) + '_' + str(format(step, '0.2e'))
+        else:
+            local_path += '/' + task
+
+        local_path += \
+            '/np_' + str(N) + \
+            '/diss_' + str(diss_type) + '_' + str(format(diss_gamma, '0.4f')) + \
+            '/prm_' + str(format(E, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + \
+            '/drv_' + str(drv_type) + '_' + str(format(drv_ampl, '0.4f')) + '_' + str(format(drv_freq, '0.4f')) + '_' + str(format(drv_phase, '0.4f'))
+
+        data_path = get_root() + local_path
 
         config_list = []
         config_list.append('[dimer]')
@@ -48,21 +62,7 @@ for N in Ns:
         config_list.append('drv_phase = ' + str(drv_phase))
 
         config_list += get_global_config(system, task)
-        config_list += get_odeint_config(step, start_observed_period, finish_observed_period)
-
-        local_path = '/' + system
-        if task == 'lindbladian_odeint_rk4':
-            local_path += '/' + task + '_' + str(start_observed_period) + '_' + str(finish_observed_period) + '_' + str(format(step, '0.2e'))
-        else:
-            local_path += '/' + task
-
-        local_path += \
-            '/np_' + str(N) + \
-            '/diss_' + str(diss_type) + '_' + str(format(diss_gamma, '0.4f')) + \
-            '/prm_' + str(format(E, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + \
-            '/drv_' + str(drv_type) + '_' + str(format(drv_ampl, '0.4f')) + '_' + str(format(drv_freq, '0.4f')) + '_' + str(format(drv_phase, '0.4f'))
-
-        data_path = get_root() + local_path
+        config_list += get_odeint_config(step, start_observed_period, finish_observed_period, is_continue, data_path + '/')
 
         pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
@@ -78,7 +78,7 @@ for N in Ns:
 
         fn_test = data_path + '/rho_mtx_' + fn_suffix + '.txt'
 
-        if not os.path.isfile(fn_test):
+        if not os.path.isfile(fn_test) or is_continue == 'true':
             if segment == 'short':
                 os.system('sbatch run_mpipks_sd_sbatch.sh ' + data_path)
             elif segment == 'medium':

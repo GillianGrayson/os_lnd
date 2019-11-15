@@ -10,7 +10,7 @@ def get_global_config(system, task):
     config_list.append('save_precision = 16')
     return config_list
 
-def get_odeint_config(step, start_observed_period, finish_observed_period):
+def get_odeint_config(step, start_observed_period, finish_observed_period, is_continue, continue_path):
 
     num_time_points = finish_observed_period - start_observed_period + 1
 
@@ -23,4 +23,6 @@ def get_odeint_config(step, start_observed_period, finish_observed_period):
     config_list.append('finish_observed_period = ' + str(finish_observed_period))
     config_list.append('num_time_points = ' + str(num_time_points))
     config_list.append('dump_progress = true')
+    config_list.append('continue = ' + str(is_continue))
+    config_list.append('continue_path = ' + str(continue_path))
     return config_list
