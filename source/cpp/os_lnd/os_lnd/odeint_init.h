@@ -9,7 +9,7 @@ typedef boost::numeric::odeint::controlled_runge_kutta<error_stepper_type> contr
 typedef boost::numeric::odeint::runge_kutta4<Eigen::VectorXcd> runge_kutta4_stepper;
 
 
-inline std::vector<double> get_times_vector(Model& model)
+inline std::vector<double> get_times_vector(Model& model, double start_time)
 {
 	const std::string dump_type = model.ini.Get("odeint", "dump_type", "unknown");
 	const double start_observed_period = model.ini.GetReal("odeint", "start_observed_period", 0.0);
@@ -19,7 +19,7 @@ inline std::vector<double> get_times_vector(Model& model)
 	std::vector<double> times;
 	if (start_observed_period > 0.0)
 	{
-		times.push_back(0.0);
+		times.push_back(start_time);
 	}
 
 	if (dump_type == "linear")
@@ -27,7 +27,7 @@ inline std::vector<double> get_times_vector(Model& model)
 		const double shift = (finish_observed_period - start_observed_period) / double(num_time_points - 1);
 		for (auto t_id = 0; t_id < num_time_points; t_id++)
 		{
-			times.push_back((start_observed_period + double(t_id) * shift) * model.period);
+			times.push_back(start_time + (start_observed_period + double(t_id) * shift) * model.period);
 		}
 	}
 	else if (dump_type == "log")
