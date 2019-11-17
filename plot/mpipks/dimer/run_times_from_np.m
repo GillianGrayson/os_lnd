@@ -15,7 +15,7 @@ diss_type = 1;
 diss_gamma = 0.1;
 
 E = 0.0;
-U = 0.01;
+U = 0.9;
 J = 1.0;
 
 drv_type = 1;

@@ -12,11 +12,11 @@ task = 'lindbladian_odeint_rk4'
 is_continue = 'true'
 
 start_observed_period = 0
-finish_observed_period = 1
-step = (2.0 * math.pi) * 0.0001
+finish_observed_period = 10
+step = (2.0 * math.pi) * 0.00005
 
-Us = list(np.linspace(0.01, 0.01, 1, dtype=float))
-Ns = list(np.linspace(10, 1000, 100, dtype=int))
+Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
+Ns = list(np.linspace(500, 500, 1, dtype=int))
 
 diss_type = 1
 diss_gamma = 0.1
