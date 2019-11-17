@@ -1,6 +1,7 @@
 #define FMT_HEADER_ONLY
 #define FMT_DEPRECATED
-#define EIGEN_USE_MKL_ALL
+#define ARMA_DONT_USE_OPENMP 1
+#define ARMA_USE_ARPACK 1
 
 #include "setup_processor.h"
 #include "run_processor.h"
