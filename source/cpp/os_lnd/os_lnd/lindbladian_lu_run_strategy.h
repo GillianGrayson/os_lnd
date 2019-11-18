@@ -1,6 +1,6 @@
 #pragma once
 #include "run_strategy.h"
-#include <Eigen/SparseLU>
+#include "third_party/eigen-git-mirror/Eigen/SparseLU"
 #include "save.h"
 
 struct LindbladianLURunStrategy : RunStrategy

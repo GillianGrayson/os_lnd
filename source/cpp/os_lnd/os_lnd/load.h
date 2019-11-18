@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <fstream>
-#include <Eigen/Core>
+#include "third_party/eigen-git-mirror/Eigen/Core"
 
 template <class T>
 void load_vector(std::vector<T>& v, const std::string& fn)

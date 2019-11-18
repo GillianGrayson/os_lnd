@@ -1,3 +1,6 @@
 [submodule "source/cpp/os_lnd/os_lnd/third_party/filesystem"]
 	path = source/cpp/os_lnd/os_lnd/third_party/filesystem
 	url = https://github.com/gulrak/filesystem
+[submodule "source/cpp/os_lnd/os_lnd/third_party/eigen-git-mirror"]
+	path = source/cpp/os_lnd/os_lnd/third_party/eigen-git-mirror
+	url = https://github.com/eigenteam/eigen-git-mirror.git
