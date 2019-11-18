@@ -16,3 +16,7 @@
 [submodule "source/cpp/os_lnd/os_lnd/third_party/fmt"]
 	path = source/cpp/os_lnd/os_lnd/third_party/fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "source/cpp/os_lnd/os_lnd/third_party/spdlog"]
+	path = source/cpp/os_lnd/os_lnd/third_party/spdlog
+	url = https://github.com/GillianGrayson/spdlog.git
+	branch = fmt_fixes
