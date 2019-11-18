@@ -2,8 +2,8 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
-#include "third_party/eigen-git-mirror/Eigen/SparseCore""
-#include "third_party/eigen-git-mirror/Eigen/Core"
+#include <Eigen/SparseCore>
+#include <Eigen/Core>
 
 template <class T>
 void save_vector(const std::vector<T>& v, const std::string& fn, int precision = 16)

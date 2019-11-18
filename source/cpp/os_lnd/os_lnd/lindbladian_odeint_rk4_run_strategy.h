@@ -4,7 +4,7 @@
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
 #include "integrate_processor.h"
-#include "third_party/filesystem/include/ghc/filesystem.hpp"
+#include <ghc/filesystem.hpp>
 
 struct LindbladianODEIntRK4RunStrategy : RunStrategy
 {

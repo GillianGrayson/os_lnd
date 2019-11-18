@@ -1,8 +1,6 @@
 #pragma once
 #include "init.h"
 #include "model.h"
-#include <gcem.hpp>
-#include <mkl.h>
 #include <iomanip>
 #include "save.h"
 #include "setup_strategy.h"

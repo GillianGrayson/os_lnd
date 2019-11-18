@@ -2,7 +2,6 @@
 #include "init.h"
 #include "model.h"
 #include <gcem.hpp>
-#include <iostream>
 #include <mkl.h>
 #include <iomanip>
 #include "save.h"

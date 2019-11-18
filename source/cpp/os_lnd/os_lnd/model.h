@@ -3,7 +3,7 @@
 #include <vector>
 #include "init.h"
 #include <chrono>
-#include "third_party/eigen-git-mirror/Eigen/Core"
+#include <Eigen/Core>
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
 #include "spdlog/sinks/stdout_color_sinks.h"
