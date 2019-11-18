@@ -7,3 +7,9 @@
 [submodule "source/cpp/os_lnd/os_lnd/third_party/odeint-v2"]
 	path = source/cpp/os_lnd/os_lnd/third_party/odeint-v2
 	url = https://github.com/headmyshoulder/odeint-v2.git
+[submodule "source/cpp/os_lnd/os_lnd/third_party/inih"]
+	path = source/cpp/os_lnd/os_lnd/third_party/inih
+	url = https://github.com/jtilly/inih.git
+[submodule "source/cpp/os_lnd/os_lnd/third_party/gcem"]
+	path = source/cpp/os_lnd/os_lnd/third_party/gcem
+	url = https://github.com/kthohr/gcem.git

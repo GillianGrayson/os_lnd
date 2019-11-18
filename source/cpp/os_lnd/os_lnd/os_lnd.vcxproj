@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;$(SolutionDir)/os_lnd/third_party/inih;$(SolutionDir)/os_lnd/third_party/gcem/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;$(SolutionDir)/os_lnd/third_party/inih;$(SolutionDir)/os_lnd/third_party/gcem/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;$(SolutionDir)/os_lnd/third_party/inih;$(SolutionDir)/os_lnd/third_party/gcem/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
@@ -151,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;E:\YandexDisk\Work\libs\gcem\include;E:\YandexDisk\Work\libs\inih;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/os_lnd/third_party/filesystem/include;$(SolutionDir)/os_lnd/third_party/eigen-git-mirror;$(SolutionDir)/os_lnd/third_party/odeint-v2/include;$(SolutionDir)/os_lnd/third_party/inih;$(SolutionDir)/os_lnd/third_party/gcem/include;E:\YandexDisk\Work\libs\armadillo-9.800.2\include;E:\YandexDisk\Work\libs\fmt\include;E:\YandexDisk\Work\libs\spdlog\include;E:\YandexDisk\Work\libs\boost_1_71_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <OpenMP>GenerateParallelCode</OpenMP>
     </ClCompile>
