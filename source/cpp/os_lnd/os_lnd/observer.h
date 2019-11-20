@@ -1,5 +1,8 @@
 #pragma once
 #include "model.h"
+#include <ghc/filesystem.hpp>
+#include <stdio.h>
+
 
 struct BaseObserver
 {
@@ -7,6 +10,7 @@ struct BaseObserver
 	std::vector<double>& times;
 	
 	Eigen::VectorXcd base_state;
+	std::vector<double> passed_times;
 
 	bool dump_progress;
 
@@ -18,6 +22,30 @@ struct BaseObserver
 	virtual ~BaseObserver() = default;
 
 	virtual void operator()(const Eigen::VectorXcd& x, double t) = 0;
+
+	std::string get_suffix(const double t) const
+	{
+		std::stringstream fns;
+		fns << "_times(" << std::setprecision(2) << std::scientific << times[0] << "_" << t << ")";
+		return fns.str();
+	}
+
+	template <typename T>
+	void rewrite_observables(const std::string& name, const std::vector<T>& observable, const double t_pre, const double t_now)
+	{
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		
+		std::string fn;
+
+		fn = name + get_suffix(t_pre) + model.suffix;
+		if (ghc::filesystem::exists(fn))
+		{
+			remove(fn.c_str());
+		}
+
+		fn = name + get_suffix(t_now) + model.suffix;
+		save_vector(observable, fn, save_precision);
+	}
 
 	void dump_current_state(const double t, const double diff)
 	{

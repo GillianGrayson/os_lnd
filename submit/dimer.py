@@ -11,9 +11,12 @@ system = 'dimer'
 task = 'lindbladian_odeint_rk4'
 is_continue = 'true'
 
-start_observed_period = 0
-finish_observed_period = 10
 step = (2.0 * math.pi) * 0.00005
+total_num_periods = 100
+
+current_num_periods = 10
+current_num_time_points = 11
+
 
 Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
 Ns = list(np.linspace(500, 500, 1, dtype=int))
@@ -36,7 +39,7 @@ for N in Ns:
         print("U = " + str(U))
         local_path = '/' + system
         if task == 'lindbladian_odeint_rk4':
-            local_path += '/' + task + '_' + str(start_observed_period) + '_' + str(finish_observed_period) + '_' + str(format(step, '0.2e'))
+            local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         else:
             local_path += '/' + task
 
@@ -62,7 +65,7 @@ for N in Ns:
         config_list.append('drv_phase = ' + str(drv_phase))
 
         config_list += get_global_config(system, task)
-        config_list += get_odeint_config(step, start_observed_period, finish_observed_period, is_continue, data_path + '/')
+        config_list += get_odeint_config(step, total_num_periods, current_num_periods, is_continue, data_path + '/')
 
         pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 

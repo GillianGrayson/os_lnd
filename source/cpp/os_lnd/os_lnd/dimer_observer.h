@@ -5,7 +5,7 @@
 struct DimerObserver : BaseObserver
 {
 	std::vector<double>& diffs;
-
+	
 	DimerObserver(
 		Model& model,
 		std::vector<double>& times,
@@ -31,7 +31,21 @@ struct DimerObserver : BaseObserver
 				model.throw_error("Integration failed. Try to decrease integration step");
 			}
 
+			double t_pre;
+			if (!passed_times.empty())
+			{
+				t_pre = passed_times.back();
+			}
+			else
+			{
+				t_pre = 0.0;
+			}
+
 			diffs.push_back(diff);
+			rewrite_observables("diffs", diffs, t_pre, t);
+
+			passed_times.push_back(t);
+			rewrite_observables("times", passed_times, t_pre, t);
 			
 			model.log_message(fmt::format("time = {:.16e}", t));
 			model.log_message(fmt::format("diff = {:.16e}\n", diff));

@@ -4,7 +4,6 @@
 #include <boost/numeric/odeint.hpp>
 #include "odeint_init.h"
 #include "dimer_system.h"
-#include "save.h"
 #include "dimer_observer.h"
 
 
@@ -16,8 +15,6 @@ struct DimerIntegrateStrategy : IntegrateStrategy
 
 	void integrate_times_rk4() override
 	{
-		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-
 		DimerSystem system(model);
 
 		std::vector<double> diffs;
@@ -37,16 +34,5 @@ struct DimerIntegrateStrategy : IntegrateStrategy
 			step,
 			observer
 		);
-
-		model.rho = Eigen::Map<Eigen::MatrixXcd>(start_state.data(), model.sys_size, model.sys_size);
-
-		auto fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
-
-		fn = "diffs" + suffix + model.suffix;
-		save_vector(diffs, fn, save_precision);
-
-		fn = "times" + suffix + model.suffix;
-		save_vector(times, fn, save_precision);
 	}
 };
