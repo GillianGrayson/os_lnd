@@ -17,7 +17,6 @@ total_num_periods = 100
 current_num_periods = 10
 current_num_time_points = 11
 
-
 Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
 Ns = list(np.linspace(500, 500, 1, dtype=int))
 

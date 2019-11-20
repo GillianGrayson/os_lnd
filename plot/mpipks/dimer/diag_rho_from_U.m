@@ -6,10 +6,10 @@ figures_path = '/home/denysov/yusipov/os_lnd/figures/dimer';
 task = 'lindbladian_odeint_rk4';
 
 start_observed_period = 0;
-finish_observed_period = 1000;
-step = (2.0 * pi) * 0.0001;
+finish_observed_period = 10;
+step = (2.0 * pi) * 0.00005;
 
-num_particles = 100;
+num_particles = 500;
 
 diss_type = 1;
 diss_gamma = 0.1;
