@@ -17,12 +17,10 @@ struct MBLIntegrateStrategy : IntegrateStrategy
 	{
 		MBLSystem system(model);
 		
-		std::vector<double> diffs;
 		MBLObserver observer(
 			model,
 			times,
-			start_state,
-			diffs
+			start_state
 		);
 
 		const runge_kutta4_stepper rk4_stepper;

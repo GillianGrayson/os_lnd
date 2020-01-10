@@ -34,6 +34,10 @@ inline std::vector<double> get_times_vector(Model& model, double start_time)
 			{
 				times.push_back(time);
 			}
+			else
+			{
+				break;
+			}
 		}
 	}
 	else if (dump_type == "log")

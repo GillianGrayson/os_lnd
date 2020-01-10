@@ -8,11 +8,11 @@ struct BaseObserver
 {
 	Model& model;
 	std::vector<double>& times;
+	Eigen::VectorXcd base_state; // not a reference
 	
-	Eigen::VectorXcd base_state;
-	std::vector<double> passed_times;
-
 	bool dump_progress;
+	std::vector<double> passed_times;
+	std::vector<double> diffs;
 
 	BaseObserver(Model& model, std::vector<double>& times, Eigen::VectorXcd& base_state) : model(model), times(times), base_state(base_state)
 	{
@@ -22,6 +22,45 @@ struct BaseObserver
 	virtual ~BaseObserver() = default;
 
 	virtual void operator()(const Eigen::VectorXcd& x, double t) = 0;
+
+	void process_observables_basic(const Eigen::VectorXcd& x, double t)
+	{
+		if (t > times[0] + std::numeric_limits<double>::epsilon())
+		{
+			model.log_time_duration();
+
+			const Eigen::VectorXcd state_diff = x - base_state;
+			base_state = x;
+
+			double diff = state_diff.norm();
+
+			if (std::isnan(diff))
+			{
+				model.throw_error("Integration failed. Try to decrease integration step");
+			}
+
+			double t_pre;
+			if (!passed_times.empty())
+			{
+				t_pre = passed_times.back();
+			}
+			else
+			{
+				t_pre = 0.0;
+			}
+
+			diffs.push_back(diff);
+			rewrite_observables("diffs", diffs, t_pre, t);
+
+			passed_times.push_back(t);
+			rewrite_observables("times", passed_times, t_pre, t);
+
+			model.log_message(fmt::format("time = {:.16e}", t));
+			model.log_message(fmt::format("diff = {:.16e}\n", diff));
+
+			dump_current_state(t, diff);
+		}
+	}
 
 	std::string get_suffix(const double t) const
 	{
