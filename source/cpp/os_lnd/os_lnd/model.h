@@ -39,7 +39,7 @@ struct Model
 
 	void throw_error(const std::string message) const
 	{
-		if(!silent)
+		if (!silent)
 		{
 			spdlog::get(logger_type)->error(message);
 		}
