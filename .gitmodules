@@ -20,3 +20,6 @@
 	path = source/cpp/os_lnd/os_lnd/third_party/spdlog
 	url = https://github.com/GillianGrayson/spdlog.git
 	branch = fmt_fixes
+[submodule "source/cpp/os_lnd/os_lnd/third_party/armadillo-code"]
+	path = source/cpp/os_lnd/os_lnd/third_party/armadillo-code
+	url = https://gitlab.com/conradsnicta/armadillo-code.git
