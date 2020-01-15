@@ -119,9 +119,6 @@ struct MBLSetupStrategy : SetupStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
 		model.hamiltonian = get_disorder_mtx(model) + get_interaction_mtx(model) + get_hopping_mtx(model);
-
-		auto fn = "hamiltonian_mtx" + model.suffix;
-		save_sp_mtx(model.hamiltonian, fn, save_precision);
 	}
 
 	void setup_hamiltonian_drv(Model& model) override
@@ -190,12 +187,6 @@ struct MBLSetupStrategy : SetupStrategy
 				Eigen::kroneckerProduct(diss_tmp_1, eye) - 
 				Eigen::kroneckerProduct(diss_tmp_3, eye) - 
 				Eigen::kroneckerProduct(eye, diss_tmp_2));
-		}
-
-		if (debug_dump)
-		{
-			auto fn = "lindbladian_mtx" + model.suffix;
-			save_sp_mtx(model.lindbladian, fn, save_precision);
 		}
 	}
 
@@ -374,12 +365,6 @@ struct MBLSetupStrategy : SetupStrategy
 		sp_mtx mtx(model.sys_size, model.sys_size);
 		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
 
-		if (debug_dump)
-		{
-			auto fn = "diss_type_0_mtx_" + std::to_string(diss_id) + model.suffix;
-			save_sp_mtx(mtx, fn, save_precision);
-		}
-
 		return mtx;
 	}
 
@@ -473,12 +458,6 @@ struct MBLSetupStrategy : SetupStrategy
 
 		sp_mtx mtx(model.sys_size, model.sys_size);
 		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
-
-		if (debug_dump)
-		{
-			auto fn = "diss_type_1_mtx_" + std::to_string(diss_id) + model.suffix;
-			save_sp_mtx(mtx, fn, save_precision);
-		}
 
 		return mtx;
 	}

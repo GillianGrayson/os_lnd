@@ -20,7 +20,7 @@ void save_vector(const std::vector<T>& v, const std::string& fn, int precision =
 }
 
 template <class T>
-void save_sp_mtx(Eigen::SparseMatrix<T>& m, const std::string& fn, int precision = 16)
+void save_sp_mtx(const Eigen::SparseMatrix<T>& m, const std::string& fn, int precision = 16)
 {
 	std::ofstream f_out(fn);
 	f_out << std::setprecision(precision) << std::scientific;

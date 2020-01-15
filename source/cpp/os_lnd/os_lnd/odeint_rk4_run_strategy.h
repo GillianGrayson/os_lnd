@@ -6,7 +6,7 @@
 #include "integrate_processor.h"
 #include <ghc/filesystem.hpp>
 
-struct LindbladianODEIntRK4RunStrategy : RunStrategy
+struct ODEIntRK4RunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{

@@ -3,7 +3,7 @@
 #include "save.h"
 
 
-struct LindbladianSmallerEigenVectorRunStrategy : RunStrategy
+struct SmallestEigenVectorRunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{

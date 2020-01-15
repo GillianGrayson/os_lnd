@@ -103,9 +103,6 @@ struct DimerSetupStrategy : SetupStrategy
 
 		model.hamiltonian = sp_mtx(model.sys_size, model.sys_size);
 		model.hamiltonian.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
-
-		auto fn = "hamiltonian_mtx" + model.suffix;
-		save_sp_mtx(model.hamiltonian, fn, save_precision);
 	}
 
 	void setup_hamiltonian_drv(Model& model) override
@@ -132,9 +129,6 @@ struct DimerSetupStrategy : SetupStrategy
 
 		model.hamiltonian_drv = sp_mtx(model.sys_size, model.sys_size);
 		model.hamiltonian_drv.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
-
-		auto fn = "hamiltonian_drv_mtx" + model.suffix;
-		save_sp_mtx(model.hamiltonian_drv, fn, save_precision);
 	}
 
 	void setup_dissipators(Model& model) override
@@ -177,12 +171,6 @@ struct DimerSetupStrategy : SetupStrategy
 			sp_mtx mtx(model.sys_size, model.sys_size);
 			mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
 
-			if (debug_dump)
-			{
-				const auto fn = "diss_type_0_mtx" + model.suffix;
-				save_sp_mtx(mtx, fn, save_precision);
-			}
-
 			model.dissipators.push_back(mtx);
 		}
 		else
@@ -217,12 +205,6 @@ struct DimerSetupStrategy : SetupStrategy
 				Eigen::kroneckerProduct(diss_tmp_3, eye) -
 				Eigen::kroneckerProduct(eye, diss_tmp_2));
 		}
-
-		if (debug_dump)
-		{
-			const auto fn = "lindbladian_mtx" + model.suffix;
-			save_sp_mtx(model.lindbladian, fn, save_precision);
-		}
 	}
 
 	void setup_lindbladian_drv(Model& model) override
@@ -235,11 +217,5 @@ struct DimerSetupStrategy : SetupStrategy
 		const sp_mtx hamiltonian_transposed(model.hamiltonian_drv.transpose());
 
 		model.lindbladian_drv = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
-
-		if (debug_dump)
-		{
-			const auto fn = "lindbladian_drv_mtx" + model.suffix;
-			save_sp_mtx(model.lindbladian_drv, fn, save_precision);
-		}
 	}
 };

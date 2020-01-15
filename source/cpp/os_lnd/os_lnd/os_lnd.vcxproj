@@ -174,8 +174,9 @@
     <ClInclude Include="init.h" />
     <ClInclude Include="integrate_strategy.h" />
     <ClInclude Include="integrate_processor.h" />
-    <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h" />
-    <ClInclude Include="lindbladian_smaller_eigen_vector_run_strategy.h" />
+    <ClInclude Include="mock_run_strategy.h" />
+    <ClInclude Include="odeint_rk4_run_strategy.h" />
+    <ClInclude Include="smallest_eigen_vector_run_strategy.h" />
     <ClInclude Include="load.h" />
     <ClInclude Include="mbl_integrate_strategy.h" />
     <ClInclude Include="mbl_observer.h" />
@@ -186,7 +187,7 @@
     <ClInclude Include="run_processor.h" />
     <ClInclude Include="setup_processor.h" />
     <ClInclude Include="setup_strategy.h" />
-    <ClInclude Include="lindbladian_lu_run_strategy.h" />
+    <ClInclude Include="lu_run_strategy.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="odeint_init.h" />
     <ClInclude Include="routines.h" />

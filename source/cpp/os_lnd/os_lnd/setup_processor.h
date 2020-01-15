@@ -34,7 +34,8 @@ struct SetupProcessor
 		setup_strategy->setup_dissipators(model);
 		setup_strategy->setup_lindbladian(model);
 		setup_strategy->setup_lindbladian_drv(model);
-
+		
+		model.save_data();
 		model.log_setup_info();
 	}
 };

@@ -3,7 +3,7 @@
 #include <Eigen/SparseLU>
 #include "save.h"
 
-struct LindbladianLURunStrategy : RunStrategy
+struct LURunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{

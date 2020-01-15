@@ -1,8 +1,8 @@
 #pragma once
-#include "lindbladian_lu_run_strategy.h"
-#include "lindbladian_odeint_rk4_run_strategy.h"
-#include "lindbladian_smaller_eigen_vector_run_strategy.h"
-
+#include "lu_run_strategy.h"
+#include "odeint_rk4_run_strategy.h"
+#include "smallest_eigen_vector_run_strategy.h"
+#include "mock_run_strategy.h"
 
 struct RunProcessor
 {
@@ -11,17 +11,21 @@ struct RunProcessor
 	void set_strategy(Model& model)
 	{
 		const std::string task = model.ini.Get("global", "task", "unknown");
-		if (task == "lindbladian_lu")
+		if (task == "lu")
 		{
-			run_strategy = std::make_unique<LindbladianLURunStrategy>();
+			run_strategy = std::make_unique<LURunStrategy>();
 		}
-		else if (task == "lindbladian_odeint_rk4")
+		else if (task == "odeint_rk4")
 		{
-			run_strategy = std::make_unique<LindbladianODEIntRK4RunStrategy>();
+			run_strategy = std::make_unique<ODEIntRK4RunStrategy>();
 		}
-		else if (task == "lindbladian_smaller_eigen_vector")
+		else if (task == "smallest_eigen_vector")
 		{
-			run_strategy = std::make_unique<LindbladianSmallerEigenVectorRunStrategy>();
+			run_strategy = std::make_unique<SmallestEigenVectorRunStrategy>();
+		}
+		else if (task == "mock")
+		{
+			run_strategy = std::make_unique<MockRunStrategy>();
 		}
 		else
 		{

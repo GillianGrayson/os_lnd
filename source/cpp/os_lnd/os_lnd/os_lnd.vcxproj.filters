@@ -65,12 +65,6 @@
     <ClInclude Include="odeint_init.h">
       <Filter>Header Files\odeint</Filter>
     </ClInclude>
-    <ClInclude Include="lindbladian_odeint_rk4_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
-    <ClInclude Include="lindbladian_lu_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
     <ClInclude Include="run_processor.h">
       <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
@@ -110,14 +104,23 @@
     <ClInclude Include="dimer_system.h">
       <Filter>Header Files\odeint\system</Filter>
     </ClInclude>
-    <ClInclude Include="lindbladian_smaller_eigen_vector_run_strategy.h">
-      <Filter>Header Files\strategy\run</Filter>
-    </ClInclude>
     <ClInclude Include="memory_usage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="load.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lu_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="odeint_rk4_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="smallest_eigen_vector_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
+    <ClInclude Include="mock_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -118,4 +118,40 @@ struct Model
 		auto fn = "mem_info" + suffix;
 		save_vector(mem_info, fn, save_precision);
 	}
+
+	void save_data() const
+	{
+		const int save_precision = ini.GetInteger("global", "save_precision", 0);
+		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
+		const auto save_hamiltonians = ini.GetBoolean("global", "save_hamiltonians", false);
+		const auto save_dissipators = ini.GetBoolean("global", "save_dissipators", false);
+		const auto save_lindbladians = ini.GetBoolean("global", "save_lindbladians", false);
+
+		if (debug_dump || save_hamiltonians)
+		{
+			auto fn = "hamiltonian_mtx" + suffix;
+			save_sp_mtx(hamiltonian, fn, save_precision);
+
+			fn = "hamiltonian_drv_mtx" + suffix;
+			save_sp_mtx(hamiltonian_drv, fn, save_precision);
+		}
+
+		if (debug_dump || save_dissipators)
+		{
+			for (auto diss_id = 0; diss_id < dissipators.size(); diss_id++)
+			{
+				auto fn = fmt::format("diss_type_{:d}_mtx", diss_id) + suffix;
+				save_sp_mtx(dissipators[diss_id], fn, save_precision);
+			}
+		}
+
+		if (debug_dump || save_lindbladians)
+		{
+			auto fn = "lindbladian_mtx" + suffix;
+			save_sp_mtx(lindbladian, fn, save_precision);
+
+			fn = "lindbladian_drv_mtx" + suffix;
+			save_sp_mtx(lindbladian_drv, fn, save_precision);
+		}
+	}
 };
