@@ -55,17 +55,11 @@ class MBLSetupStrategy(SetupStrategy):
 
         for diss in model.dissipators:
 
-            base_diss = copy.deepcopy(diss)
-
-            tmp_0 = diss.conjugate(copy=True)
-            tmp_1 = tmp_0.transpose(copy=True)
-            tmp_2 = diss.conjugate(copy=True) * diss
+            tmp_1 = diss.getH().transpose(copy=True)
+            tmp_2 = diss.getH() * diss
             tmp_3 = tmp_2.transpose(copy=True)
 
-            model.lindbladian += 0.5 * diss_gamma * (
-                    2.0 * sparse.kron(eye, diss) * sparse.kron(tmp_1, eye) -
-                    sparse.kron(tmp_3, eye) -
-                    sparse.kron(eye, tmp_2))
+            model.lindbladian += 0.5 * diss_gamma * (2.0 * sparse.kron(eye, diss) * sparse.kron(tmp_1, eye) - sparse.kron(tmp_3, eye) - sparse.kron(eye, tmp_2))
 
         fn = get_input_path(model.params_path) + '/lindbladian_mtx' + model.suffix
         lindbladian_origin = load_sp_mtx(fn, model.sys_size * model.sys_size)
