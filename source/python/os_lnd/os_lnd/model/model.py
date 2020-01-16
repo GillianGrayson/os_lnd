@@ -7,6 +7,7 @@ class Model:
         self.suffix = None
         self.sys_size = None
         self.num_dissipators = None
+        self.diss_gammas = None
         self.hamiltonian = None
         self.dissipators = None
         self.lindbladian = None

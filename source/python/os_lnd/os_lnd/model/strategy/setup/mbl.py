@@ -2,13 +2,11 @@ from scipy.special import comb
 from os_lnd.model.strategy.setup.strategy import SetupStrategy
 from os_lnd.infrastructure.load import load_sp_mtx
 from os_lnd.infrastructure.file_system import get_input_path
-from scipy import sparse
 from scipy.sparse.linalg import norm
-import numpy as np
-import copy
 
 
 class MBLSetupStrategy(SetupStrategy):
+
     def setup_model(self, model):
 
         name_precision = model.ini['global']['name_precision']
@@ -45,21 +43,13 @@ class MBLSetupStrategy(SetupStrategy):
         model.hamiltonian = load_sp_mtx(fn, model.sys_size)
 
         model.dissipators = []
+        model.diss_gammas = []
         for diss_id in range(0, model.num_dissipators):
             fn = get_input_path(model.params_path) + f'/diss_{diss_id}_mtx' + model.suffix
             model.dissipators.append(load_sp_mtx(fn, model.sys_size))
+            model.diss_gammas.append(diss_gamma)
 
-        eye = sparse.eye(model.sys_size, model.sys_size, dtype=np.complex, format='csr')
-
-        model.lindbladian = -1.0j * (sparse.kron(eye, model.hamiltonian) - sparse.kron(model.hamiltonian.transpose(copy=True), eye))
-
-        for diss in model.dissipators:
-
-            tmp_1 = diss.getH().transpose(copy=True)
-            tmp_2 = diss.getH() * diss
-            tmp_3 = tmp_2.transpose(copy=True)
-
-            model.lindbladian += 0.5 * diss_gamma * (2.0 * sparse.kron(eye, diss) * sparse.kron(tmp_1, eye) - sparse.kron(tmp_3, eye) - sparse.kron(eye, tmp_2))
+        self.calc_lindbladian(model)
 
         fn = get_input_path(model.params_path) + '/lindbladian_mtx' + model.suffix
         lindbladian_origin = load_sp_mtx(fn, model.sys_size * model.sys_size)
