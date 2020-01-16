@@ -30,3 +30,18 @@ def load_sp_mtx(fn, size):
     mtx = csr_matrix((data, (rows, cols)), shape=(size, size))
 
     return mtx
+
+
+def load_mtx(fn, size):
+    num_lines = num_lines_in_file(fn)
+
+    data = np.zeros(num_lines, dtype=np.complex)
+    f = open(fn)
+    for line_id, line in tqdm(enumerate(f), mininterval=60.0, desc='load_mtx'):
+        m = re.match(r'\((?P<real>.*),(?P<imag>.*)\)', line)
+        data[line_id] = float(m.group('real')) + float(m.group('imag')) * 1j
+    f.close()
+
+    mtx = data.reshape((size,size))
+
+    return mtx
