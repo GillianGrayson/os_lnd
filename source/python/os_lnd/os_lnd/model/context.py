@@ -10,3 +10,4 @@ class Context:
 
     def run(self, model):
         self.setup_strategy.setup_model(model)
+        model.calc_zero_eigen_vector()

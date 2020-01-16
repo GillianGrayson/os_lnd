@@ -2,7 +2,6 @@ from scipy.special import comb
 from os_lnd.model.strategy.setup.strategy import SetupStrategy
 from os_lnd.infrastructure.load import load_sp_mtx
 from os_lnd.infrastructure.file_system import get_input_path
-from scipy.sparse.linalg import norm
 
 
 class MBLSetupStrategy(SetupStrategy):
@@ -50,15 +49,6 @@ class MBLSetupStrategy(SetupStrategy):
             model.diss_gammas.append(diss_gamma)
 
         self.calc_lindbladian(model)
-
-        fn = get_input_path(model.params_path) + '/lindbladian_mtx' + model.suffix
-        lindbladian_origin = load_sp_mtx(fn, model.sys_size * model.sys_size)
-
-        lindbladian_diff = lindbladian_origin - model.lindbladian
-
-        n = norm(lindbladian_diff)
-
-        ololo = 1
 
 
 
