@@ -140,7 +140,7 @@ struct Model
 		{
 			for (auto diss_id = 0; diss_id < dissipators.size(); diss_id++)
 			{
-				auto fn = fmt::format("diss_type_{:d}_mtx", diss_id) + suffix;
+				auto fn = fmt::format("diss_{:d}_mtx", diss_id) + suffix;
 				save_sp_mtx(dissipators[diss_id], fn, save_precision);
 			}
 		}
