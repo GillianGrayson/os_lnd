@@ -8,17 +8,17 @@ import math
 segment = 'medium'
 
 system = 'dimer'
-task = 'lindbladian_odeint_rk4'
+task = 'odeint_rk4'
 is_continue = 'true'
 
-step = (2.0 * math.pi) * 0.00005
-total_num_periods = 100
+step = (2.0 * math.pi) * 0.0005
+total_num_periods = 1000
 
-current_num_periods = 10
-current_num_time_points = 11
+current_num_periods = 1000
+current_num_time_points = 1001
 
 Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
-Ns = list(np.linspace(500, 500, 1, dtype=int))
+Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1
 diss_gamma = 0.1
@@ -37,7 +37,7 @@ for N in Ns:
         print("N = " + str(N))
         print("U = " + str(U))
         local_path = '/' + system
-        if task == 'lindbladian_odeint_rk4':
+        if task == 'odeint_rk4':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         else:
             local_path += '/' + task
@@ -82,7 +82,7 @@ for N in Ns:
 
         if not os.path.isfile(fn_test) or is_continue == 'true':
             if segment == 'short':
-                os.system('sbatch run_mpipks_sd_sbatch.sh ' + data_path)
+                os.system('sbatch run_short.sh ' + data_path)
             elif segment == 'medium':
-                os.system('sbatch run_mpipks_sd_sbatch_medium.sh ' + data_path)
+                os.system('sbatch run_medium.sh ' + data_path)
 
