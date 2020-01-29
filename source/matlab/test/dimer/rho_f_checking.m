@@ -4,26 +4,26 @@ global N J E0 A0 w U g HE HU HJ A phi0 Ps Pd
 
 imag1=sqrt(-1);
 
-num_periods = 30;
+num_periods = 10;
 
 N=10; % number of particles, system size = N+1
 Ns = N + 1;
 
-E0 = 0.; % bias
-U = 0.5; % on-site interaction
+E0 = -1.; % bias
+U = 0.6; % on-site interaction
 J = -1; % hopping constant
 
 g=0.1/N; % gamma;
 
-A0 = -3.4; %driving amplitude
+A0 = -1.5; %driving amplitude
 w = 1; % driving frequency
 phi0 = 0; % initial phase
 
 cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
 
-file_name_suffix = sprintf('np(%d)_diss(1_0.1000)_prm(%0.4f_%0.4f_%0.4f)_drv(1_%0.4f_%0.4f_%0.4f)', ...
+file_name_suffix = sprintf('np(%d)_diss(1_0.1000)_prm(%0.4f_%0.4f_%0.4f)_drv(0_%0.4f_%0.4f_%0.4f)', ...
     N, ...
-    E0, ...
+    -E0, ...
     U, ...
     -J, ...
     -A0, ...
@@ -84,7 +84,7 @@ A2=imag1*A2;
 A=A1-sqrt(-1)*A2;
 
 cpp_mtx = zeros(Ns, Ns);
-file_name_cpp = sprintf('%s/diss_type_0_mtx_%s.txt', cpp_path, file_name_suffix);
+file_name_cpp = sprintf('%s/diss_0_mtx_%s.txt', cpp_path, file_name_suffix);
 cpp_mtx_data = importdata(file_name_cpp);
 for str_id = 1 : size(cpp_mtx_data, 1)
     str = string(cpp_mtx_data(str_id));
@@ -162,4 +162,17 @@ end
 rho_check = max(max(abs(rho_after_mtx - cpp_rho)))
 rho_check_trans = max(max(abs(rho_after_mtx - transpose(cpp_rho))))
 
+
+data_path = 'E:/Work/os_d/source/cpp/CQdiss_os_dimer/CQdiss_fbasis';
+fn = sprintf('%s/rho.txt', data_path);
+rho_data = importdata(fn);
+d_size = size(rho_data, 1);
+curr_rho = zeros(N, N);
+for d_id = 1:d_size
+    curr_row = rho_data(d_id, 1);
+    curr_col = rho_data(d_id, 2);
+    curr_rho(curr_row, curr_col) = rho_data(d_id, 3) + sqrt(-1) * rho_data(d_id, 4);
+end
+rho_check = max(max(abs(rho_after_mtx - curr_rho)))
+rho_check_trans = max(max(abs(rho_after_mtx - transpose(curr_rho))))
 

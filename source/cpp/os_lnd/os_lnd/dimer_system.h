@@ -25,9 +25,8 @@ struct DimerSystem : BaseSystem
 		double driving = 0.0;
 		if (drv_type == 0)
 		{
-			double mod_time = std::fmod(t, model.period);
-			double half_period = model.period * 0.5;
-			if (mod_time < half_period)
+			double sinus = std::sin(drv_freq * t + drv_phase);
+			if (sinus > 0)
 			{
 				driving = drv_ampl;
 			}

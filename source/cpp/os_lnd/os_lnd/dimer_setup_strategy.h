@@ -70,7 +70,7 @@ struct DimerSetupStrategy : SetupStrategy
 		for (int id = 0; id < model.sys_size; id++)
 		{
 			const double val_U = 2.0 * U * double(id * (id - 1) + (model.sys_size - (id + 1)) * (model.sys_size - (id + 1) - 1));
-			const double val_E = -E * double((model.sys_size - (id + 1)) - id);
+			const double val_E = E * double((model.sys_size - (id + 1)) - id);
 			trace += (val_U + val_E);
 			vals.push_back(val_U + val_E);
 			rows.push_back(id);
