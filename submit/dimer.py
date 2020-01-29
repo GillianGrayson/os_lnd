@@ -12,10 +12,10 @@ task = 'odeint_rk4'
 is_continue = 'true'
 
 step = (2.0 * math.pi) * 0.0005
-total_num_periods = 1000
+total_num_periods = 100
 
-current_num_periods = 1000
-current_num_time_points = 1001
+current_num_periods = 100
+current_num_time_points = 101
 
 Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
@@ -23,11 +23,11 @@ Ns = list(np.linspace(100, 100, 1, dtype=int))
 diss_type = 1
 diss_gamma = 0.1
 
-E = 0.0
+E = 1.0
 J = 1.0
 
-drv_type = 1
-drv_ampl = 3.4
+drv_type = 0
+drv_ampl = 1.5
 drv_freq = 1.0
 drv_phase = 0.0
 

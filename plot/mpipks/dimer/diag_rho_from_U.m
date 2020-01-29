@@ -1,25 +1,24 @@
 clear all;
 
-data_path = '/data/biophys/denysov/yusipov/os_lnd/dimer';
-figures_path = '/home/denysov/yusipov/os_lnd/figures/dimer';
+data_path = '/data/condmat/ivanchen/yusipov/os_lnd/dimer';
+figures_path = '/home/ivanchen/yusipov/os_lnd/figures/dimer';
 
-task = 'lindbladian_odeint_rk4';
+task = 'odeint_rk4';
 
-start_observed_period = 0;
-finish_observed_period = 10;
-step = (2.0 * pi) * 0.00005;
+total_num_periods = 100;
+step = (2.0 * pi) * 0.0005;
 
-num_particles = 500;
+num_particles = 100;
 
 diss_type = 1;
 diss_gamma = 0.1;
 
-E = 0.0;
+E = 1.0;
 Us = [0.01 : 0.01 : 1.0]';
 J = 1.0;
 
-drv_type = 1;
-drv_ampl = 3.4;
+drv_type = 0;
+drv_ampl = 1.5;
 drv_freq = 1.0;
 drv_phase = 0.0;
 
@@ -31,10 +30,9 @@ for U_id = 1 : size(Us, 1)
     
     U = Us(U_id)
     
-    local_path = sprintf('%s_%d_%d_%0.2e/np_%d/diss_%d_%0.4f/prm_%0.4f_%0.4f_%0.4f/drv_%d_%0.4f_%0.4f_%0.4f', ...
+    local_path = sprintf('%s_%d_%0.2e/np_%d/diss_%d_%0.4f/prm_%0.4f_%0.4f_%0.4f/drv_%d_%0.4f_%0.4f_%0.4f', ...
         task, ...
-		start_observed_period, ...
-		finish_observed_period, ...
+		total_num_periods, ...
 		step, ...
         num_particles, ...
         diss_type, ...
@@ -90,10 +88,9 @@ set(gca, 'FontSize', 30);
 title(h, '$PDF$','Interpreter', 'latex');
 set(gca,'YDir','normal');
 
-task_path = sprintf('%s(%d_%d_%0.2e)', ...
+task_path = sprintf('%s(%d_%0.2e)', ...
 	task, ...
-	start_observed_period, ...
-	finish_observed_period, ...
+	total_num_periods, ...
 	step);
 
 new_dir = sprintf('%s/%s', figures_path, task_path);
