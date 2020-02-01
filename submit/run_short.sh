@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=1
-#SBATCH --time=48:00:00
+#SBATCH --time=2:00:00
 #SBATCH --mem=2000
 
 export OMP_NUM_THREADS=1
@@ -14,7 +14,7 @@ cp $1/config.ini .
 
 cat config.ini
 
-srun $code_base/os_lnd.out
+srun $code_base/os_lnd.o
 
 cp -r $scratch/* $1 # Better use a subdirectory of $HOME .
 rm -r $scratch/*

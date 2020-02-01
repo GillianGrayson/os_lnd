@@ -15,7 +15,7 @@ cp $1/config.ini .
 
 cat config.ini
 
-srun $code_base/os_lnd.out
+srun $code_base/os_lnd.o
 
 cp -r $scratch/* $1 # Better use a subdirectory of $HOME .
 rm -r $scratch/*
