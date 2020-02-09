@@ -11,13 +11,14 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		
         Mat            A;           /* problem matrix */
+		MatInfo		   mat_info;
         EPS            eps;         /* eigenproblem solver context */
         EPSType        type;
         PetscReal      error, tol, re, im;
         PetscScalar    value, kr, ki;
 		PetscScalar    *sm_vector;
         Vec            xr, xi;
-        PetscInt       n, i, Istart, Iend, nev, ncv, maxit, its, nconv;
+        PetscInt       n, i, Istart, Iend, nev, ncv, maxit, its, nconv, size_n, size_m;
 
 		n = model.sys_size * model.sys_size;
 
@@ -38,6 +39,15 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+
+		MatGetInfo(A, MAT_GLOBAL_MAX, &mat_info);
+		model.log_message(fmt::format("mallocs: {:16e}", mat_info.mallocs));
+		model.log_message(fmt::format("nz_allocated: {:16e}", mat_info.nz_allocated));
+		model.log_message(fmt::format("nz_used: {:16e}", mat_info.nz_used));
+
+		MatGetSize(A, &size_n, &size_m);
+		model.log_message(fmt::format("size_n: {:16e}", size_n));
+		model.log_message(fmt::format("size_m: {:16e}", size_m));
 
 		MatCreateVecs(A, NULL, &xr);
 		MatCreateVecs(A, NULL, &xi);
@@ -67,7 +77,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("Number of requested eigenvalues: {:d}", nev));
 		model.log_message(fmt::format("Maximum dimension of the subspace to be used by the solver: {:d}", ncv));
 		EPSGetTolerances(eps, &tol, &maxit);
-		model.log_message(fmt::format("Stopping condition: tol={:16e}, maxit={:d}", (double)tol, maxit));
+		model.log_message(fmt::format("Stopping condition: tol{:16e}", (double)tol));
+		model.log_message(fmt::format("Stopping condition: maxit={:d}", (double)tol, maxit));
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Display solution and clean up
