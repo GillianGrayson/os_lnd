@@ -21,8 +21,6 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 		n = model.sys_size;
 
-        ierr = SlepcInitialize(&argc, &argv, (char*)0, help); if (ierr) return ierr;
-
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		   Compute the operator matrix that defines the eigensystem, Ax=kx
 		   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
