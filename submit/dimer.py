@@ -8,7 +8,7 @@ import math
 segment = 'medium'
 
 system = 'dimer'
-task = 'odeint_rk4'
+task = 'smallest_eigen_vector'
 is_continue = 'true'
 
 step = (2.0 * math.pi) * 0.0005
@@ -17,7 +17,7 @@ total_num_periods = 100
 current_num_periods = 100
 current_num_time_points = 101
 
-Us = list(np.linspace(0.01, 1.0, 100, dtype=float))
+Us = list(np.linspace(0.01, 1.0, 1, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1

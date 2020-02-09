@@ -19,7 +19,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
         Vec            xr, xi;
         PetscInt       n, i, Istart, Iend, nev, maxit, its, nconv;
 
-		n = model.sys_size;
+		n = model.sys_size * model.sys_size;
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		   Compute the operator matrix that defines the eigensystem, Ax=kx
