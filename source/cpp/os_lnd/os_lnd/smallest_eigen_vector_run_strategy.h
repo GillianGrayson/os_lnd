@@ -78,7 +78,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("Maximum dimension of the subspace to be used by the solver: {:d}", ncv));
 		EPSGetTolerances(eps, &tol, &maxit);
 		model.log_message(fmt::format("Stopping condition: tol{:16e}", (double)tol));
-		model.log_message(fmt::format("Stopping condition: maxit={:d}", (double)tol, maxit));
+		model.log_message(fmt::format("Stopping condition: maxit={:d}", maxit));
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Display solution and clean up
