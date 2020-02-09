@@ -1,7 +1,7 @@
 CC = icc
 CFLAGS = -O2 -mkl=sequential -qopenmp -std=c++14
 
-PETSC_DIR=/home/ivanchen/yusipov/eigs/petsc-3.12.3
+PETSC_DIR=/home/ivanchen/yusipov/eigs/petsc-3.12.4
 PETSC_ARCH=arch-linux2-c-opt
 SLEPC_DIR=/home/ivanchen/yusipov/eigs/slepc-3.12.2
 
