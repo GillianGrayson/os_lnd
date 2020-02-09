@@ -10,8 +10,6 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		
-		static char help[] = "";
-		
         Mat            A;           /* problem matrix */
         EPS            eps;         /* eigenproblem solver context */
         EPSType        type;
@@ -127,6 +125,5 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		ierr = MatDestroy(&A); CHKERRQ(ierr);
 		ierr = VecDestroy(&xr); CHKERRQ(ierr);
 		ierr = VecDestroy(&xi); CHKERRQ(ierr);
-		ierr = SlepcFinalize();
 	}
 };
