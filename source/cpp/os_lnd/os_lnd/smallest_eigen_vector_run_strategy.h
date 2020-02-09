@@ -46,8 +46,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("nz_used: {:16e}", mat_info.nz_used));
 
 		MatGetSize(A, &size_n, &size_m);
-		model.log_message(fmt::format("size_n: {:16e}", size_n));
-		model.log_message(fmt::format("size_m: {:16e}", size_m));
+		model.log_message(fmt::format("size_n: {:d}", size_n));
+		model.log_message(fmt::format("size_m: {:d}", size_m));
 
 		MatCreateVecs(A, NULL, &xr);
 		MatCreateVecs(A, NULL, &xi);
