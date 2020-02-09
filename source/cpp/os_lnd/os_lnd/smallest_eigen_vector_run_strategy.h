@@ -17,7 +17,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
         PetscScalar    value, kr, ki;
 		PetscScalar    *sm_vector;
         Vec            xr, xi;
-        PetscInt       n, i, Istart, Iend, nev, maxit, its, nconv;
+        PetscInt       n, i, Istart, Iend, nev, ncv, maxit, its, nconv;
 
 		n = model.sys_size * model.sys_size;
 
@@ -60,13 +60,14 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		   Optional: Get some information from the solver and display it
 		*/
 		EPSGetIterationNumber(eps, &its);
-		PetscPrintf(PETSC_COMM_WORLD, " Number of iterations of the method: %D\n", its);
+		model.log_message(fmt::format("Number of iterations of the method: {:d}", its));
 		EPSGetType(eps, &type);
-		PetscPrintf(PETSC_COMM_WORLD, " Solution method: %s\n\n", type);
-		EPSGetDimensions(eps, &nev, NULL, NULL);
-		PetscPrintf(PETSC_COMM_WORLD, " Number of requested eigenvalues: %D\n", nev);
+		model.log_message(fmt::format("Solution method: {:s}", type));
+		EPSGetDimensions(eps, &nev, &ncv, NULL);
+		model.log_message(fmt::format("Number of requested eigenvalues: {:d}", nev));
+		model.log_message(fmt::format("Maximum dimension of the subspace to be used by the solver: {:d}", ncv));
 		EPSGetTolerances(eps, &tol, &maxit);
-		PetscPrintf(PETSC_COMM_WORLD, " Stopping condition: tol=%.4g, maxit=%D\n", (double)tol, maxit);
+		model.log_message(fmt::format("Stopping condition: tol={:16e}, maxit={:d}", (double)tol, maxit));
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Display solution and clean up
@@ -75,7 +76,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 				Get number of converged approximate eigenpairs
 		*/
 		EPSGetConverged(eps, &nconv);
-		PetscPrintf(PETSC_COMM_WORLD, " Number of converged eigenpairs: %D\n\n", nconv);
+		model.log_message(fmt::format("Number of converged eigenpairs: {:d}", nconv));
 
 		/*
 		   Display eigenvalue and relative error
