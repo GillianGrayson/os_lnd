@@ -60,7 +60,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		EPSSetProblemType(eps, EPS_NHEP);
 		EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
 		EPSSetType(eps, EPSARNOLDI);
-		EPSSetTolerances(eps, 1e-12, 9999999);
+		EPSSetTolerances(eps, 1e-8, 9999999);
 		EPSSetFromOptions(eps);
 
 
