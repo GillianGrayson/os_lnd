@@ -2,12 +2,15 @@
 #include "run_strategy.h"
 #include "save.h"
 
+#ifdef __linux__ 
 #include <slepceps.h>
+#endif
 
 struct SmallestEigenVectorRunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{
+#ifdef __linux__
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		
         Mat            A;           /* problem matrix */
@@ -41,7 +44,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
 
-		MatView(A, PETSC_VIEWER_STDOUT_WORLD);
+		//MatView(A, PETSC_VIEWER_STDOUT_WORLD);
 
 		MatGetInfo(A, MAT_GLOBAL_MAX, &mat_info);
 		model.log_message(fmt::format("mallocs: {:16e}", mat_info.mallocs));
@@ -143,5 +146,6 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		MatDestroy(&A);
 		VecDestroy(&xr);
 		VecDestroy(&xi);
+#endif
 	}
 };

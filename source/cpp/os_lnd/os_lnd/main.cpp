@@ -5,13 +5,17 @@
 #include "setup_processor.h"
 #include "run_processor.h"
 
+#ifdef __linux__ 
 #include <slepceps.h>
+#endif
 
 int main(int argc, char* argv[])
 {
+#ifdef __linux__ 
 	PetscErrorCode ierr;
 	static char help[] = "";
 	ierr = SlepcInitialize(&argc, &argv, (char*)0, help); if (ierr) return ierr;
+#endif
 	
 	INIReader ini("config.ini");
 	if (ini.ParseError() < 0)
@@ -28,6 +32,8 @@ int main(int argc, char* argv[])
 	RunProcessor run_processor;
 	run_processor.set_strategy(model);
 	run_processor.process(model);
-
+	
+#ifdef __linux__ 
 	ierr = SlepcFinalize();
+#endif
 }
