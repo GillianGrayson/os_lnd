@@ -12,6 +12,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 	{
 #ifdef __linux__
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const int max_num_iterations = model.ini.GetInteger("smallest_eigen_vector", "max_num_iterations", 0);
+		const double tolerance = model.ini.GetReal("smallest_eigen_vector", "tolerance", 0.0);
 		
         Mat            A;           /* problem matrix */
 		MatInfo		   mat_info;
@@ -66,8 +68,12 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		EPSSetProblemType(eps, EPS_NHEP);
 		EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
 		EPSSetType(eps, EPSKRYLOVSCHUR);
-		EPSSetTolerances(eps, 1e-10, 500000);
+		EPSSetTolerances(eps, tolerance, max_num_iterations);
 		EPSSetFromOptions(eps);
+		
+		EPSGetTolerances(eps, &tol, &maxit);
+		model.log_message(fmt::format("Stopping condition: tolerance = {:16e}", (double)tol));
+		model.log_message(fmt::format("Stopping condition: max_num_iterations = {:d}", maxit));
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Solve the eigensystem
@@ -83,9 +89,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		EPSGetDimensions(eps, &nev, &ncv, NULL);
 		model.log_message(fmt::format("Number of requested eigenvalues: {:d}", nev));
 		model.log_message(fmt::format("Maximum dimension of the subspace to be used by the solver: {:d}", ncv));
-		EPSGetTolerances(eps, &tol, &maxit);
-		model.log_message(fmt::format("Stopping condition: tol = {:16e}", (double)tol));
-		model.log_message(fmt::format("Stopping condition: maxit = {:d}", maxit));
+		
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Display solution and clean up

@@ -26,3 +26,12 @@ def get_odeint_config(step, total_num_periods, current_num_periods, is_continue,
     config_list.append('continue = ' + str(is_continue))
     config_list.append('continue_path = ' + str(continue_path))
     return config_list
+
+
+def get_smallest_eigen_vector_config(max_num_iterations, tolerance):
+
+    config_list = []
+    config_list.append('[smallest_eigen_vector]')
+    config_list.append('max_num_iterations = ' + str(max_num_iterations))
+    config_list.append('tolerance = ' + str(tolerance))
+    return config_list

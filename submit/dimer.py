@@ -1,6 +1,6 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config,  get_odeint_config
+from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config
 import os.path
 import numpy as np
 import math
@@ -17,7 +17,10 @@ total_num_periods = 100
 current_num_periods = 100
 current_num_time_points = 101
 
-Us = list(np.linspace(0.01, 1.0, 1, dtype=float))
+max_num_iterations = 500000
+tolerance = 1e-10
+
+Us = list(np.linspace(1.0, 1.0, 1, dtype=float))
 Ns = list(np.linspace(100, 100, 1, dtype=int))
 
 diss_type = 1
@@ -39,6 +42,8 @@ for N in Ns:
         local_path = '/' + system
         if task == 'odeint_rk4':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
+        elif task == 'smallest_eigen_vector':
+            local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
         else:
             local_path += '/' + task
 
@@ -64,7 +69,10 @@ for N in Ns:
         config_list.append('drv_phase = ' + str(drv_phase))
 
         config_list += get_global_config(system, task)
-        config_list += get_odeint_config(step, total_num_periods, current_num_periods, is_continue, data_path + '/')
+        if task == 'odeint_rk4':
+            config_list += get_odeint_config(step, total_num_periods, current_num_periods, is_continue, data_path + '/')
+        elif task == 'smallest_eigen_vector':
+            config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
 
         pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
