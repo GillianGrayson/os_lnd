@@ -35,11 +35,13 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 			{
 				value = it.value().real() + it.value().imag() * PETSC_i;			
 				MatSetValue(A, it.row(), it.col(), value, INSERT_VALUES);
-				model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
+				//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			}
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+
+		MatView(A, PETSC_VIEWER_STDOUT_WORLD);
 
 		MatGetInfo(A, MAT_GLOBAL_MAX, &mat_info);
 		model.log_message(fmt::format("mallocs: {:16e}", mat_info.mallocs));
@@ -60,7 +62,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		EPSSetOperators(eps, A, NULL);
 		EPSSetProblemType(eps, EPS_NHEP);
 		EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
-		EPSSetType(eps, EPSARNOLDI);
+		EPSSetType(eps, EPSKRYLOVSCHUR);
 		EPSSetTolerances(eps, 1e-8, 500000);
 		EPSSetFromOptions(eps);
 
