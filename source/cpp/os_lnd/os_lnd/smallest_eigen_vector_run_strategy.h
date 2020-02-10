@@ -110,12 +110,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		re = PetscRealPart(kr);
 		im = PetscImaginaryPart(kr);
 
-		if (im != 0.0) {
-			PetscPrintf(PETSC_COMM_WORLD, " %9f%+9fi %12g\n", (double)re, (double)im, (double)error);
-		}
-		else {
-			PetscPrintf(PETSC_COMM_WORLD, "   %12f       %12g\n", (double)re, (double)error);
-		}
+		model.log_message(fmt::format("smallest_eval = {:16e} + {:16e} i", re, im));
+		model.log_message(fmt::format("error = {:16e}", error));
 		
 		VecGetArray(xr, &sm_vector);
 
@@ -130,8 +126,11 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		VecRestoreArray(xr, &sm_vector);
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(rho_vec.data(), model.sys_size, model.sys_size);
-		auto trace_rho = model.rho.trace();
+		std::complex<double> trace_rho = model.rho.trace();
+		model.log_message(fmt::format("trace_rho = {:16e} + {:16e} i", trace_rho.real(), trace_rho.imag()));
 		model.rho = model.rho / trace_rho;
+		trace_rho = model.rho.trace();
+		model.log_message(fmt::format("trace_rho = {:16e} + {:16e} i", trace_rho.real(), trace_rho.imag()));
 
 		auto fn = "rho_mtx" + model.suffix;
 		save_dense_mtx(model.rho, fn, save_precision);
