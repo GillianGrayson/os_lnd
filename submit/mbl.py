@@ -9,14 +9,13 @@ segment = 'medium'
 
 system = 'mbl'
 
-task = 'odeint_rk4'
+task = 'smallest_eigen_vector'
 
 is_continue = 'true'
-step = (2.0 * math.pi) * 0.0005
-total_num_periods = 100
+step = 0.01
+total_num_periods = 1000
 
 current_num_periods = 1000
-current_num_time_points = 1001
 
 max_num_iterations = 500000
 tolerance = 1e-10
