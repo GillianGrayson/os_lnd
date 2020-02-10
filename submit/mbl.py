@@ -9,7 +9,7 @@ segment = 'medium'
 
 system = 'mbl'
 
-task = 'smallest_eigen_vector'
+task = 'odeint_rk4'
 
 is_continue = 'true'
 step = (2.0 * math.pi) * 0.0005
@@ -79,11 +79,10 @@ for seed in seeds:
         file_config.write('\n'.join(config_list))
 
         fn_suffix = \
-            'np(' + str(N) + ')_' + \
-            'diss(' + str(diss_type) + '_' + str(format(diss_gamma, '0.4f')) + ')_' + \
-            'prm(' + str(format(E, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + ')_' + \
-            'drv(' + str(drv_type) + '_' + str(format(drv_ampl, '0.4f')) + '_' + str(
-                format(drv_freq, '0.4f')) + '_' + str(format(drv_phase, '0.4f')) + ')'
+            'ns(' + str(num_spins) + ')_' + \
+            'seed(' + str(seed) + ')_' + \
+            'diss(' + str(diss_type) + '_' + str(format(diss_phase, '0.4f')) + '_' + str(format(diss_gamma, '0.4f')) + ')_' + \
+            'prm(' + str(format(W, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + ')'
 
         fn_test = data_path + '/rho_mtx_' + fn_suffix + '.txt'
 
