@@ -35,6 +35,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 			{
 				value = it.value().real() + it.value().imag() * PETSC_i;			
 				MatSetValue(A, it.row(), it.col(), value, INSERT_VALUES);
+				model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			}
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
