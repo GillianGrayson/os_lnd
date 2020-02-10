@@ -66,9 +66,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		EPSSetProblemType(eps, EPS_NHEP);
 		EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
 		EPSSetType(eps, EPSKRYLOVSCHUR);
-		EPSSetTolerances(eps, 1e-8, 500000);
+		EPSSetTolerances(eps, 1e-10, 500000);
 		EPSSetFromOptions(eps);
-
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Solve the eigensystem
@@ -85,8 +84,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("Number of requested eigenvalues: {:d}", nev));
 		model.log_message(fmt::format("Maximum dimension of the subspace to be used by the solver: {:d}", ncv));
 		EPSGetTolerances(eps, &tol, &maxit);
-		model.log_message(fmt::format("Stopping condition: tol{:16e}", (double)tol));
-		model.log_message(fmt::format("Stopping condition: maxit={:d}", maxit));
+		model.log_message(fmt::format("Stopping condition: tol = {:16e}", (double)tol));
+		model.log_message(fmt::format("Stopping condition: maxit = {:d}", maxit));
 
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 							Display solution and clean up
