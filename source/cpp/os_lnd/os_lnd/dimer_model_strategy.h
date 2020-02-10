@@ -3,11 +3,11 @@
 #include "model.h"
 #include <iomanip>
 #include "save.h"
-#include "setup_strategy.h"
+#include "model_strategy.h"
 #include <unsupported/Eigen/KroneckerProduct>
 #include "routines.h"
 
-struct DimerSetupStrategy : SetupStrategy
+struct DimerModelStrategy : ModelStrategy
 {
 	void setup_suffix(Model& model) override
 	{
@@ -217,5 +217,10 @@ struct DimerSetupStrategy : SetupStrategy
 		const sp_mtx hamiltonian_transposed(model.hamiltonian_drv.transpose());
 
 		model.lindbladian_drv = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
+	}
+
+	void append_observables(Model& model, std::string& prefix) override
+	{
+		model.throw_error("observables are absent in this model");
 	}
 };

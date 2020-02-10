@@ -2,7 +2,7 @@
 #define FMT_DEPRECATED
 #define EIGEN_USE_MKL_ALL
 
-#include "setup_processor.h"
+#include "model_processor.h"
 #include "run_processor.h"
 
 #ifdef __linux__ 
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
 	Model model(ini);
 
-	SetupProcessor setup_processor;
+	ModelProcessor setup_processor;
 	setup_processor.set_strategy(model);
 	setup_processor.process(model);
 

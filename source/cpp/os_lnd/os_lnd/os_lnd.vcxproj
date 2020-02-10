@@ -169,7 +169,7 @@
   <ItemGroup>
     <ClInclude Include="dimer_integrate_strategy.h" />
     <ClInclude Include="dimer_observer.h" />
-    <ClInclude Include="dimer_setup_strategy.h" />
+    <ClInclude Include="dimer_model_strategy.h" />
     <ClInclude Include="dimer_system.h" />
     <ClInclude Include="init.h" />
     <ClInclude Include="integrate_strategy.h" />
@@ -180,13 +180,13 @@
     <ClInclude Include="load.h" />
     <ClInclude Include="mbl_integrate_strategy.h" />
     <ClInclude Include="mbl_observer.h" />
-    <ClInclude Include="mbl_setup_strategy.h" />
+    <ClInclude Include="mbl_model_strategy.h" />
     <ClInclude Include="mbl_system.h" />
     <ClInclude Include="memory_usage.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="run_processor.h" />
-    <ClInclude Include="setup_processor.h" />
-    <ClInclude Include="setup_strategy.h" />
+    <ClInclude Include="model_processor.h" />
+    <ClInclude Include="model_strategy.h" />
     <ClInclude Include="lu_run_strategy.h" />
     <ClInclude Include="observer.h" />
     <ClInclude Include="odeint_init.h" />

@@ -5,7 +5,7 @@
 #include <mkl.h>
 #include <iomanip>
 #include "save.h"
-#include "setup_strategy.h"
+#include "model_strategy.h"
 #include <unsupported/Eigen/KroneckerProduct>
 #include "routines.h"
 
@@ -64,7 +64,7 @@ inline std::vector<int> convert_int_to_vector_of_bits(int x, const int size)
 	return res;
 }
 
-struct MBLSetupStrategy : SetupStrategy
+struct MBLModelStrategy : ModelStrategy
 {
 	std::vector<int> adj;
 	std::vector<int> x_to_id;
@@ -460,5 +460,10 @@ struct MBLSetupStrategy : SetupStrategy
 		mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
 
 		return mtx;
+	}
+
+	void append_observables(Model& model, std::string& prefix) override
+	{
+		model.throw_error("observables are absent in this model");
 	}
 };
