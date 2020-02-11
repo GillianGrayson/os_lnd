@@ -14,6 +14,9 @@ struct DimerObserver : BaseObserver
 
 	void operator()(const Eigen::VectorXcd& x, double t) override
 	{
-		process_observables_basic(x, t);
+		if (t > times[0] + std::numeric_limits<double>::epsilon())
+		{
+			process_observables_basic(x, t);
+		}
 	}
 };

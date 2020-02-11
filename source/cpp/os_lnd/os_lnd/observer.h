@@ -25,41 +25,32 @@ struct BaseObserver
 
 	void process_observables_basic(const Eigen::VectorXcd& x, double t)
 	{
-		if (t > times[0] + std::numeric_limits<double>::epsilon())
+		model.log_time_duration();
+
+		const Eigen::VectorXcd state_diff = x - base_state;
+		base_state = x;
+
+		model.rho = Eigen::Map<Eigen::MatrixXcd>(base_state.data(), model.sys_size, model.sys_size);
+
+		double diff = state_diff.norm();
+
+		if (std::isnan(diff))
 		{
-			model.log_time_duration();
-
-			const Eigen::VectorXcd state_diff = x - base_state;
-			base_state = x;
-
-			double diff = state_diff.norm();
-
-			if (std::isnan(diff))
-			{
-				model.throw_error("Integration failed. Try to decrease integration step");
-			}
-
-			double t_pre;
-			if (!passed_times.empty())
-			{
-				t_pre = passed_times.back();
-			}
-			else
-			{
-				t_pre = 0.0;
-			}
-
-			diffs.push_back(diff);
-			rewrite_observables("diffs", diffs, t_pre, t);
-
-			passed_times.push_back(t);
-			rewrite_observables("times", passed_times, t_pre, t);
-
-			model.log_message(fmt::format("time = {:.16e}", t));
-			model.log_message(fmt::format("diff = {:.16e}\n", diff));
-
-			dump_current_state(t, diff);
+			model.throw_error("Integration failed. Try to decrease integration step");
 		}
+
+		const double t_pre = get_t_pre();
+
+		diffs.push_back(diff);
+		rewrite_observables("diffs", diffs, t_pre, t);
+
+		passed_times.push_back(t);
+		rewrite_observables("times", passed_times, t_pre, t);
+
+		model.log_message(fmt::format("time = {:.16e}", t));
+		model.log_message(fmt::format("diff = {:.16e}\n", diff));
+
+		dump_current_state(t, diff);
 	}
 
 	std::string get_suffix(const double t) const
@@ -92,7 +83,6 @@ struct BaseObserver
 		{
 			const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
-			model.rho = Eigen::Map<Eigen::MatrixXcd>(base_state.data(), model.sys_size, model.sys_size);
 			auto fn = "rho_mtx" + model.suffix;
 			save_dense_mtx(model.rho, fn, save_precision);
 
@@ -103,5 +93,19 @@ struct BaseObserver
 			fn = "curr_dump" + model.suffix;
 			save_vector(curr_dump, fn, save_precision);
 		}
+	}
+
+	double get_t_pre()
+	{
+		double t_pre;
+		if (!passed_times.empty())
+		{
+			t_pre = passed_times.back();
+		}
+		else
+		{
+			t_pre = 0.0;
+		}
+		return t_pre;
 	}
 };

@@ -7,7 +7,10 @@
 #include "save.h"
 #include "model_strategy.h"
 #include <unsupported/Eigen/KroneckerProduct>
+#include <Eigen/Eigenvalues>
+#include <Eigen/SVD>
 #include "routines.h"
+#include <numeric>
 
 
 inline int bit_count(int value)
@@ -462,8 +465,150 @@ struct MBLModelStrategy : ModelStrategy
 		return mtx;
 	}
 
-	void append_observables(Model& model, std::string& prefix) override
+	double get_ratio(Model& model)
 	{
-		model.throw_error("observables are absent in this model");
+		Eigen::ComplexEigenSolver<Eigen::MatrixXcd> ces;
+		ces.compute(model.rho);
+		auto evals_raw = ces.eigenvalues();
+		std::vector<double> evals(model.sys_size);
+		for (int st_id = 0; st_id < model.sys_size; st_id ++)
+		{
+			evals[st_id] = evals_raw[st_id].real();
+		}
+		std::sort(evals.begin(), evals.end());
+
+		int skip = model.sys_size / 3;
+
+		std::vector<double> cutted_evals = std::vector<double>(evals.begin() + skip, evals.end() - skip);
+		int size_cutted = cutted_evals.size();
+		
+		std::vector<double> evals_diff(size_cutted - 1);
+		for (int st_id = 0; st_id < size_cutted - 1; st_id++)
+		{
+			evals_diff[st_id] = cutted_evals[st_id + 1] - cutted_evals[st_id];
+			if (evals_diff[st_id] < std::numeric_limits<double>::epsilon())
+			{
+				model.log_message("Can't calculate ratio");
+				return 0.0;
+			}
+		}
+		
+		std::vector<double> evals_r(size_cutted - 2);
+		for (int st_id = 0; st_id < size_cutted - 2; st_id++)
+		{
+			evals_r[st_id] = evals_diff[st_id + 1] / evals_diff[st_id];
+			double straight = evals_r[st_id];
+			double inverse = 1.0 / evals_r[st_id];
+			evals_r[st_id] = std::min(straight, inverse);	
+		}
+
+		double sum = std::accumulate(evals_r.begin(), evals_r.end(), 0.0);
+		double ratio = sum / evals_r.size();
+
+		return ratio;
+	}
+
+	double get_entanglement_entropy(Model& model)
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		int xtd_size = std::pow(2, num_spins);
+		
+		Eigen::MatrixXcd rho_xtd = Eigen::MatrixXcd::Zero(xtd_size, xtd_size);
+		for (int st_id_1 = 0; st_id_1 < model.sys_size; st_id_1++)
+		{
+			for (int st_id_2 = 0; st_id_2 < model.sys_size; st_id_2++)
+			{
+				int xtd_st_id_1 = id_to_x[st_id_1];
+				int xtd_st_id_2 = id_to_x[st_id_2];
+
+				std::complex<double> val(model.rho(st_id_1, st_id_2).real(), model.rho(st_id_1, st_id_2).imag());
+				rho_xtd(xtd_st_id_1, xtd_st_id_2) = val;
+			}
+		}
+
+		int red_size = pow(2, num_spins / 2);
+		double eps_eval = 1.0e-14;
+
+		Eigen::MatrixXcd R = Eigen::MatrixXcd::Zero(xtd_size, xtd_size);
+
+		for (int k1 = 0; k1 < red_size; k1++)
+		{
+			for (int k2 = 0; k2 < red_size; k2++)
+			{
+				for (int s1 = 0; s1 < red_size; s1++)
+				{
+					for (int s2 = 0; s2 < red_size; s2++)
+					{
+						int R_id_1 = k1 * red_size + k2;
+						int R_id_2 = s1 * red_size + s2;
+
+						int rho_id_1 = k1 * red_size + s1;
+						int rho_id_2 = k2 * red_size + s2;
+
+						std::complex<double> val(rho_xtd(rho_id_1, rho_id_2).real(), rho_xtd(rho_id_1, rho_id_2).imag());
+						R(R_id_1, R_id_2) = val;
+					}
+				}
+			}
+		}
+
+		Eigen::JacobiSVD<Eigen::MatrixXcd> svd(R);
+		auto svals = svd.singularValues();
+
+		double sum = 0.0;
+		for (int xtd_st_id = 0; xtd_st_id < xtd_size; xtd_st_id++)
+		{
+			sum += svals[xtd_st_id] * svals[xtd_st_id];
+		}
+
+		double ee = 0.0; // entanglement entropy
+		for (int xtd_st_id = 0; xtd_st_id < xtd_size; xtd_st_id++)
+		{
+			const auto curr_mu = svals[xtd_st_id] * svals[xtd_st_id] / sum;
+			if (fabs(curr_mu) > eps_eval)
+			{
+				ee -= curr_mu * log2(curr_mu);
+			}
+		}
+		
+		return ee;
+	}
+
+	double get_imbalace(Model& model)
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		
+		std::vector<double> n_part(num_spins);
+
+		for (int st_id = 0; st_id < model.sys_size; st_id++)
+		{
+			std::vector<int> vb = convert_int_to_vector_of_bits(id_to_x[st_id], num_spins);
+
+			for (int cell_id = 0; cell_id < num_spins; cell_id++)
+			{
+				n_part[cell_id] += model.rho(st_id, st_id).real() * double(vb[cell_id]);
+			}
+		}
+
+		double sum_odd = 0.0;
+		double sum_even = 0.0;
+		double sum_all = 0.0;
+
+		for (int cell_id = 0; cell_id < num_spins; cell_id++)
+		{
+			if (cell_id % 2 == 0)
+			{
+				sum_odd += n_part[cell_id];
+			}
+			else
+			{
+				sum_even += n_part[cell_id];
+			}
+		}
+		sum_all = sum_even + sum_odd;
+
+		double imbalance = (sum_odd - sum_even) / sum_all;
+
+		return imbalance;
 	}
 };

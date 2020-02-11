@@ -13,6 +13,4 @@ struct ModelStrategy
 	virtual void setup_dissipators(Model& model) = 0;
 	virtual void setup_lindbladian(Model& model) = 0;
 	virtual void setup_lindbladian_drv(Model& model) = 0;
-
-	virtual void append_observables(Model& model, std::string& prefix) = 0;
 };

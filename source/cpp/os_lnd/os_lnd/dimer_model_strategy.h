@@ -218,9 +218,4 @@ struct DimerModelStrategy : ModelStrategy
 
 		model.lindbladian_drv = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
 	}
-
-	void append_observables(Model& model, std::string& prefix) override
-	{
-		model.throw_error("observables are absent in this model");
-	}
 };
