@@ -11,7 +11,7 @@ system = 'mbl'
 
 task = 'smallest_eigen_vector'
 
-is_continue = 'true'
+is_continue = 'false'
 step = 0.01
 total_num_periods = 1000
 
@@ -20,7 +20,7 @@ current_num_periods = 1000
 max_num_iterations = 500000
 tolerance = 1e-10
 
-num_spins = 8
+num_spins = 10
 
 seeds = list(np.linspace(10, 10, 1, dtype=int))
 num_seeds = 1000000
@@ -29,7 +29,7 @@ diss_type = 1
 diss_phase = 0.0
 diss_gamma = 0.1
 
-Ws = list(np.linspace(2.0, 2.0, 1, dtype=float))
+Ws = list(np.linspace(1.0, 20.0, 20, dtype=float))
 U = 1.0
 J = 1.0
 
