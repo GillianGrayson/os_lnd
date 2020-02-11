@@ -70,7 +70,7 @@ for N in Ns:
 
         config_list += get_global_config(system, task)
         if task == 'odeint_rk4':
-            config_list += get_odeint_config(step, total_num_periods, current_num_periods, is_continue, data_path + '/')
+            config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
 

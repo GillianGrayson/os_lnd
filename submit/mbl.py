@@ -3,7 +3,6 @@ from common.file_system import get_root
 from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config
 import os.path
 import numpy as np
-import math
 
 segment = 'medium'
 
@@ -16,6 +15,7 @@ step = 0.01
 total_num_periods = 1000
 
 current_num_periods = 1000
+current_num_time_points = 1001
 
 max_num_iterations = 500000
 tolerance = 1e-10
@@ -68,7 +68,7 @@ for seed in seeds:
 
         config_list += get_global_config(system, task)
         if task == 'odeint_rk4':
-            config_list += get_odeint_config(step, total_num_periods, current_num_periods, is_continue, data_path + '/')
+            config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
 

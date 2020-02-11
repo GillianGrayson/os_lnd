@@ -10,9 +10,7 @@ def get_global_config(system, task):
     config_list.append('save_precision = 16')
     return config_list
 
-def get_odeint_config(step, total_num_periods, current_num_periods, is_continue, continue_path):
-
-    current_num_time_points = current_num_periods + 1
+def get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, continue_path):
 
     config_list = []
     config_list.append('[odeint]')
