@@ -74,6 +74,44 @@ struct MBLModelStrategy : ModelStrategy
 	std::vector<int> id_to_x;
 	std::vector<double> energies;
 
+	void setup_aux_data(Model& model) override
+	{
+		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const int num_global_states = std::pow(2, num_spins);
+		adj = std::vector<int>(num_global_states, 0);
+		x_to_id = std::vector<int>(num_global_states, 0);
+		id_to_x = std::vector<int>(model.sys_size, 0);
+
+		int state_id = 0;
+		for (int g_state_id = 0; g_state_id < num_global_states; g_state_id++)
+		{
+			if ((bit_count(g_state_id) == 2) && (bit_count(g_state_id & (g_state_id << 1)) == 1))
+			{
+				adj[g_state_id] = 1;
+			}
+			else
+			{
+				adj[g_state_id] = 0;
+			}
+
+			if (bit_count(g_state_id) == num_spins / 2)
+			{
+				x_to_id[g_state_id] = state_id + 1;
+				id_to_x[state_id] = g_state_id;
+				state_id++;
+			}
+			else
+			{
+				x_to_id[g_state_id] = 0;
+			}
+		}
+
+		if (state_id != model.sys_size)
+		{
+			model.throw_error("Something wrong with MBL generation");
+		}
+	}
+	
 	void setup_suffix(Model& model) override
 	{
 		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
@@ -109,7 +147,6 @@ struct MBLModelStrategy : ModelStrategy
 		}
 		
 		model.sys_size = gcem::binomial_coef(num_spins, num_spins / 2);
-		init_aux_data(model);
 	}
 
 	void setup_period(Model& model) override
@@ -196,44 +233,6 @@ struct MBLModelStrategy : ModelStrategy
 	void setup_lindbladian_drv(Model& model) override
 	{
 		model.log_message("lindbladian_drv is absent in this model");
-	}
-
-	void init_aux_data(Model& model)
-	{
-		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
-		const int num_global_states = std::pow(2, num_spins);
-		adj = std::vector<int>(num_global_states, 0);
-		x_to_id = std::vector<int>(num_global_states, 0);
-		id_to_x = std::vector<int>(model.sys_size, 0);
-
-		int state_id = 0;
-		for (int g_state_id = 0; g_state_id < num_global_states; g_state_id++)
-		{
-			if ((bit_count(g_state_id) == 2) && (bit_count(g_state_id & (g_state_id << 1)) == 1))
-			{
-				adj[g_state_id] = 1;
-			}
-			else
-			{
-				adj[g_state_id] = 0;
-			}
-
-			if (bit_count(g_state_id) == num_spins / 2)
-			{
-				x_to_id[g_state_id] = state_id + 1;
-				id_to_x[state_id] = g_state_id;
-				state_id++;
-			}
-			else
-			{
-				x_to_id[g_state_id] = 0;
-			}
-		}
-
-		if (state_id != model.sys_size)
-		{
-			model.throw_error("Something wrong with MBL generation");
-		}
 	}
 
 	sp_mtx get_disorder_mtx(Model& model)
@@ -574,7 +573,7 @@ struct MBLModelStrategy : ModelStrategy
 		return ee;
 	}
 
-	double get_imbalace(Model& model)
+	double get_imbalance(Model& model)
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
 		
@@ -610,5 +609,23 @@ struct MBLModelStrategy : ModelStrategy
 		double imbalance = (sum_odd - sum_even) / sum_all;
 
 		return imbalance;
+	}
+
+	void release_observables(Model& model) override
+	{
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		std::string fn;
+
+		const double ratio = get_ratio(model);
+		fn = "ratio" + model.suffix;
+		save_value(ratio, fn, save_precision);
+
+		const double ee = get_entanglement_entropy(model);
+		fn = "ee" + model.suffix;
+		save_value(ee, fn, save_precision);
+
+		const double imbalance = get_imbalance(model);
+		fn = "imbalance" + model.suffix;
+		save_value(imbalance, fn, save_precision);
 	}
 };

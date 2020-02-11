@@ -24,10 +24,23 @@ struct ModelProcessor
 		}
 	}
 
-	void process(Model& model) const
+	void init_model(Model& model) const
 	{
 		model_strategy->setup_suffix(model);
 		model_strategy->setup_sys_size(model);
+		model_strategy->setup_aux_data(model);
+	}
+
+	void release_observables(Model& model) const
+	{
+		model_strategy->release_observables(model);
+	}
+	
+	void create_model(Model& model) const
+	{
+		model_strategy->setup_suffix(model);
+		model_strategy->setup_sys_size(model);
+		model_strategy->setup_aux_data(model);
 		model_strategy->setup_period(model);
 		model_strategy->setup_hamiltonian(model);
 		model_strategy->setup_hamiltonian_drv(model);

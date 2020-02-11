@@ -16,7 +16,7 @@ struct MBLObserver : BaseObserver
 	) : BaseObserver(model, times, base_state)
 	{
 		model_strategy = MBLModelStrategy();
-		model_strategy.init_aux_data(model);
+		model_strategy.setup_aux_data(model);
 	}
 
 	void operator()(const Eigen::VectorXcd& x, double t) override
@@ -33,7 +33,7 @@ struct MBLObserver : BaseObserver
 		ees.push_back(ee);
 		rewrite_observables("ees", ees, t_pre, t);
 
-		double imbalance = model_strategy.get_imbalace(model);
+		double imbalance = model_strategy.get_imbalance(model);
 		imbalances.push_back(imbalance);
 		rewrite_observables("imbalances", imbalances, t_pre, t);
 	}

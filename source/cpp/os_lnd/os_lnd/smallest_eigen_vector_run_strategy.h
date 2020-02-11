@@ -148,6 +148,11 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		MatDestroy(&A);
 		VecDestroy(&xr);
 		VecDestroy(&xi);
+
+		ModelProcessor model_processor;
+		model_processor.set_strategy(model);
+		model_processor.init_model(model);
+		model_processor.release_observables(model);
 #endif
 	}
 };

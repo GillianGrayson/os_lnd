@@ -9,6 +9,10 @@
 
 struct DimerModelStrategy : ModelStrategy
 {
+	void setup_aux_data(Model& model) override
+	{
+	}
+	
 	void setup_suffix(Model& model) override
 	{
 		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
@@ -217,5 +221,9 @@ struct DimerModelStrategy : ModelStrategy
 		const sp_mtx hamiltonian_transposed(model.hamiltonian_drv.transpose());
 
 		model.lindbladian_drv = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
+	}
+
+	void release_observables(Model& model) override
+	{
 	}
 };

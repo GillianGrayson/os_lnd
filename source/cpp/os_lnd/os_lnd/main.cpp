@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
 	ModelProcessor setup_processor;
 	setup_processor.set_strategy(model);
-	setup_processor.process(model);
+	setup_processor.create_model(model);
 
 	RunProcessor run_processor;
 	run_processor.set_strategy(model);

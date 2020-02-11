@@ -38,6 +38,15 @@ void save_sp_mtx(const Eigen::SparseMatrix<T>& m, const std::string& fn, int pre
 	f_out.close();
 }
 
+template <class T>
+void save_value(const T& value, const std::string& fn, int precision = 16)
+{
+	std::ofstream f_out(fn);
+	f_out << std::setprecision(precision) << std::scientific;
+	f_out << value << std::endl;
+	f_out.close();
+}
+
 template <typename Derived>
 void save_dense_mtx(const Eigen::DenseBase<Derived>& dense, const std::string& fn, int precision = 16)
 {
