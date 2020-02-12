@@ -30,6 +30,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		   Compute the operator matrix that defines the eigensystem, Ax=kx
 		   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+		model.log_message(fmt::format("SLEPc matrix init ..."));
+		model.log_time_duration();
         MatCreate(PETSC_COMM_WORLD, &A);
         MatSetSizes(A, PETSC_DECIDE, PETSC_DECIDE, n, n);
         MatSetFromOptions(A);
@@ -45,6 +47,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
+		model.log_message(fmt::format("SLEPc matrix init end"));
+		model.log_time_duration();
 
 		//MatView(A, PETSC_VIEWER_STDOUT_WORLD);
 
@@ -153,6 +157,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model_processor.set_strategy(model);
 		model_processor.init_model(model);
 		model_processor.release_observables(model);
+		model.log_time_duration();
 #endif
 	}
 };
