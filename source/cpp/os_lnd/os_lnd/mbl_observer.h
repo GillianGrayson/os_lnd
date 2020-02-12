@@ -27,14 +27,18 @@ struct MBLObserver : BaseObserver
 		
 		double ratio = model_strategy.get_ratio(model);
 		ratios.push_back(ratio);
-		rewrite_observables("ratios", ratios, t_pre, t);
 
 		double ee = model_strategy.get_entanglement_entropy(model);
 		ees.push_back(ee);
-		rewrite_observables("ees", ees, t_pre, t);
 
 		double imbalance = model_strategy.get_imbalance(model);
 		imbalances.push_back(imbalance);
-		rewrite_observables("imbalances", imbalances, t_pre, t);
+		
+		if (dump_progress)
+		{
+			rewrite_observables("ratios", ratios, t_pre, t);
+			rewrite_observables("ees", ees, t_pre, t);
+			rewrite_observables("imbalances", imbalances, t_pre, t);
+		}
 	}
 };

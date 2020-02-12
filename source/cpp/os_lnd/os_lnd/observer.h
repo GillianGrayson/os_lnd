@@ -41,16 +41,18 @@ struct BaseObserver
 
 		const double t_pre = get_t_pre();
 
-		diffs.push_back(diff);
-		rewrite_observables("diffs", diffs, t_pre, t);
-
 		passed_times.push_back(t);
-		rewrite_observables("times", passed_times, t_pre, t);
-
+		diffs.push_back(diff);
+		
 		model.log_message(fmt::format("time = {:.16e}", t));
 		model.log_message(fmt::format("diff = {:.16e}\n", diff));
 
-		dump_current_state(t, diff);
+		if (dump_progress)
+		{
+			rewrite_observables("times", passed_times, t_pre, t);
+			rewrite_observables("diffs", diffs, t_pre, t);
+			dump_current_state(t, diff);
+		}
 	}
 
 	std::string get_suffix(const double t) const
@@ -79,20 +81,17 @@ struct BaseObserver
 
 	void dump_current_state(const double t, const double diff)
 	{
-		if (dump_progress)
-		{
-			const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 
-			auto fn = "rho_mtx" + model.suffix;
-			save_dense_mtx(model.rho, fn, save_precision);
+		auto fn = "rho_mtx" + model.suffix;
+		save_dense_mtx(model.rho, fn, save_precision);
 
-			std::vector<double> curr_dump;
-			curr_dump.push_back(t);
-			curr_dump.push_back(diff);
+		std::vector<double> curr_dump;
+		curr_dump.push_back(t);
+		curr_dump.push_back(diff);
 
-			fn = "curr_dump" + model.suffix;
-			save_vector(curr_dump, fn, save_precision);
-		}
+		fn = "curr_dump" + model.suffix;
+		save_vector(curr_dump, fn, save_precision);
 	}
 
 	double get_t_pre()
