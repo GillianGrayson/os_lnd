@@ -32,18 +32,5 @@ struct MBLIntegrateStrategy : IntegrateStrategy
 			step,
 			observer
 		);
-
-		if (!observer.dump_progress)
-		{
-			double t = observer.passed_times.back();
-			
-			observer.rewrite_observables("times", observer.passed_times, t, t);
-			observer.rewrite_observables("diffs", observer.diffs, t, t);
-			observer.dump_current_state(t, observer.diffs.back());
-
-			observer.rewrite_observables("ratios", observer.ratios, t, t);
-			observer.rewrite_observables("ees", observer.ees, t, t);
-			observer.rewrite_observables("imbalances", observer.imbalances, t, t);
-		}
 	}
 };

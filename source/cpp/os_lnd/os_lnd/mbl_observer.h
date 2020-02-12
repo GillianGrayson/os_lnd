@@ -20,9 +20,7 @@ struct MBLObserver : BaseObserver
 	}
 
 	void operator()(const Eigen::VectorXcd& x, double t) override
-	{
-		const double t_pre = get_t_pre();
-		
+	{		
 		process_observables_basic(x, t);
 		
 		double ratio = model_strategy.get_ratio(model);
@@ -34,7 +32,7 @@ struct MBLObserver : BaseObserver
 		double imbalance = model_strategy.get_imbalance(model);
 		imbalances.push_back(imbalance);
 		
-		if (dump_progress)
+		if (dump_progress || is_last_time(t))
 		{
 			rewrite_observables("ratios", ratios, t_pre, t);
 			rewrite_observables("ees", ees, t_pre, t);
