@@ -487,7 +487,7 @@ struct MBLModelStrategy : ModelStrategy
 			evals_diff[st_id] = cutted_evals[st_id + 1] - cutted_evals[st_id];
 			if (evals_diff[st_id] < std::numeric_limits<double>::epsilon())
 			{
-				model.log_message("Can't calculate ratio");
+				model.log_message("Can't calculate ratio\n");
 				return 0.0;
 			}
 		}
