@@ -48,7 +48,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 			int num_cols = cols.size();
 
-			MatSetValues(A, 1, &k, num_cols, cols.data(), values.data(), INSERT_VALUES)
+			MatSetValues(A, 1, &k, num_cols, cols.data(), values.data(), INSERT_VALUES);
 
 			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			//{
