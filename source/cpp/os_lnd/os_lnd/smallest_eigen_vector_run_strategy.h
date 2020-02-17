@@ -44,11 +44,23 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 			{
 				values.push_back(it.value());
 				cols.push_back(it.col());
+
+				model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			}
 
 			int num_cols = cols.size();
 
-			MatSetValues(A, 1, &k, num_cols, cols.data(), values.data(), INSERT_VALUES);
+			PetscScalar* values_petsc = new PetscScalar[num_cols];
+			PetscInt* cols_petsc = new PetscInt[num_cols];
+			for (int c_id = 0; c_id < num_cols; c_id++)
+			{
+				cols_petsc = cols[c_id];
+				values_petsc[c_id] = values[c_id].real() + values[c_id].imag() * PETSC_i;
+			}
+			MatSetValues(A, 1, &k, num_cols, cols_petsc, values_petsc, INSERT_VALUES);
+
+			delete[] values_ptsc;
+			delete[] cols_petsc;
 
 			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			//{
