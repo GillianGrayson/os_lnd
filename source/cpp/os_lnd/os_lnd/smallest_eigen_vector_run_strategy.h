@@ -38,12 +38,24 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
         MatSetUp(A);
 		for (int k = 0; k < model.lindbladian.outerSize(); ++k)
 		{
+			std::vector<std::complex<double>> values;
+			std::vector<int> cols;
 			for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			{
-				value = it.value().real() + it.value().imag() * PETSC_i;			
-				MatSetValue(A, it.row(), it.col(), value, INSERT_VALUES);
-				//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
+				values.push_back(it.value());
+				cols.push_back(it.col());
 			}
+
+			int num_cols = cols.size();
+
+			MatSetValues(A, 1, &k, num_cols, cols.data(), values.data(), INSERT_VALUES)
+
+			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
+			//{
+			//	value = it.value().real() + it.value().imag() * PETSC_i;			
+			//	MatSetValue(A, it.row(), it.col(), value, INSERT_VALUES);
+			//	//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
+			//}
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
 		MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
