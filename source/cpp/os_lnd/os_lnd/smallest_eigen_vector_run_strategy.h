@@ -59,7 +59,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 			}
 			MatSetValues(A, 1, &k, num_cols, cols_petsc, values_petsc, INSERT_VALUES);
 
-			delete[] values_ptsc;
+			delete[] values_petsc;
 			delete[] cols_petsc;
 
 			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
