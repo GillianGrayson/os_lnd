@@ -48,7 +48,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 			int num_rows = rows.size();
 
-			MatSetValues(A, 1, &k, num_rows, rows.data(), values.data(), INSERT_VALUES);
+			MatSetValues(A, num_rows, rows.data(), 1, &k, values.data(), INSERT_VALUES);
 
 			//int num_rows = rows.size();
 
