@@ -39,31 +39,31 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		for (int k = 0; k < model.lindbladian.outerSize(); ++k)
 		{
 			std::vector<std::complex<double>> values;
-			std::vector<int> cols;
+			std::vector<int> rows;
 			for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			{
 				values.push_back(it.value());
-				cols.push_back(it.col());
+				rows.push_back(it.row());
 				
-				model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), it.value().real(), it.value().imag()));
+				//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), it.value().real(), it.value().imag()));
 				//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			}
 
-			int num_cols = cols.size();
+			int num_rows = rows.size();
 
 			PetscScalar* values_petsc = new PetscScalar[num_cols];
-			PetscInt* cols_petsc = new PetscInt[num_cols];
-			for (int c_id = 0; c_id < num_cols; c_id++)
+			PetscInt* rows_petsc = new PetscInt[num_cols];
+			for (int r_id = 0; r_id < num_rows; r_id++)
 			{
-				cols_petsc[c_id] = cols[c_id];
-				values_petsc[c_id] = values[c_id].real() + values[c_id].imag() * PETSC_i;
+				rows_petsc[r_id] = rows[r_id];
+				values_petsc[r_id] = values[r_id].real() + values[r_id].imag() * PETSC_i;
 
-				model.log_message(fmt::format("ba[{:d}] = {:16e} + {:16e} i", cols[c_id], PetscRealPart(values_petsc[c_id]), PetscImaginaryPart(values_petsc[c_id])));
+				//model.log_message(fmt::format("ba[{:d}] = {:16e} + {:16e} i", cols[c_id], PetscRealPart(values_petsc[c_id]), PetscImaginaryPart(values_petsc[c_id])));
 			}
-			MatSetValues(A, 1, &k, num_cols, cols_petsc, values_petsc, INSERT_VALUES);
+			MatSetValues(A, 1, &k, num_rows, rows_petsc, values_petsc, INSERT_VALUES);
 
 			delete[] values_petsc;
-			delete[] cols_petsc;
+			delete[] rows_petsc;
 
 			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			//{
