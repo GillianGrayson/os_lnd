@@ -45,7 +45,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 				values.push_back(it.value());
 				cols.push_back(it.col());
 
-				model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
+				//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			}
 
 			int num_cols = cols.size();
@@ -54,7 +54,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 			PetscInt* cols_petsc = new PetscInt[num_cols];
 			for (int c_id = 0; c_id < num_cols; c_id++)
 			{
-				cols_petsc = cols[c_id];
+				cols_petsc[c_id] = cols[c_id];
 				values_petsc[c_id] = values[c_id].real() + values[c_id].imag() * PETSC_i;
 			}
 			MatSetValues(A, 1, &k, num_cols, cols_petsc, values_petsc, INSERT_VALUES);
