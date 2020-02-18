@@ -51,8 +51,8 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 			int num_rows = rows.size();
 
-			PetscScalar* values_petsc = new PetscScalar[num_cols];
-			PetscInt* rows_petsc = new PetscInt[num_cols];
+			PetscScalar* values_petsc = new PetscScalar[num_rows];
+			PetscInt* rows_petsc = new PetscInt[num_rows];
 			for (int r_id = 0; r_id < num_rows; r_id++)
 			{
 				rows_petsc[r_id] = rows[r_id];
