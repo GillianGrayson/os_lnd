@@ -77,7 +77,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("SLEPc matrix init end"));
 		model.log_time_duration();
 
-		//MatView(A, PETSC_VIEWER_STDOUT_WORLD);
+		MatView(A, PETSC_VIEWER_STDOUT_WORLD);
 
 		MatGetInfo(A, MAT_GLOBAL_MAX, &mat_info);
 		model.log_message(fmt::format("mallocs: {:16e}", mat_info.mallocs));
