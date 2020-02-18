@@ -50,27 +50,10 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 			MatSetValues(A, num_rows, rows.data(), 1, &k, values.data(), INSERT_VALUES);
 
-			//int num_rows = rows.size();
-
-			//PetscScalar* values_petsc = new PetscScalar[num_rows];
-			//PetscInt* rows_petsc = new PetscInt[num_rows];
-			//for (int r_id = 0; r_id < num_rows; r_id++)
-			//{
-			//	rows_petsc[r_id] = rows[r_id];
-			//	values_petsc[r_id] = values[r_id].real() + values[r_id].imag() * PETSC_i;
-
-			//	//model.log_message(fmt::format("ba[{:d}] = {:16e} + {:16e} i", cols[c_id], PetscRealPart(values_petsc[c_id]), PetscImaginaryPart(values_petsc[c_id])));
-			//}
-			//MatSetValues(A, 1, &k, num_rows, rows_petsc, values_petsc, INSERT_VALUES);
-
-			//delete[] values_petsc;
-			//delete[] rows_petsc;
-
 			//for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			//{
 			//	value = it.value().real() + it.value().imag() * PETSC_i;			
 			//	MatSetValue(A, it.row(), it.col(), value, INSERT_VALUES);
-			//	//model.log_message(fmt::format("a[{:d},{:d}] = {:16e} + {:16e} i", it.row(), it.col(), PetscRealPart(value), PetscImaginaryPart(value)));
 			//}
 		}
 		MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
@@ -78,7 +61,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("SLEPc matrix init end"));
 		model.log_time_duration();
 
-		MatView(A, PETSC_VIEWER_STDOUT_WORLD);
+		//MatView(A, PETSC_VIEWER_STDOUT_WORLD);
 
 		MatGetInfo(A, MAT_GLOBAL_MAX, &mat_info);
 		model.log_message(fmt::format("mallocs: {:16e}", mat_info.mallocs));
