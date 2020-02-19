@@ -162,7 +162,7 @@ struct AllEvalsRunStrategy : RunStrategy
 			std::vector<std::complex<double>> lindbladian_evals(model.sys_size * model.sys_size);
 			for (int ev_id = 0; ev_id < model.sys_size * model.sys_size; ev_id++)
 			{
-				EPSGetEigenpair(eps, ev_id, &kr, &ki);
+				EPSGetEigenvalue(eps, ev_id, &kr, &ki);
 				re = PetscRealPart(kr);
 				im = PetscImaginaryPart(kr);
 				lindbladian_evals[ev_id] = std::complex<double>(re, im);
