@@ -2,6 +2,7 @@
 #include "lu_run_strategy.h"
 #include "odeint_rk4_run_strategy.h"
 #include "smallest_eigen_vector_run_strategy.h"
+#include "all_evals_run_strategy.h"
 #include "mock_run_strategy.h"
 
 struct RunProcessor
@@ -22,6 +23,10 @@ struct RunProcessor
 		else if (task == "smallest_eigen_vector")
 		{
 			run_strategy = std::make_unique<SmallestEigenVectorRunStrategy>();
+		}
+		else if (task == "all_evals")
+		{
+			run_strategy = std::make_unique<AllEvalsRunStrategy>();
 		}
 		else if (task == "mock")
 		{

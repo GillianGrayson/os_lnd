@@ -167,6 +167,7 @@
     <ClCompile Include="run_strategy.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="all_evals_run_strategy.h" />
     <ClInclude Include="dimer_integrate_strategy.h" />
     <ClInclude Include="dimer_observer.h" />
     <ClInclude Include="dimer_model_strategy.h" />
