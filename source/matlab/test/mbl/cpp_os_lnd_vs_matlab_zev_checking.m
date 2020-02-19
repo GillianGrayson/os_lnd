@@ -5,7 +5,7 @@ seed                = 10;
 dissipator_type     = 1;
 alpha               = 0;
 g                   = 0.1;
-W                   = 2;
+W                   = 3;
 U                   = 1;
 J                   = 1;
 
