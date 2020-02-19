@@ -157,16 +157,14 @@ struct AllEvalsRunStrategy : RunStrategy
 		{
 			model.throw_error("Not all eigenvalues were converged");
 		}
-		else
+
+		std::vector<std::complex<double>> lindbladian_evals(model.sys_size * model.sys_size);
+		for (int ev_id = 0; ev_id < model.sys_size * model.sys_size; ev_id++)
 		{
-			std::vector<std::complex<double>> lindbladian_evals(model.sys_size * model.sys_size);
-			for (int ev_id = 0; ev_id < model.sys_size * model.sys_size; ev_id++)
-			{
-				EPSGetEigenvalue(eps, ev_id, &kr, &ki);
-				re = PetscRealPart(kr);
-				im = PetscImaginaryPart(kr);
-				lindbladian_evals[ev_id] = std::complex<double>(re, im);
-			}
+			EPSGetEigenvalue(eps, ev_id, &kr, &ki);
+			re = PetscRealPart(kr);
+			im = PetscImaginaryPart(kr);
+			lindbladian_evals[ev_id] = std::complex<double>(re, im);
 		}
 		
 		fn = "lindbladian_evals" + model.suffix;
