@@ -33,3 +33,12 @@ def get_smallest_eigen_vector_config(max_num_iterations, tolerance):
     config_list.append('max_num_iterations = ' + str(max_num_iterations))
     config_list.append('tolerance = ' + str(tolerance))
     return config_list
+
+
+def get_all_evals_config(max_num_iterations, tolerance):
+
+    config_list = []
+    config_list.append('[all_evals]')
+    config_list.append('max_num_iterations = ' + str(max_num_iterations))
+    config_list.append('tolerance = ' + str(tolerance))
+    return config_list

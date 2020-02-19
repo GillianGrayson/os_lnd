@@ -1,23 +1,23 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config
+from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
 import os.path
 import numpy as np
 
-segment = 'medium'
+segment = 'short'
 
 system = 'mbl'
 
-task = 'smallest_eigen_vector'
+task = 'all_evals'
 
 is_continue = 'false'
 step = 0.01
-total_num_periods = 1000
+total_num_periods = 500
 
-current_num_periods = 1000
-current_num_time_points = 1001
+current_num_periods = 500
+current_num_time_points = 501
 
-max_num_iterations = 500000
+max_num_iterations = 100000
 tolerance = 1e-10
 
 num_spins = 10
@@ -42,6 +42,8 @@ for seed in seeds:
         if task == 'odeint_rk4':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
+            local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
+        elif task == 'all_evals':
             local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
         else:
             local_path += '/' + task
@@ -71,6 +73,8 @@ for seed in seeds:
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
+        elif task == 'all_evals':
+            config_list += get_all_evals_config(max_num_iterations, tolerance)
 
         pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 

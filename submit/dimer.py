@@ -1,6 +1,6 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config
+from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
 import os.path
 import numpy as np
 import math
@@ -44,6 +44,8 @@ for N in Ns:
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
             local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
+        elif task == 'all_evals':
+            local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
         else:
             local_path += '/' + task
 
@@ -73,6 +75,8 @@ for N in Ns:
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
+        elif task == 'all_evals':
+            config_list += get_all_evals_config(max_num_iterations, tolerance)
 
         pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 

@@ -12,8 +12,8 @@ struct AllEvalsRunStrategy : RunStrategy
 	{
 #ifdef __linux__
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-		const int max_num_iterations = model.ini.GetInteger("smallest_eigen_vector", "max_num_iterations", 0);
-		const double tolerance = model.ini.GetReal("smallest_eigen_vector", "tolerance", 0.0);
+		const int max_num_iterations = model.ini.GetInteger("all_evals", "max_num_iterations", 0);
+		const double tolerance = model.ini.GetReal("all_evals", "tolerance", 0.0);
 
 		Mat            A;           /* problem matrix */
 		MatInfo		   mat_info;
