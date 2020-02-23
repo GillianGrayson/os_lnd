@@ -84,8 +84,8 @@ struct AllEvalsRunStrategy : RunStrategy
 		EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
 		EPSSetType(eps, EPSKRYLOVSCHUR);
 		EPSSetTolerances(eps, tolerance, max_num_iterations);
-		//EPSSetDimensions(eps, n, PETSC_DEFAULT, PETSC_DEFAULT);
-		EPSSetDimensions(eps, 1, PETSC_DEFAULT, PETSC_DEFAULT);
+		EPSSetDimensions(eps, n, n, n);
+		//EPSSetDimensions(eps, 1, PETSC_DEFAULT, PETSC_DEFAULT);
 		EPSSetFromOptions(eps);
 
 		EPSGetTolerances(eps, &tol, &maxit);
