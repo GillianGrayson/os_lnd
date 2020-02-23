@@ -81,10 +81,12 @@ struct AllEvalsRunStrategy : RunStrategy
 		EPSCreate(PETSC_COMM_WORLD, &eps);
 		EPSSetOperators(eps, A, NULL);
 		EPSSetProblemType(eps, EPS_NHEP);
+		EPSSetInterval(eps, -1.1, 1.1);
+		EPSSetWhichEigenpairs(eps, EPS_ALL);
 		//EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
 		//EPSSetType(eps, EPSKRYLOVSCHUR);
-		EPSSetTolerances(eps, tolerance, max_num_iterations);
-		EPSSetDimensions(eps, n, n, n);
+		//EPSSetTolerances(eps, tolerance, max_num_iterations);
+		//EPSSetDimensions(eps, n, n, n);
 		//EPSSetDimensions(eps, 1, PETSC_DEFAULT, PETSC_DEFAULT);
 		EPSSetFromOptions(eps);
 
