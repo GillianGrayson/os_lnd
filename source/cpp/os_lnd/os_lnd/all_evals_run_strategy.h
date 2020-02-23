@@ -81,11 +81,10 @@ struct AllEvalsRunStrategy : RunStrategy
 		EPSCreate(PETSC_COMM_WORLD, &eps);
 		EPSSetOperators(eps, A, NULL);
 		EPSSetProblemType(eps, EPS_NHEP);
-		//EPSSetWhichEigenpairs(eps, EPS_SMALLEST_MAGNITUDE);
+		EPSSetWhichEigenpairs(eps, EPS_LARGEST_MAGNITUDE);
 		EPSSetType(eps, EPSKRYLOVSCHUR);
 		EPSSetTolerances(eps, tolerance, max_num_iterations);
 		EPSSetDimensions(eps, n, PETSC_DEFAULT, PETSC_DEFAULT);
-		//EPSSetDimensions(eps, 1, PETSC_DEFAULT, PETSC_DEFAULT);
 		EPSSetFromOptions(eps);
 
 		EPSGetTolerances(eps, &tol, &maxit);
@@ -121,7 +120,7 @@ struct AllEvalsRunStrategy : RunStrategy
 		   Display eigenvalue and relative error
 		*/
 
-		EPSGetEigenpair(eps, 0, &kr, &ki, xr, xi);
+		EPSGetEigenpair(eps, n-1, &kr, &ki, xr, xi);
 		/*
 		   Compute the relative error associated to eigenpair
 		*/
