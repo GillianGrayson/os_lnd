@@ -36,17 +36,17 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
         MatSetSizes(A, PETSC_DECIDE, PETSC_DECIDE, n, n);
         MatSetFromOptions(A);
         MatSetUp(A);
-		for (int k = 0; k < model.lindbladian.outerSize(); ++k)
+		for (PetscInt k = 0; k < model.lindbladian.outerSize(); ++k)
 		{
 			std::vector<std::complex<double>> values;
-			std::vector<int> rows;
+			std::vector<PetscInt> rows;
 			for (typename sp_mtx::InnerIterator it(model.lindbladian, k); it; ++it)
 			{
 				values.push_back(it.value());
-				rows.push_back(it.row());
+				rows.push_back(PetscInt(it.row()));
 			}
 
-			int num_rows = rows.size();
+			PetscInt num_rows = PetscInt(rows.size());
 
 			MatSetValues(A, num_rows, rows.data(), 1, &k, values.data(), INSERT_VALUES);
 
