@@ -9,6 +9,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "save.h"
 #include "memory_usage.h"
+#include "routines.h"
 
 struct Model
 {
@@ -21,9 +22,15 @@ struct Model
 	double period;
 	sp_mtx hamiltonian;
 	sp_mtx hamiltonian_drv;
+	ds_mtx hamiltonian_dense;
+	ds_mtx hamiltonian_drv_dense;
 	std::vector<sp_mtx> dissipators;
+	std::vector<ds_mtx> dissipators_dense;
 	sp_mtx lindbladian;
 	sp_mtx lindbladian_drv;
+	ds_mtx lindbladian_dense;
+	ds_mtx lindbladian_drv_dense;
+	std::vector<sp_mtx> f_basis;
 	Eigen::MatrixXcd rho;
 	std::chrono::high_resolution_clock::time_point start_run_time;
 	std::vector<double> run_times;
@@ -122,18 +129,43 @@ struct Model
 	void save_data() const
 	{
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
+		const auto type = ini.Get("global", "type", "None");
 		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
 		const auto save_hamiltonians = ini.GetBoolean("global", "save_hamiltonians", false);
 		const auto save_dissipators = ini.GetBoolean("global", "save_dissipators", false);
 		const auto save_lindbladians = ini.GetBoolean("global", "save_lindbladians", false);
+		const auto save_f_basis = ini.GetBoolean("global", "save_f_basis", false);
 
 		if (debug_dump || save_hamiltonians)
 		{
 			auto fn = "hamiltonian_mtx" + suffix;
-			save_sp_mtx(hamiltonian, fn, save_precision);
+			if (type == "sparse")
+			{
+				save_sp_mtx(hamiltonian, fn, save_precision);
+			}
+			else if (type == "dense")
+			{
+				save_dense_mtx(hamiltonian_dense, fn, save_precision);
+			}
+			else
+			{
+				throw_error("Unsupported type");
+			}
+			
 
 			fn = "hamiltonian_drv_mtx" + suffix;
-			save_sp_mtx(hamiltonian_drv, fn, save_precision);
+			if (type == "sparse")
+			{
+				save_sp_mtx(hamiltonian_drv, fn, save_precision);
+			}
+			else if (type == "dense")
+			{
+				save_dense_mtx(hamiltonian_drv_dense, fn, save_precision);
+			}
+			else
+			{
+				throw_error("Unsupported type");
+			}
 		}
 
 		if (debug_dump || save_dissipators)
@@ -141,17 +173,101 @@ struct Model
 			for (auto diss_id = 0; diss_id < dissipators.size(); diss_id++)
 			{
 				auto fn = fmt::format("diss_{:d}_mtx", diss_id) + suffix;
-				save_sp_mtx(dissipators[diss_id], fn, save_precision);
+				if (type == "sparse")
+				{
+					save_sp_mtx(dissipators[diss_id], fn, save_precision);
+				}
+				else if (type == "dense")
+				{
+					save_dense_mtx(dissipators_dense[diss_id], fn, save_precision);
+				}
+				else
+				{
+					throw_error("Unsupported type");
+				}
 			}
 		}
 
 		if (debug_dump || save_lindbladians)
 		{
 			auto fn = "lindbladian_mtx" + suffix;
-			save_sp_mtx(lindbladian, fn, save_precision);
+			if (type == "sparse")
+			{
+				save_sp_mtx(lindbladian, fn, save_precision);
+			}
+			else if (type == "dense")
+			{
+				save_dense_mtx(lindbladian_dense, fn, save_precision);
+			}
+			else
+			{
+				throw_error("Unsupported type");
+			}
 
 			fn = "lindbladian_drv_mtx" + suffix;
-			save_sp_mtx(lindbladian_drv, fn, save_precision);
+			if (type == "sparse")
+			{
+				save_sp_mtx(lindbladian_drv, fn, save_precision);
+			}
+			else if (type == "dense")
+			{
+				save_dense_mtx(lindbladian_drv_dense, fn, save_precision);
+			}
+			else
+			{
+				throw_error("Unsupported type");
+			}
+		}
+
+		if (debug_dump || save_f_basis)
+		{
+			for (auto fb_id = 0; fb_id < f_basis.size(); fb_id++)
+			{
+				auto fn = fmt::format("f_basis_{:d}_mtx", fb_id) + suffix;
+				save_sp_mtx(f_basis[fb_id], fn, save_precision);
+			}
+		}
+	}
+
+	void init_f_basis()
+	{
+		const int n = sys_size;
+
+		sp_mtx tmp = get_sp_eye(n) / std::sqrt(double(n));
+		f_basis.push_back(tmp);
+
+		double sqrt_2 = std::sqrt(2.0);
+
+		for (auto i = 0; i < n; i++)
+		{
+			for (auto j = i + 1; j < n; j++)
+			{
+				std::vector<triplet> vec_triplets(2);
+				vec_triplets[0] = triplet(i, j, std::complex<double>(1.0 / sqrt_2, 0.0));
+				vec_triplets[1] = triplet(j, i, std::complex<double>(1.0 / sqrt_2, 0.0));
+				tmp = sp_mtx(n, n);
+				tmp.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+				f_basis.push_back(tmp);
+
+				vec_triplets[0] = triplet(i, j, std::complex<double>(0.0, -1.0 / sqrt_2));
+				vec_triplets[1] = triplet(j, i, std::complex<double>(0.0, 1.0 / sqrt_2));
+				tmp = sp_mtx(n, n);
+				tmp.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+				f_basis.push_back(tmp);
+			}
+		}
+
+		for (auto i = 0; i < n - 1; i++)
+		{
+			std::vector<triplet> vec_triplets(i + 2);
+			for (auto j = 0; j < i + 1; j++)
+			{
+				vec_triplets[j] = triplet(j, j, std::complex<double>(1.0 / std::sqrt(double((i + 1) * (i + 2))), 0.0));
+			}
+			vec_triplets[i + 1] = triplet(i + 1, i + 1, std::complex<double>(-double(i + 1) / std::sqrt(double((i + 1) * (i + 2))), 0.0));
+			tmp = sp_mtx(n, n);
+			tmp.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+			f_basis.push_back(tmp);
 		}
 	}
 };

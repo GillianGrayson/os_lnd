@@ -1,7 +1,7 @@
 #pragma once
 #include "mbl_model_strategy.h"
 #include "dimer_model_strategy.h"
-
+#include "super_decoh_model_strategy.h"
 
 struct ModelProcessor
 {
@@ -17,6 +17,10 @@ struct ModelProcessor
 		else if (system == "dimer")
 		{
 			model_strategy = std::make_unique<DimerModelStrategy>();
+		}
+		else if (system == "super_decoh")
+		{
+			model_strategy = std::make_unique<SuperDecohModelStrategy>();
 		}
 		else
 		{

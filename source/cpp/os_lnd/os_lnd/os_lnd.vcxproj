@@ -193,6 +193,7 @@
     <ClInclude Include="odeint_init.h" />
     <ClInclude Include="routines.h" />
     <ClInclude Include="save.h" />
+    <ClInclude Include="super_decoh_model_strategy.h" />
     <ClInclude Include="system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
