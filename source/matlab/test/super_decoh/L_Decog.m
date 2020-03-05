@@ -2,6 +2,8 @@ N = 10; % system size
 p = 0.1; % parameter for partial decoherence 0<=p<=1
 seed = 10;
 
+check_f_basis = 0;
+
 cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
 suffix = sprintf('N(%d)_p(%0.4f)_seed(%d)', N, p, seed);
 
@@ -31,20 +33,22 @@ for i=1:N-1
     F{k}=sparse([1:i+1],[1:i+1],temp/sqrt(i*(i+1)),N,N);
 end
 
-diffs = zeros(size(F, 2), 1);
-for fb_id = 1:size(F, 2)
-    test_mtx = zeros(N, N);
-    fn_cpp = sprintf('%s/f_basis_%d_mtx_%s.txt', cpp_path, fb_id - 1, suffix);
-    cpp_data = importdata(fn_cpp);
-    for str_id = 1 : size(cpp_data, 1)
-        str = string(cpp_data(str_id));
-        data = sscanf(str, '%d\t%d\t(%e,%e)', 4);
-        test_mtx(data(1) + 1, data(2) + 1) = data(3) + 1i * data(4);
+if (check_f_basis)
+    diffs = zeros(size(F, 2), 1);
+    for fb_id = 1:size(F, 2)
+        test_mtx = zeros(N, N);
+        fn_cpp = sprintf('%s/f_basis_%d_mtx_%s.txt', cpp_path, fb_id - 1, suffix);
+        cpp_data = importdata(fn_cpp);
+        for str_id = 1 : size(cpp_data, 1)
+            str = string(cpp_data(str_id));
+            data = sscanf(str, '%d\t%d\t(%e,%e)', 4);
+            test_mtx(data(1) + 1, data(2) + 1) = data(3) + 1i * data(4);
+        end
+        curr_f = full(F{fb_id});
+        diffs(fb_id) = norm(curr_f - test_mtx);
     end
-    curr_f = full(F{fb_id});
-    diffs(fb_id) = norm(curr_f - test_mtx);
+    max_fb_diff = max(diffs)
 end
-max_fb_diff = max(diffs)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                 G
@@ -73,6 +77,8 @@ for k1=1:M
     end
 end
 
+FF1 = Reshuf(P,N,N2);
+
 L = zeros(N2);
 fn_cpp = sprintf('%s/lindbladian_mtx_%s.txt', cpp_path, suffix);
 cpp_data = importdata(fn_cpp);
@@ -86,10 +92,47 @@ for st_id_1 = 1:N2
 end
 L = transpose(L); % Eigen is column-major by default. Here we have row-major dense matrix
 
-lnd_diff = norm(P - L)
 
+L_gamma = zeros(N2);
+for i = 1:N
+    for j = 1:N
+        for k = 1:N
+            for m = 1:N
+                origin_row = (i - 1) * N + k;
+                origin_col = (j - 1) * N + m;
+                
+                gamma_row = (i - 1) * N + j;
+                gamma_col = (k - 1) * N + m;
+                
+                L_gamma(gamma_row, gamma_col) = P(origin_row, origin_col);
+            end
+        end
+    end
+end
 
-FF1 = Reshuf(P,N,N2); % transfroming the map into a state (non-normalized)
+P_gamma = zeros(N2);
+for i = 1:N
+    for j = 1:N
+        for k = 1:N
+            for m = 1:N
+                origin_row = (i - 1) * N + k;
+                origin_col = (j - 1) * N + m;
+                
+                gamma_row = (m - 1) * N + k;
+                gamma_col = (j - 1) * N + i;
+                
+                P_gamma(gamma_row, gamma_col) = P(origin_row, origin_col);
+            end
+        end
+    end
+end
+
+lnd_diff = norm(L_gamma - L)
+lnd_diff = norm(P_gamma - FF1)
+
+lnd_diff = norm(P_gamma - L_gamma)
+
+ % transfroming the map into a state (non-normalized)
 FF = Decoh(FF1,N2,p); % decoherence acting on the state
 trace(FF1*FF1)
 trace(FF1)

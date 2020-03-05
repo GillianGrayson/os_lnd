@@ -89,6 +89,9 @@ struct SuperDecohModelStrategy : ModelStrategy
 				model.lindbladian_dense += tmp;
 			}
 		}
+
+		ds_mtx reshuffle = get_reshuffle_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		model.lindbladian_dense = reshuffle;
 	}
 
 	void setup_lindbladian_drv(Model& model) override

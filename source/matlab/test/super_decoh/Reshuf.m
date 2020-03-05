@@ -19,12 +19,6 @@ for s = 1:M
         t=ii+N*(kk-1);
         tp=jj+N*(ll-1);
         y(s,sp)=rho(t,tp);
-        
-        
-      %  t = ii + N*(kk - 1);
-      %  tp = jj + N*(ll - 1);
-       
-    % y(s,sp) = rho(t,tp);
     end
 end
 
