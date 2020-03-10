@@ -129,7 +129,6 @@ struct Model
 	void save_data() const
 	{
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
-		const auto type = ini.Get("global", "type", "None");
 		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
 		const auto save_hamiltonians = ini.GetBoolean("global", "save_hamiltonians", false);
 		const auto save_dissipators = ini.GetBoolean("global", "save_dissipators", false);
@@ -138,33 +137,36 @@ struct Model
 
 		if (debug_dump || save_hamiltonians)
 		{
+			auto is_sp_empty = (hamiltonian.outerSize() > 0) ? false : true;
+			auto is_ds_empty = (hamiltonian_dense.outerSize() > 0) ? false : true;
 			auto fn = "hamiltonian_mtx" + suffix;
-			if (type == "sparse")
+			if (!is_sp_empty)
 			{
 				save_sp_mtx(hamiltonian, fn, save_precision);
 			}
-			else if (type == "dense")
+			else if (is_sp_empty and !is_ds_empty)
 			{
 				save_dense_mtx(hamiltonian_dense, fn, save_precision);
 			}
 			else
 			{
-				throw_error("Unsupported type");
+				log_message("Can't save: Empty hamiltonian");
 			}
-			
 
+			is_sp_empty = (hamiltonian_drv.outerSize() > 0) ? false : true;
+			is_ds_empty = (hamiltonian_drv_dense.outerSize() > 0) ? false : true;
 			fn = "hamiltonian_drv_mtx" + suffix;
-			if (type == "sparse")
+			if (!is_sp_empty)
 			{
 				save_sp_mtx(hamiltonian_drv, fn, save_precision);
 			}
-			else if (type == "dense")
+			else if (is_sp_empty and !is_ds_empty)
 			{
 				save_dense_mtx(hamiltonian_drv_dense, fn, save_precision);
 			}
 			else
 			{
-				throw_error("Unsupported type");
+				log_message("Can't save: Empty hamiltonian_drv");
 			}
 		}
 
@@ -172,50 +174,58 @@ struct Model
 		{
 			for (auto diss_id = 0; diss_id < dissipators.size(); diss_id++)
 			{
+				auto is_sp_empty = (dissipators[diss_id].outerSize() > 0) ? false : true;
+				auto is_ds_empty = (dissipators_dense[diss_id].outerSize() > 0) ? false : true;
 				auto fn = fmt::format("diss_{:d}_mtx", diss_id) + suffix;
-				if (type == "sparse")
+				if (!is_sp_empty)
 				{
 					save_sp_mtx(dissipators[diss_id], fn, save_precision);
 				}
-				else if (type == "dense")
+				else if (is_sp_empty and !is_ds_empty)
 				{
 					save_dense_mtx(dissipators_dense[diss_id], fn, save_precision);
 				}
 				else
 				{
-					throw_error("Unsupported type");
+					log_message("Can't save: Empty dissipators");
 				}
 			}
 		}
 
 		if (debug_dump || save_lindbladians)
 		{
+			auto is_sp_empty = (lindbladian.outerSize() > 0) ? false : true;
+			auto is_ds_empty = (lindbladian_dense.outerSize() > 0) ? false : true;
 			auto fn = "lindbladian_mtx" + suffix;
-			if (type == "sparse")
+
+			if (!is_sp_empty)
 			{
 				save_sp_mtx(lindbladian, fn, save_precision);
 			}
-			else if (type == "dense")
+			else if (is_sp_empty and !is_ds_empty)
 			{
 				save_dense_mtx(lindbladian_dense, fn, save_precision);
 			}
 			else
 			{
-				throw_error("Unsupported type");
+				log_message("Can't save: Empty lindbladian");
 			}
-
+			
+			is_sp_empty = (lindbladian_drv.outerSize() > 0) ? false : true;
+			is_ds_empty = (lindbladian_drv_dense.outerSize() > 0) ? false : true;
 			fn = "lindbladian_drv_mtx" + suffix;
-			if (type == "sparse")
+
+			if (!is_sp_empty)
 			{
 				save_sp_mtx(lindbladian_drv, fn, save_precision);
 			}
-			else if (type == "dense")
+			else if (is_sp_empty and !is_ds_empty)
 			{
 				save_dense_mtx(lindbladian_drv_dense, fn, save_precision);
 			}
 			else
 			{
-				throw_error("Unsupported type");
+				log_message("Can't save: Empty lindbladian_drv");
 			}
 		}
 

@@ -64,6 +64,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
+		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
 		
 		model.init_f_basis();
 
@@ -92,6 +93,21 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		ds_mtx reshuffle = get_reshuffle_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
 		model.lindbladian_dense = reshuffle;
+
+		decoherence(model, model.lindbladian_dense);
+
+		ds_mtx A = get_addition_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+
+		if (debug_dump || save_A)
+		{
+			auto fn = "A_mtx" + model.suffix;
+			save_dense_mtx(A, fn, save_precision);
+		}
+
+		reshuffle = get_reshuffle_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		model.lindbladian_dense = reshuffle;
+
+		model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(A, eye) + Eigen::kroneckerProduct(eye, A.transpose()));		
 	}
 
 	void setup_lindbladian_drv(Model& model) override
@@ -141,5 +157,16 @@ struct SuperDecohModelStrategy : ModelStrategy
 		G = double(model.sys_size) * G / trace.real();
 
 		return G;
+	}
+
+	static void decoherence(Model& model, ds_mtx& mtx)
+	{
+		const auto p = model.ini.GetReal("super_decoh", "p", 0.0);
+
+		Eigen::VectorXcd diag_vec(mtx.diagonal());
+
+		mtx = p * mtx;
+
+		mtx.diagonal() = diag_vec;
 	}
 };

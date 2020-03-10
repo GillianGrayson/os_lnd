@@ -3,6 +3,7 @@
 #include "odeint_rk4_run_strategy.h"
 #include "smallest_eigen_vector_run_strategy.h"
 #include "all_evals_run_strategy.h"
+#include "eigen_dense_run_strategy.h"
 #include "mock_run_strategy.h"
 
 struct RunProcessor
@@ -27,6 +28,10 @@ struct RunProcessor
 		else if (task == "all_evals")
 		{
 			run_strategy = std::make_unique<AllEvalsRunStrategy>();
+		}
+		else if (task == "eigen_dense")
+		{
+			run_strategy = std::make_unique<EigenDenseRunStrategy>();
 		}
 		else if (task == "mock")
 		{

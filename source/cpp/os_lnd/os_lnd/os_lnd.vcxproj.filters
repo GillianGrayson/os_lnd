@@ -128,5 +128,8 @@
     <ClInclude Include="super_decoh_model_strategy.h">
       <Filter>Header Files\strategy\model</Filter>
     </ClInclude>
+    <ClInclude Include="eigen_dense_run_strategy.h">
+      <Filter>Header Files\strategy\run</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

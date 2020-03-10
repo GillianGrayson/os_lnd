@@ -2,9 +2,9 @@ N = 10; % system size
 p = 0.1; % parameter for partial decoherence 0<=p<=1
 seed = 10;
 
-check_f_basis = 0;
+check_f_basis = 1;
 
-cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
+cpp_path = 'D:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
 suffix = sprintf('N(%d)_p(%0.4f)_seed(%d)', N, p, seed);
 
 N2 = N^2;
@@ -77,7 +77,38 @@ for k1=1:M
     end
 end
 
-FF1 = Reshuf(P,N,N2);
+FF1 = reshuffle(P, N);
+FF = Decoh(FF1, N2, p);
+P = reshuffle(FF, N);
+
+AA=zeros(N);
+
+for s1 = 1:N
+    for s2 = 1:N
+        for s3 = 1:N
+            w1=s3+N*(s1-1);
+            w2=s3+N*(s2-1);
+            AA(s1,s2)=AA(s1,s2)+ FF(w1,w2);
+        end
+    end
+end
+
+A = zeros(N);
+fn_cpp = sprintf('%s/A_mtx_%s.txt', cpp_path, suffix);
+cpp_data = importdata(fn_cpp);
+for st_id_1 = 1:N
+    for st_id_2 = 1:N
+        str_id = (st_id_1 - 1) * N + st_id_2;
+        str = string(cpp_data(str_id));
+        data = sscanf(str, '(%e,%e)', 2);
+        A(st_id_1, st_id_2) = data(1) + 1i * data(2);
+    end
+end
+A = transpose(A); % Eigen is column-major by default.Here we have row-major dense matrix
+
+a_diff = norm(AA - A)
+
+P = P - (1/2)*(kron(AA,eye(N)) + kron(eye(N),transpose(AA)));
 
 L = zeros(N2);
 fn_cpp = sprintf('%s/lindbladian_mtx_%s.txt', cpp_path, suffix);
@@ -92,75 +123,13 @@ for st_id_1 = 1:N2
 end
 L = transpose(L); % Eigen is column-major by default. Here we have row-major dense matrix
 
+lindbladian_diff = norm(L - P)
 
-L_gamma = zeros(N2);
-for i = 1:N
-    for j = 1:N
-        for k = 1:N
-            for m = 1:N
-                origin_row = (i - 1) * N + k;
-                origin_col = (j - 1) * N + m;
-                
-                gamma_row = (i - 1) * N + j;
-                gamma_col = (k - 1) * N + m;
-                
-                L_gamma(gamma_row, gamma_col) = P(origin_row, origin_col);
-            end
-        end
-    end
-end
-
-P_gamma = zeros(N2);
-for i = 1:N
-    for j = 1:N
-        for k = 1:N
-            for m = 1:N
-                origin_row = (i - 1) * N + k;
-                origin_col = (j - 1) * N + m;
-                
-                gamma_row = (m - 1) * N + k;
-                gamma_col = (j - 1) * N + i;
-                
-                P_gamma(gamma_row, gamma_col) = P(origin_row, origin_col);
-            end
-        end
-    end
-end
-
-lnd_diff = norm(L_gamma - L)
-lnd_diff = norm(P_gamma - FF1)
-
-lnd_diff = norm(P_gamma - L_gamma)
-
- % transfroming the map into a state (non-normalized)
-FF = Decoh(FF1,N2,p); % decoherence acting on the state
-trace(FF1*FF1)
-trace(FF1)
-P = Reshuf(FF,N,N2); % transforming the state back into a map
-
-% caclualting an addition to the map in order to get the Lindbladian
-AA=zeros(N);
-
-for s1 = 1:N
-    for s2 = 1:N
-        for s3 = 1:N
-            w1=s3+N*(s1-1);
-            w2=s3+N*(s2-1);
-            AA(s1,s2)=AA(s1,s2)+ FF(w1,w2);
-        end
-    end
-end
-
-trace(AA)
-
-%%%%% generation of Lindblad operator L %%%%%%
-P = P - (1/2)*(kron(AA,eye(N)) + kron(eye(N),transpose(AA)));
-%%%%%
-% end of formaing Lindbladian
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         Lindbladian evals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% END OF SUPERDECOHERENCE ACTION
-
-
 %Step 5
 [Evec,D] = eig(P); % eigenvalues of Lindblad superoperator
 Eval = diag(D);
