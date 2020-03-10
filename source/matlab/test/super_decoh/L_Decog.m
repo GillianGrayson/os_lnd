@@ -4,7 +4,7 @@ seed = 10;
 
 check_f_basis = 1;
 
-cpp_path = 'D:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
+cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
 suffix = sprintf('N(%d)_p(%0.4f)_seed(%d)', N, p, seed);
 
 N2 = N^2;
@@ -129,65 +129,51 @@ lindbladian_diff = norm(L - P)
 %                         Lindbladian evals
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%% END OF SUPERDECOHERENCE ACTION
-%Step 5
 [Evec,D] = eig(P); % eigenvalues of Lindblad superoperator
 Eval = diag(D);
+[C, min_eval_id] = min(abs(Eval));
+Eval = sort(Eval, 'ComparisonMethod', 'abs');
 
-Eval_re = real(Eval);
-Eval_im = imag(Eval);
-
-fname1 = strcat('eval_L_re_',str1,'.txt');
-fname2 = strcat('eval_L_im_',str1,'.txt');
-
-hull = fopen('sobstvenie_znacheniya.dat','w');
-%fprintf(hull,'%8.4f %16.12f\n',DT.Points(C,1),DT.Points(C,2));
-for nn=2:M
-    sx=N*real(Eval(nn)+1);
-    sy=N*imag(Eval(nn));
-    fprintf(hull,'%12.8f %16.12f\n',sx,sy);
+evals = zeros(N2, 1);
+fn_cpp = sprintf('%s/lindbladian_evals_%s.txt', cpp_path, suffix);
+cpp_data = importdata(fn_cpp);
+for str_id = 1:N2
+        str = string(cpp_data(str_id));
+        data = sscanf(str, '(%e,%e)', 2);
+        evals(str_id) = data(1) + 1i * data(2);
 end
+evals = sort(evals, 'ComparisonMethod', 'abs');
 
+evals_diff = norm(abs(evals) - abs(Eval))
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                Rho
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-%write evals of L-matrix to txt-files
-save(fname1, 'Eval_re', '-ASCII', '-double')
-save(fname2, 'Eval_im', '-ASCII', '-double')
-
-%{
-rho = zeros(N,N);
+rho_ml = zeros(N,N);
 
 for i=1:N
     for j=1:N
-        rho(j,i) = Evec((i-1)*N+j,1);
+        rho_ml(i,j) = Evec((i-1)*N+j,min_eval_id);
     end
 end
 
-rho = rho/trace(rho);
+rho_ml = rho_ml/trace(rho_ml);
 
-rho_re = real(rho);
-rho_im = imag(rho);
-%}
+rho = zeros(N);
+fn_cpp = sprintf('%s/rho_mtx_%s.txt', cpp_path, suffix);
+cpp_data = importdata(fn_cpp);
+for st_id_1 = 1:N
+    for st_id_2 = 1:N
+        str_id = (st_id_1 - 1) * N + st_id_2;
+        str = string(cpp_data(str_id));
+        data = sscanf(str, '(%e,%e)', 2);
+        rho(st_id_1, st_id_2) = data(1) + 1i * data(2);
+    end
+end
+rho = transpose(rho); % Eigen is column-major by default.Here we have row-major dense matrix
 
-%{
-fname3 = strcat('rho_re_',str1,'.txt');
-fname4 = strcat('rho_im_',str1,'.txt');
-
-%write rho-matrix to txt-files
-save(fname3, 'rho_re', '-ASCII', '-double')
-save(fname4, 'rho_im', '-ASCII', '-double')
+rho_diff = norm(rho_ml - rho)
 
 
-rhoEval = eig(rho);
-rhoEval_re = real(rhoEval);
 
-fname5 = strcat('rhoEval_',str1,'.txt');
-%write eigenvalues of rho-matrix to txt-files
-save(fname5, 'rhoEval_re', '-ASCII', '-double')
-%}
-
-%quit()
