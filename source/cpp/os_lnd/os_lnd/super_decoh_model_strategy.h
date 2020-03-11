@@ -82,12 +82,22 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		auto M = model.sys_size * model.sys_size - 1;
 		sp_mtx tmp;
+
+		std::vector<sp_mtx> lefts(M);
+		std::vector<sp_mtx> rights(M);
+		for (auto k1 = 0; k1 < M; k1++)
+		{
+			lefts[k1] = Eigen::kroneckerProduct(model.f_basis[k1 + 1], eye);
+			rights[k1] = Eigen::kroneckerProduct(eye, model.f_basis[k1 + 1].transpose());
+		}
+		model.log_message("Lefts and rights created");
+		model.log_time_duration();
+		
 		for (auto k1 = 0; k1 < M; k1++)
 		{
 			for (auto k2 = 0; k2 < M; k2++)
 			{
-				tmp = G(k1, k2) * Eigen::kroneckerProduct(model.f_basis[k1 + 1], eye) * Eigen::kroneckerProduct(eye, model.f_basis[k2 + 1].transpose());
-				model.lindbladian_dense += tmp;
+				model.lindbladian_dense += G(k1, k2) * lefts[k1] * rights[k2];
 			}
 		}
 
@@ -136,6 +146,9 @@ struct SuperDecohModelStrategy : ModelStrategy
 		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, M * M, disorder_real, 0.0, 1.0);
 		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, M * M, disorder_imag, 0.0, 1.0);
 
+		model.log_message("G random complete");
+		model.log_time_duration();
+
 		ds_mtx X(M, M);
 
 		for (auto st_id_1 = 0; st_id_1 < M; st_id_1++)
@@ -155,6 +168,9 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const auto trace = G.trace();
 
 		G = double(model.sys_size) * G / trace.real();
+
+		model.log_message("G generation complete");
+		model.log_time_duration();
 
 		return G;
 	}

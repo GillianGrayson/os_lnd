@@ -246,6 +246,9 @@ struct Model
 		sp_mtx tmp = get_sp_eye(n) / std::sqrt(double(n));
 		f_basis.push_back(tmp);
 
+		log_message("F-basis init...");
+		log_time_duration();
+
 		double sqrt_2 = std::sqrt(2.0);
 
 		for (auto i = 0; i < n; i++)
@@ -279,5 +282,8 @@ struct Model
 			tmp.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
 			f_basis.push_back(tmp);
 		}
+		
+		log_message("F-basis init complete");
+		log_time_duration();
 	}
 };

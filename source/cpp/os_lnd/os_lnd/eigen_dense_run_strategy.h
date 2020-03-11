@@ -43,7 +43,7 @@ struct EigenDenseRunStrategy : RunStrategy
 		auto min_eval_index = std::distance(abs_evals.begin(), std::min_element(abs_evals.begin(), abs_evals.end()));
 
 		model.log_message(fmt::format("min_eval_index = {:d}", min_eval_index));
-		model.log_message(fmt::format("min_eval_index = {:16e} + {:16e} i", lind_evals[min_eval_index].real(), lind_evals[min_eval_index].imag()));
+		model.log_message(fmt::format("min_eval = {:16e} + {:16e} i", lind_evals[min_eval_index].real(), lind_evals[min_eval_index].imag()));
 
 		Eigen::MatrixXcd rho_vec = es.eigenvectors().col(min_eval_index);
 
