@@ -1,4 +1,4 @@
-def get_global_config(system, task):
+def get_global_config(system, task, name_precision=4):
     config_list = []
     config_list.append('[global]')
     config_list.append('logger_type = console')
@@ -10,7 +10,7 @@ def get_global_config(system, task):
     config_list.append('save_dissipators = false')
     config_list.append('save_lindbladians = false')
     config_list.append('save_f_basis = false')
-    config_list.append('name_precision = 4')
+    config_list.append('name_precision = ' + str(name_precision))
     config_list.append('save_precision = 16')
     return config_list
 

@@ -4,7 +4,7 @@ from common.config import get_global_config
 import os.path
 import numpy as np
 
-segment = 'medium'
+segment = 'short'
 
 system = 'super_decoh'
 
@@ -27,7 +27,7 @@ for N in Ns:
 
             local_path += \
                 '/N_' + str(N) + \
-                '/p_' + str(p) + \
+                '/p_' + str(format(p, '0.10f')) + \
                 '/seed_' + str(seed)
 
             data_path = get_root() + local_path
@@ -41,7 +41,7 @@ for N in Ns:
             config_list.append('save_G = false')
             config_list.append('save_A = false')
 
-            config_list += get_global_config(system, task)
+            config_list += get_global_config(system, task, 10)
 
             pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
@@ -50,7 +50,7 @@ for N in Ns:
 
             fn_suffix = \
                 'N(' + str(N) + ')_' + \
-                'p('  + str(format(p, '0.4f')) + ')_' + \
+                'p('  + str(format(p, '0.10f')) + ')_' + \
                 'seed(' + str(seed) + ')'
 
             fn_test = data_path + '/rho_mtx_' + fn_suffix + '.txt'
