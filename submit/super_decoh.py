@@ -11,8 +11,8 @@ system = 'super_decoh'
 task = 'eigen_dense'
 
 Ns = list(np.linspace(50, 50, 1, dtype=int))
-ps = [0.00001, 0.0001, 0.001, 0.01, 0.1]
-seeds = list(np.linspace(1, 1, 1, dtype=int))
+ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
+seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
 
 for N in Ns:
