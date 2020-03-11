@@ -1,7 +1,7 @@
 clear all;
 
 N = 50;
-p = 0.2;
+p = 0.01;
 seed = 10;
 
 pdf2d.x_num_bins = 101;
@@ -29,7 +29,7 @@ evals = sort(evals, 'ComparisonMethod', 'abs');
 evals = evals(2:end);
 evals = N * (real(evals) + 1) + 1i * N * imag(evals);
 
-abs_imag_parts = abs(imag(evals));
+abs_imag_parts = sort(abs(imag(evals)), 'descend');
 pdf1dlog.x_bin_s = min(abs_imag_parts);
 pdf1dlog.x_bin_f = max(abs_imag_parts);
 pdf1dlog = oqs_pdf_1d_log_setup(pdf1dlog);
