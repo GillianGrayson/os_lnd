@@ -39,11 +39,6 @@ fig = oqs_pdf_1d_log_plot(pdf1dlog);
 fn_fig = sprintf('abs_imag_parts_%s', suffix);
 oqs_save_fig(fig, fn_fig)
 
-pdf1dlog.x_bin_s = min(abs_imag_parts);
-pdf1dlog.x_bin_f = max(abs_imag_parts);
-
-
-
 pdf2d.x_bin_s = min(real(evals));
 pdf2d.x_bin_f = max(real(evals));
 pdf2d.y_bin_s = min(imag(evals));
