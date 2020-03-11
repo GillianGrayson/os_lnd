@@ -6,6 +6,10 @@ def get_global_config(system, task):
     config_list.append('system = ' + system)
     config_list.append('task = ' + task)
     config_list.append('debug_dump = false')
+    config_list.append('save_hamiltonians = false')
+    config_list.append('save_dissipators = false')
+    config_list.append('save_lindbladians = false')
+    config_list.append('save_f_basis = false')
     config_list.append('name_precision = 4')
     config_list.append('save_precision = 16')
     return config_list

@@ -1,7 +1,7 @@
 clear all;
 
 N = 50;
-p = 0.01;
+p = 0.2;
 seed = 10;
 
 pdf2d.x_num_bins = 101;
