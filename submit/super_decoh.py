@@ -4,14 +4,15 @@ from common.config import get_global_config
 import os.path
 import numpy as np
 
-segment = 'short'
+segment = 'medium'
 
 system = 'super_decoh'
 
 task = 'eigen_dense'
 
-Ns = list(np.linspace(50, 50, 1, dtype=int))
-ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
+Ns = list(np.linspace(100, 100, 1, dtype=int))
+#ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
+ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
 seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
 
