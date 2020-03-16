@@ -16,6 +16,11 @@ for p = ps
     pdf2d.x_label = '$Re(\lambda)$';
     pdf2d.y_label = '$Im(\lambda)$';
     
+    pdf2d_paased.x_num_bins = 101;
+    pdf2d_paased.y_num_bins = 101;
+    pdf2d_paased.x_label = '$Re(\lambda)$';
+    pdf2d_paased.y_label = '$Im(\lambda)$';
+    
     pdf1dlog.x_num_bins = 101;
     pdf1dlog.x_label = '$Im(\lambda)$';
     
@@ -28,7 +33,8 @@ for p = ps
     N2 = N * N;
     
     all_evals = zeros((N2 - 1) * size(seeds, 1), 1);
-    passed_evals = zeros(size(seeds, 1), 1);
+    all_evals_passed = [];
+    num_passed_evals = zeros(size(seeds, 1), 1);
     
     for seed_id = 1:size(seeds, 1)
         seed = seeds(seed_id);
@@ -45,15 +51,16 @@ for p = ps
         end
         evals = sort(evals, 'ComparisonMethod', 'abs');
         evals = evals(2:end);
-        evals = N * (real(evals) + 1) + 1i * N * imag(evals);
+        evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
         
         curr_passed_evals = 0;
         for e_id = 1:size(evals, 1)
             if abs(imag(evals(e_id))) > evals_lim
                 curr_passed_evals = curr_passed_evals + 1;
+                all_evals_passed = vertcat(all_evals_passed, evals(e_id));
             end
         end
-        passed_evals(seed_id) = curr_passed_evals;
+        num_passed_evals(seed_id) = curr_passed_evals;
         
         curr_passed_evals = curr_passed_evals;
         
@@ -64,10 +71,10 @@ for p = ps
     
     suffix = sprintf('N(%d)_p(%0.10f)_numSeeds(%d)_logLim(%0.4f)', N, p, size(seeds, 1), log10(evals_lim));
     
-    passed.x_bin_s = min(passed_evals);
-    passed.x_bin_f = max(passed_evals);
+    passed.x_bin_s = min(num_passed_evals);
+    passed.x_bin_f = max(num_passed_evals);
     passed = oqs_pdf_1d_setup(passed);
-    passed = oqs_pdf_1d_update(passed, passed_evals);
+    passed = oqs_pdf_1d_update(passed, num_passed_evals);
     passed = oqs_pdf_1d_release(passed);
     fig = oqs_pdf_1d_plot(passed);
     fn_fig = sprintf('%s/passed_evals_%s', figures_path, suffix);
@@ -95,6 +102,18 @@ for p = ps
     pdf2d = oqs_pdf_2d_release(pdf2d);
     fig = oqs_pdf_2d_plot(pdf2d);
     fn_fig = sprintf('%s/lindbladian_evals_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_paased.x_bin_s = min(real(all_evals_passed));
+    pdf2d_paased.x_bin_f = max(real(all_evals_passed));
+    pdf2d_paased.y_bin_s = min(imag(all_evals_passed));
+    pdf2d_paased.y_bin_f = max(imag(all_evals_passed));
+    pdf2d_paased = oqs_pdf_2d_setup(pdf2d_paased);
+    data2d = horzcat(real(all_evals_passed), imag(all_evals_passed));
+    pdf2d_paased = oqs_pdf_2d_update(pdf2d_paased, data2d);
+    pdf2d_paased = oqs_pdf_2d_release(pdf2d_paased);
+    fig = oqs_pdf_2d_plot(pdf2d_paased);
+    fn_fig = sprintf('%s/lindbladian_evals_passed_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
 end
