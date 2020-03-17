@@ -10,7 +10,7 @@ system = 'super_decoh'
 
 task = 'eigen_dense'
 
-reshuffle_type = 0
+reshuffle_type = 1
 Ns = list(np.linspace(10, 100, 91, dtype=int))
 #ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
 #ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
