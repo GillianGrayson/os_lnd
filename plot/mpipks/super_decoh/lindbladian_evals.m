@@ -104,10 +104,10 @@ for p = ps
     fn_fig = sprintf('%s/lindbladian_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
-    pdf2d_paased.x_bin_s = min(real(all_evals_passed));
-    pdf2d_paased.x_bin_f = max(real(all_evals_passed));
-    pdf2d_paased.y_bin_s = min(imag(all_evals_passed));
-    pdf2d_paased.y_bin_f = max(imag(all_evals_passed));
+    pdf2d_paased.x_bin_s = -4;
+    pdf2d_paased.x_bin_f = 4;
+    pdf2d_paased.y_bin_s = -1;
+    pdf2d_paased.y_bin_f = 1;
     pdf2d_paased = oqs_pdf_2d_setup(pdf2d_paased);
     data2d = horzcat(real(all_evals_passed), imag(all_evals_passed));
     pdf2d_paased = oqs_pdf_2d_update(pdf2d_paased, data2d);
