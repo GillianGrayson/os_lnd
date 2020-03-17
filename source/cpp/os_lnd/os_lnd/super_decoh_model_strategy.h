@@ -25,7 +25,10 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 
+		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
+
 		std::stringstream fns;
+		fns << "_reshuffle(" << reshuffle_type << ")";
 		fns << "_N(" << N << ")";
 		fns << "_p(" << std::setprecision(name_precision) << std::fixed << p << ")";
 		fns << "_seed(" << seed << ")";
@@ -65,6 +68,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
 		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
+		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
 		
 		model.init_f_basis();
 
@@ -100,8 +104,20 @@ struct SuperDecohModelStrategy : ModelStrategy
 				model.lindbladian_dense += G(k1, k2) * lefts[k1] * rights[k2];
 			}
 		}
-
-		ds_mtx reshuffle = get_reshuffle_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		
+		ds_mtx reshuffle;
+		if (reshuffle_type == 1)
+		{
+			reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		}
+		else if (reshuffle_type == 0)
+		{
+			reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		}
+		else
+		{
+			model.throw_error("Unsupported reshuffle_type");
+		}
 		model.lindbladian_dense = reshuffle;
 
 		decoherence(model, model.lindbladian_dense);
@@ -114,7 +130,18 @@ struct SuperDecohModelStrategy : ModelStrategy
 			save_dense_mtx(A, fn, save_precision);
 		}
 
-		reshuffle = get_reshuffle_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		if (reshuffle_type == 1)
+		{
+			reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		}
+		else if (reshuffle_type == 0)
+		{
+			reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+		}
+		else
+		{
+			model.throw_error("Unsupported reshuffle_type");
+		}
 		model.lindbladian_dense = reshuffle;
 
 		model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(A, eye) + Eigen::kroneckerProduct(eye, A.transpose()));		

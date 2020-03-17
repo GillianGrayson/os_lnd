@@ -1,14 +1,14 @@
 clear all;
 
+reshuffle_type = 0; % 0 - original, 1 - mine
 N = 10; % system size
-p = 0.1; % parameter for partial decoherence 0<=p<=1
+p = 1e-10; % parameter for partial decoherence 0<=p<=1
 seed = 1;
 
 check_f_basis = 1;
-reshufle_type = 0; % 0 - original, 1 - mine
 
 cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
-suffix = sprintf('N(%d)_p(%0.4f)_seed(%d)', N, p, seed);
+suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshuffle_type, N, p, seed);
 
 N2 = N^2;
 M = N^2-1; % auxiliary size
@@ -80,7 +80,7 @@ for k1=1:M
     end
 end
 
-if reshufle_type == 1
+if reshuffle_type == 1
     FF1 = reshuffle(P, N);
     FF = Decoh(FF1, N2, p);
     P = reshuffle(FF, N);
@@ -188,7 +188,7 @@ rho_diff = norm(rho_ml - rho)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                               passed_evals
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-passed_evals = [];
+evec_sub_diag_norms = zeros(N2,1);
 for evec_id = 1:N2
     evec_mtx = zeros(N,N);
     
@@ -199,12 +199,21 @@ for evec_id = 1:N2
     end
     
     test_mtx = evec_mtx - diag(diag(evec_mtx));
-    if norm(test_mtx) < 1e-12
-        passed_evals = vertcat(passed_evals, Eval(evec_id));
-    end
-
+    evec_sub_diag_norms(evec_id) = norm(test_mtx, 'fro');
 end
+evec_sub_diag_norms = sort(evec_sub_diag_norms);
 
-ololo = 1;
+evec_sub_diag_norms_cpp = zeros(N2, 1);
+fn_cpp = sprintf('%s/evec_sub_diag_norms_%s.txt', cpp_path, suffix);
+cpp_data = importdata(fn_cpp);
+for str_id = 1:N2
+    str = string(cpp_data(str_id));
+    data = sscanf(str, '%e', 1);
+    evec_sub_diag_norms_cpp(str_id) = data(1);
+end
+evec_sub_diag_norms_cpp = sort(evec_sub_diag_norms_cpp);
+
+evec_sub_diag_norms_diff = norm(evec_sub_diag_norms - evec_sub_diag_norms_cpp)
+
 
 

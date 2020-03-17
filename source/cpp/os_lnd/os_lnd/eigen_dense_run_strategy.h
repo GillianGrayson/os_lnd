@@ -34,6 +34,18 @@ struct EigenDenseRunStrategy : RunStrategy
 		auto fn = "lindbladian_evals" + model.suffix;
 		save_vector(lind_evals, fn, save_precision);
 
+		Eigen::VectorXcd zeros = Eigen::VectorXcd::Zero(model.sys_size);
+		std::vector<double> evec_sub_diag_norms(model.sys_size * model.sys_size);
+		for (auto i = 0; i < model.sys_size * model.sys_size; i++)
+		{
+			Eigen::MatrixXcd evec = es.eigenvectors().col(i);
+			Eigen::MatrixXcd evec_mtx = Eigen::Map<Eigen::MatrixXcd>(evec.data(), model.sys_size, model.sys_size);
+			evec_mtx.diagonal() = zeros;
+			evec_sub_diag_norms[i] = evec_mtx.norm();
+		}
+		fn = "evec_sub_diag_norms" + model.suffix;
+		save_vector(evec_sub_diag_norms, fn, save_precision);
+
 		std::vector<double> abs_evals(model.sys_size * model.sys_size);
 		for (auto i = 0; i < model.sys_size * model.sys_size; i++)
 		{
@@ -62,5 +74,6 @@ struct EigenDenseRunStrategy : RunStrategy
 		std::vector<std::complex<double>> rho_evals(rho_evals_tmp.data(), rho_evals_tmp.data() + rho_evals_tmp.rows() * rho_evals_tmp.cols());
 		fn = "rho_evals" + model.suffix;
 		save_vector(rho_evals, fn, save_precision);
+
 	}
 };
