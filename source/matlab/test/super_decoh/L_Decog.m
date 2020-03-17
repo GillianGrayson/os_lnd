@@ -1,8 +1,11 @@
+clear all;
+
 N = 10; % system size
 p = 0.1; % parameter for partial decoherence 0<=p<=1
-seed = 10;
+seed = 1;
 
 check_f_basis = 1;
+reshufle_type = 0; % 0 - original, 1 - mine
 
 cpp_path = 'E:/Work/os_lnd/source/cpp/os_lnd/os_lnd';
 suffix = sprintf('N(%d)_p(%0.4f)_seed(%d)', N, p, seed);
@@ -77,9 +80,15 @@ for k1=1:M
     end
 end
 
-FF1 = reshuffle(P, N);
-FF = Decoh(FF1, N2, p);
-P = reshuffle(FF, N);
+if reshufle_type == 1
+    FF1 = reshuffle(P, N);
+    FF = Decoh(FF1, N2, p);
+    P = reshuffle(FF, N);
+else
+    FF1 = Reshuf(P,N,N2);
+    FF = Decoh(FF1,N2,p);
+    P = Reshuf(FF,N,N2);
+end
 
 AA=zeros(N);
 
@@ -132,7 +141,7 @@ lindbladian_diff = norm(L - P)
 [Evec,D] = eig(P); % eigenvalues of Lindblad superoperator
 Eval = diag(D);
 [C, min_eval_id] = min(abs(Eval));
-Eval = sort(Eval, 'ComparisonMethod', 'abs');
+Eval_sorted = sort(Eval, 'ComparisonMethod', 'abs');
 
 evals = zeros(N2, 1);
 fn_cpp = sprintf('%s/lindbladian_evals_%s.txt', cpp_path, suffix);
@@ -142,9 +151,9 @@ for str_id = 1:N2
         data = sscanf(str, '(%e,%e)', 2);
         evals(str_id) = data(1) + 1i * data(2);
 end
-evals = sort(evals, 'ComparisonMethod', 'abs');
+evals_sorted = sort(evals, 'ComparisonMethod', 'abs');
 
-evals_diff = norm(abs(evals) - abs(Eval))
+evals_diff = norm(abs(evals_sorted) - abs(Eval_sorted))
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                Rho
@@ -175,5 +184,27 @@ rho = transpose(rho); % Eigen is column-major by default.Here we have row-major 
 
 rho_diff = norm(rho_ml - rho)
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               passed_evals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+passed_evals = [];
+for evec_id = 1:N2
+    evec_mtx = zeros(N,N);
+    
+    for i=1:N
+        for j=1:N
+            evec_mtx(i,j) = Evec((i-1)*N+j, evec_id);
+        end
+    end
+    
+    test_mtx = evec_mtx - diag(diag(evec_mtx));
+    if norm(test_mtx) < 1e-12
+        passed_evals = vertcat(passed_evals, Eval(evec_id));
+    end
+
+end
+
+ololo = 1;
 
 
