@@ -11,11 +11,11 @@ system = 'super_decoh'
 task = 'eigen_dense'
 
 reshuffle_type = 1
-Ns = list(np.linspace(10, 100, 91, dtype=int))
+Ns = list(np.linspace(100, 100, 1, dtype=int))
 #ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
 #ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
-ps = [1e-10]
-seeds = list(np.linspace(1, 100, 100, dtype=int))
+ps = [0, 0.01, 0.1, 0.3, 0.5, 0.8]
+seeds = list(np.linspace(1, 1000, 1000, dtype=int))
 num_seeds = 1000000
 
 for N in Ns:

@@ -1,10 +1,10 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-reshufle_type = 0;
+reshufle_type = 1;
 N = 100;
 ps = logspace(-10, 0, 11);
-seeds = linspace(1, 100, 100)';
+seeds = linspace(1, 1000, 1000)';
 
 evals_lim = 1e-8;
 
