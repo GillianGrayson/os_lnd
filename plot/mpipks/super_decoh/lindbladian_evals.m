@@ -1,9 +1,9 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-reshufle_type = 1;
+reshufle_type = 0;
 N = 100;
-ps = logspace(-10, 0, 11);
+ps = [0.0, 0.01, 0.1, 0.3, 0.5, 0.8];
 seeds = linspace(1, 1000, 1000)';
 
 evals_lim = 1e-8;
@@ -12,26 +12,21 @@ for p = ps
 
 	fprintf('p = %0.16e\n', p);
     
-    pdf2d.x_num_bins = 501;
-    pdf2d.y_num_bins = 501;
+    pdf2d.x_num_bins = 201;
+    pdf2d.y_num_bins = 201;
     pdf2d.x_label = '$Re(\lambda)$';
     pdf2d.y_label = '$Im(\lambda)$';
     
-    pdf2d_passed.x_num_bins = 101;
-    pdf2d_passed.y_num_bins = 101;
-    pdf2d_passed.x_label = '$Re(\lambda)$';
-    pdf2d_passed.y_label = '$Im(\lambda)$';
-    
-    pdf2d_rem.x_num_bins = 101;
-    pdf2d_rem.y_num_bins = 101;
+    pdf2d_rem.x_num_bins = 201;
+    pdf2d_rem.y_num_bins = 201;
     pdf2d_rem.x_label = '$Re(\lambda)$';
     pdf2d_rem.y_label = '$Im(\lambda)$';
     
-    pdf1dlog.x_num_bins = 101;
+    pdf1dlog.x_num_bins = 201;
     pdf1dlog.x_label = '$Im(\lambda)$';
     
-    passed.x_num_bins = 5;
-    passed.x_label = 'passed evals';
+    num_passed_evals.x_num_bins = 5;
+    num_passed_evals.x_label = 'passed evals';
 
     evec_sub_diag_norms.x_num_bins = 50;
     evec_sub_diag_norms.x_label = '$\log_{10}norm$';
@@ -42,13 +37,12 @@ for p = ps
     N2 = N * N;
     
     all_evals = zeros((N2 - 1) * size(seeds, 1), 1);
-    all_evals_passed = [];
     all_evals_rem = zeros((N - 1) * size(seeds, 1), 1);
     all_num_passed_evals = zeros(size(seeds, 1), 1);
     all_evec_sub_diag_norms = zeros((N - 1) * size(seeds, 1), 1);
     
     for seed_id = 1:size(seeds, 1)
-        seed = seeds(seed_id);
+        seed = seeds(seed_id)
         
         suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
         
@@ -77,18 +71,12 @@ for p = ps
         evecs_norms = evecs_norms(order);
         evals = evals(2:end);
         evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
-        if evecs_norms(1) > 1e-10
-            fprintf('Warning! First evec norm = %0.16e\n', evecs_norms(1));
-        end
         evecs_norms = evecs_norms(2:end);
         
         [evecs_norms, order] = sort(evecs_norms);
-        if evecs_norms(N-1) > 1e-4
-            fprintf('Warning! Last evec norm = %0.16e\n', evecs_norms(N-1));
-        end
         
         for e_id = 1:N-1
-            curr_norm = log10(evecs_norms(e_id));
+            curr_norm = log10(evecs_norms(e_id) + 1e-16);
             all_evec_sub_diag_norms((seed_id - 1) * (N - 1) + e_id) = curr_norm;
             curr_eval = evals(order(e_id));
             all_evals_rem((seed_id - 1) * (N - 1) + e_id) = curr_eval;
@@ -98,7 +86,6 @@ for p = ps
         for e_id = 1:size(evals, 1)
             if abs(imag(evals(e_id))) > evals_lim
                 curr_num_passed_evals = curr_num_passed_evals + 1;
-                all_evals_passed = vertcat(all_evals_passed, evals(e_id));
             end
         end
         all_num_passed_evals(seed_id) = curr_num_passed_evals;
@@ -110,12 +97,12 @@ for p = ps
     
     suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)_logLim(%0.4f)', reshufle_type, N, p, size(seeds, 1), log10(evals_lim));
     
-    passed.x_bin_s = min(all_num_passed_evals);
-    passed.x_bin_f = max(all_num_passed_evals);
-    passed = oqs_pdf_1d_setup(passed);
-    passed = oqs_pdf_1d_update(passed, all_num_passed_evals);
-    passed = oqs_pdf_1d_release(passed);
-    fig = oqs_pdf_1d_plot(passed);
+    num_passed_evals.x_bin_s = min(all_num_passed_evals);
+    num_passed_evals.x_bin_f = max(all_num_passed_evals);
+    num_passed_evals = oqs_pdf_1d_setup(num_passed_evals);
+    num_passed_evals = oqs_pdf_1d_update(num_passed_evals, all_num_passed_evals);
+    num_passed_evals = oqs_pdf_1d_release(num_passed_evals);
+    fig = oqs_pdf_1d_plot(num_passed_evals);
     fn_fig = sprintf('%s/passed_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
@@ -143,18 +130,6 @@ for p = ps
     fn_fig = sprintf('%s/lindbladian_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
-    pdf2d_passed.x_bin_s = -4;
-    pdf2d_passed.x_bin_f = 4;
-    pdf2d_passed.y_bin_s = -1;
-    pdf2d_passed.y_bin_f = 1;
-    pdf2d_passed = oqs_pdf_2d_setup(pdf2d_passed);
-    data2d = horzcat(real(all_evals_passed), imag(all_evals_passed));
-    pdf2d_passed = oqs_pdf_2d_update(pdf2d_passed, data2d);
-    pdf2d_passed = oqs_pdf_2d_release(pdf2d_passed);
-    fig = oqs_pdf_2d_plot(pdf2d_passed);
-    fn_fig = sprintf('%s/lindbladian_evals_passed_%s', figures_path, suffix);
-    oqs_save_fig(fig, fn_fig)
-    
     pdf2d_rem.x_bin_s = -4;
     pdf2d_rem.x_bin_f = 4;
     pdf2d_rem.y_bin_s = -1;
@@ -167,8 +142,8 @@ for p = ps
     fn_fig = sprintf('%s/lindbladian_evals_rem_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
-    evec_sub_diag_norms.x_bin_s = min(all_evec_sub_diag_norms);
-    evec_sub_diag_norms.x_bin_f = max(all_evec_sub_diag_norms);
+    evec_sub_diag_norms.x_bin_s = min(all_evec_sub_diag_norms) - 1e-16;
+    evec_sub_diag_norms.x_bin_f = max(all_evec_sub_diag_norms) + 1e-16;
     evec_sub_diag_norms = oqs_pdf_1d_setup(evec_sub_diag_norms);
     evec_sub_diag_norms = oqs_pdf_1d_update(evec_sub_diag_norms, all_evec_sub_diag_norms);
     evec_sub_diag_norms = oqs_pdf_1d_release(evec_sub_diag_norms);
