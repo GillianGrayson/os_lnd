@@ -3,8 +3,8 @@ addpath('../../../source/matlab/lib')
 
 reshufle_type = 1;
 N = 100;
-ps = [0.01]';
-scaling_types = [1]';
+ps = [0.2]';
+scaling_types = [3]';
 seeds = linspace(1, 1000, 1000)';
 
 evals_lim = 1e-8;
@@ -127,8 +127,8 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/abs_imag_parts_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
-    pdf2d.x_bin_s = -4;
-    pdf2d.x_bin_f = 4;
+    pdf2d.x_bin_s = -2;
+    pdf2d.x_bin_f = 2;
     pdf2d.y_bin_s = -1;
     pdf2d.y_bin_f = 1;
     pdf2d = oqs_pdf_2d_setup(pdf2d);
