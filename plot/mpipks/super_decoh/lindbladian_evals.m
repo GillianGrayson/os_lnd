@@ -1,14 +1,17 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-reshufle_type = 0;
+reshufle_type = 1;
 N = 100;
-ps = [0.0, 0.01, 0.1, 0.3, 0.5, 0.8];
+ps = [0.01]';
+scaling_types = [1]';
 seeds = linspace(1, 1000, 1000)';
 
 evals_lim = 1e-8;
 
-for p = ps
+for p_id = 1:size(ps, 1)
+
+	p = ps(p_id);
 
 	fprintf('p = %0.16e\n', p);
     
@@ -70,8 +73,14 @@ for p = ps
         [evals, order] = sort(evals, 'ComparisonMethod', 'abs');
         evecs_norms = evecs_norms(order);
         evals = evals(2:end);
-        evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
-        evecs_norms = evecs_norms(2:end);
+		if (scaling_types(p_id) == 1)
+			evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
+        elseif (scaling_types(p_id) == 3)
+			evals = N / p * (real(evals) + 1) + 1i * N / p * imag(evals);
+		else
+			evals = N * (real(evals) + 1) + 1i * N * imag(evals);
+		end
+		evecs_norms = evecs_norms(2:end);
         
         [evecs_norms, order] = sort(evecs_norms);
         
@@ -118,10 +127,10 @@ for p = ps
     fn_fig = sprintf('%s/abs_imag_parts_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
-    pdf2d.x_bin_s = min(real(all_evals));
-    pdf2d.x_bin_f = max(real(all_evals));
-    pdf2d.y_bin_s = min(imag(all_evals));
-    pdf2d.y_bin_f = max(imag(all_evals));
+    pdf2d.x_bin_s = -4;
+    pdf2d.x_bin_f = 4;
+    pdf2d.y_bin_s = -1;
+    pdf2d.y_bin_f = 1;
     pdf2d = oqs_pdf_2d_setup(pdf2d);
     data2d = horzcat(real(all_evals), imag(all_evals));
     pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
