@@ -2,11 +2,13 @@ clear all;
 addpath('../../../source/matlab/lib')
 
 ps = vertcat([0.01]', [0.1:0.02:0.3]', [0.5, 0.8, 1.0]');
-type = 'classical';
+type = 'quantum';
 
 reshufle_type = 1;
 N = 100;
 seeds = linspace(1, 1000, 1000)';
+
+num_hits = 3*N;
 
 theory_data = importdata(sprintf('borderline_%s.dat', type'));
 
@@ -65,7 +67,7 @@ for p_id = 1:size(ps, 1)
         all_evals(s_id : f_id) = evals;
     end
      
-    suffix = sprintf('type(%s)_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', type, reshufle_type, N, p, size(seeds, 1));
+    suffix = sprintf('numHits(%d)_type(%s)_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', num_hits, type, reshufle_type, N, p, size(seeds, 1));
     
     pdf2d.x_bin_s = min(real(all_evals)) - 1e-16;
     pdf2d.x_bin_f = max(real(all_evals)) + 1e-16;
@@ -89,13 +91,15 @@ for p_id = 1:size(ps, 1)
     
     hold all;
     plot(pgont);
-    
+	
+	limit_pdf = num_hits / (size(all_evals, 1) * pdf2d.x_bin_shift * pdf2d.y_bin_shift)
+	
     xr1 = pdf2d.x_bin_centers';
     yr1 = zeros(size(pdf2d.x_bin_centers, 2), 1);
     for x_id = 1:size(pdf2d.x_bin_centers, 2)
         is_found = 0;
         for y_id = 1:size(pdf2d.y_bin_centers, 2)
-            if pdf2d.pdf(x_id, y_id) > 0.0
+            if pdf2d.pdf(x_id, y_id) > limit_pdf
                 yr1(x_id) = pdf2d.y_bin_centers(y_id);
                 is_found = 1;
                 break;
@@ -126,12 +130,14 @@ for p_id = 1:size(ps, 1)
 
     xor_areas(p_id) = area(polyout);
 	xor_areas_normed(p_id) = xor_areas(p_id) / area(polyunion);
+	
+	fprintf('xor_areas_normed = %0.16e\n', xor_areas_normed(p_id));
     
     oqs_save_fig(fig, fn_fig);
     
 end
 
-suffix = sprintf('type(%s)_reshuffle(%d)_N(%d)_p(var)_numSeeds(%d)', type, reshufle_type, N, size(seeds, 1));
+suffix = sprintf('numHits(%d)_type(%s)_reshuffle(%d)_N(%d)_p(var)_numSeeds(%d)', num_hits, type, reshufle_type, N, size(seeds, 1));
 
 fig = figure;
 plot(ps, xor_areas, 'LineWidth', 2)
