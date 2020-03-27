@@ -8,28 +8,28 @@ segment = 'short'
 
 system = 'mbl'
 
-task = 'all_evals'
+task = 'odeint_rk4'
 
 is_continue = 'false'
 step = 0.01
 total_num_periods = 500
 
 current_num_periods = 500
-current_num_time_points = 501
+current_num_time_points = 2
 
 max_num_iterations = 100000
 tolerance = 1e-10
 
-num_spins = 10
+num_spins = 12
 
-seeds = list(np.linspace(10, 10, 1, dtype=int))
+seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
 
 diss_type = 1
 diss_phase = 0.0
 diss_gamma = 0.1
 
-Ws = list(np.linspace(1.0, 20.0, 20, dtype=float))
+Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
 U = 1.0
 J = 1.0
 
