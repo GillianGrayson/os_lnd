@@ -175,13 +175,22 @@ struct Model
 			for (auto diss_id = 0; diss_id < dissipators.size(); diss_id++)
 			{
 				auto is_sp_empty = (dissipators[diss_id].outerSize() > 0) ? false : true;
-				auto is_ds_empty = (dissipators_dense[diss_id].outerSize() > 0) ? false : true;
 				auto fn = fmt::format("diss_{:d}_mtx", diss_id) + suffix;
 				if (!is_sp_empty)
 				{
 					save_sp_mtx(dissipators[diss_id], fn, save_precision);
 				}
-				else if (is_sp_empty and !is_ds_empty)
+				else
+				{
+					log_message("Can't save: Empty dissipators");
+				}
+			}
+
+			for (auto diss_id = 0; diss_id < dissipators_dense.size(); diss_id++)
+			{
+				auto is_ds_empty = (dissipators_dense[diss_id].outerSize() > 0) ? false : true;
+				auto fn = fmt::format("diss_{:d}_mtx", diss_id) + suffix;
+				if (!is_ds_empty)
 				{
 					save_dense_mtx(dissipators_dense[diss_id], fn, save_precision);
 				}

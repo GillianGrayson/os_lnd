@@ -17,7 +17,7 @@ struct RunProcessor
 		{
 			run_strategy = std::make_unique<LURunStrategy>();
 		}
-		else if (task == "odeint_rk4")
+		else if (task == "odeint")
 		{
 			run_strategy = std::make_unique<ODEIntRK4RunStrategy>();
 		}
