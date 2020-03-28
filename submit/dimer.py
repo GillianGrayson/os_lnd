@@ -40,7 +40,7 @@ for N in Ns:
         print("N = " + str(N))
         print("U = " + str(U))
         local_path = '/' + system
-        if task == 'odeint_rk4':
+        if task == 'odeint':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
             local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
@@ -71,7 +71,7 @@ for N in Ns:
         config_list.append('drv_phase = ' + str(drv_phase))
 
         config_list += get_global_config(system, task)
-        if task == 'odeint_rk4':
+        if task == 'odeint':
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)

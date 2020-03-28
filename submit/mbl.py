@@ -8,7 +8,7 @@ segment = 'medium'
 
 system = 'mbl'
 
-task = 'odeint'
+task = 'eigen_dense'
 
 is_continue = 'false'
 step = 0.01
@@ -20,7 +20,7 @@ current_num_time_points = 2
 max_num_iterations = 100000
 tolerance = 1e-10
 
-num_spins = 12
+num_spins = 8
 
 seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
@@ -29,7 +29,7 @@ diss_type = 1
 diss_phase = 0.0
 diss_gamma = 0.1
 
-Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
+Ws = list(np.linspace(1.0, 20.0, 20, dtype=float))
 U = 1.0
 J = 1.0
 
@@ -39,7 +39,7 @@ for seed in seeds:
         print("seed = " + str(seed))
         print("W = " + str(W))
         local_path = '/' + system
-        if task == 'odeint_rk4':
+        if task == 'odeint':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
             local_path += '/' + task + '_' + str(max_num_iterations) + '_' + str(format(tolerance, '0.2e'))
@@ -69,7 +69,7 @@ for seed in seeds:
         config_list.append('J = ' + str(J))
 
         config_list += get_global_config(system, task, save_rho='false')
-        if task == 'odeint_rk4':
+        if task == 'odeint':
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
             config_list += get_smallest_eigen_vector_config(max_num_iterations, tolerance)
