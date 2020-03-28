@@ -68,7 +68,7 @@ for seed in seeds:
         config_list.append('U = ' + str(U))
         config_list.append('J = ' + str(J))
 
-        config_list += get_global_config(system, task)
+        config_list += get_global_config(system, task, save_rho='false')
         if task == 'odeint_rk4':
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':
