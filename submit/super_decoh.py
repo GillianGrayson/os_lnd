@@ -11,11 +11,12 @@ system = 'super_decoh'
 task = 'eigen_dense'
 
 reshuffle_type = 1
-Ns = list(np.linspace(100, 100, 1, dtype=int))
+Ns = list(np.linspace(150, 150, 1, dtype=int))
 #ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
 #ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
-ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
-seeds = list(np.linspace(1, 1000, 1000, dtype=int))
+#ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
+ps = [0.1]
+seeds = list(np.linspace(1, 10, 10, dtype=int))
 num_seeds = 1000000
 
 for N in Ns:
@@ -46,7 +47,7 @@ for N in Ns:
             config_list.append('save_G = false')
             config_list.append('save_A = false')
 
-            config_list += get_global_config(system, task, 10)
+            config_list += get_global_config(system, task, name_precision=10)
 
             pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
