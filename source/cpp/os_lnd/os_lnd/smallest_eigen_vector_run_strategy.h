@@ -14,6 +14,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const int max_num_iterations = model.ini.GetInteger("smallest_eigen_vector", "max_num_iterations", 0);
 		const double tolerance = model.ini.GetReal("smallest_eigen_vector", "tolerance", 0.0);
+		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
 		
         Mat            A;           /* problem matrix */
 		MatInfo		   mat_info;
@@ -151,8 +152,10 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		model.log_message(fmt::format("trace_rho = {:16e} + {:16e} i", trace_rho.real(), trace_rho.imag()));
 
 		auto fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
-		
+		if (save_rho)
+		{
+			save_dense_mtx(model.rho, fn, save_precision);
+		}
 		model.log_time_duration();
 		model.log_memory_usage();
 

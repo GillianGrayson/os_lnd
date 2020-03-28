@@ -1,4 +1,4 @@
-def get_global_config(system, task, name_precision=4):
+def get_global_config(system, task, save_rho='true', name_precision=4):
     config_list = []
     config_list.append('[global]')
     config_list.append('logger_type = console')
@@ -6,6 +6,7 @@ def get_global_config(system, task, name_precision=4):
     config_list.append('system = ' + system)
     config_list.append('task = ' + task)
     config_list.append('debug_dump = false')
+    config_list.append('save_rho = ' + save_rho)
     config_list.append('save_hamiltonians = false')
     config_list.append('save_dissipators = false')
     config_list.append('save_lindbladians = false')

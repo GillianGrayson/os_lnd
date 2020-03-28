@@ -8,6 +8,7 @@ struct LURunStrategy : RunStrategy
 	void run(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
 
 		Eigen::SparseLU<sp_mtx> solver;
 		solver.compute(model.lindbladian);
@@ -33,6 +34,9 @@ struct LURunStrategy : RunStrategy
 
 		model.rho = Eigen::Map<Eigen::MatrixXcd>(rho_vec.data(), model.sys_size, model.sys_size);
 		auto fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
+		if (save_rho)
+		{
+			save_dense_mtx(model.rho, fn, save_precision);
+		}
 	}
 };

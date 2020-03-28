@@ -95,10 +95,14 @@ struct BaseObserver
 	void dump_current_state(const double t, const double diff)
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
 
 		auto fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
-
+		if (save_rho)
+		{
+			save_dense_mtx(model.rho, fn, save_precision);
+		}
+		
 		std::vector<double> curr_dump;
 		curr_dump.push_back(t);
 		curr_dump.push_back(diff);

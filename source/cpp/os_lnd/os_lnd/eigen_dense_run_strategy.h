@@ -9,6 +9,7 @@ struct EigenDenseRunStrategy : RunStrategy
 	void run(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
 
 		auto is_sp_empty = (model.lindbladian.outerSize() > 0) ? false : true;
 		auto is_ds_empty = (model.lindbladian_dense.outerSize() > 0) ? false : true;
@@ -25,7 +26,7 @@ struct EigenDenseRunStrategy : RunStrategy
 
 		model.log_time_duration();
 		model.log_message("Lindbladians eigen...");
-		
+
 		Eigen::ComplexEigenSolver<ds_mtx> es;
 		es.compute(model.lindbladian_dense, true);
 
@@ -51,7 +52,7 @@ struct EigenDenseRunStrategy : RunStrategy
 		{
 			abs_evals[i] = std::abs(lind_evals[i]);
 		}
-		
+
 		auto min_eval_index = std::distance(abs_evals.begin(), std::min_element(abs_evals.begin(), abs_evals.end()));
 
 		model.log_message(fmt::format("min_eval_index = {:d}", min_eval_index));
@@ -67,8 +68,10 @@ struct EigenDenseRunStrategy : RunStrategy
 		model.log_message(fmt::format("trace_rho = {:16e} + {:16e} i", trace_rho.real(), trace_rho.imag()));
 		model.log_time_duration();
 		fn = "rho_mtx" + model.suffix;
-		save_dense_mtx(model.rho, fn, save_precision);
-		
+		if (save_rho)
+		{
+			save_dense_mtx(model.rho, fn, save_precision);
+		}
 		es.compute(model.rho, true);
 		auto rho_evals_tmp = es.eigenvalues();
 		std::vector<std::complex<double>> rho_evals(rho_evals_tmp.data(), rho_evals_tmp.data() + rho_evals_tmp.rows() * rho_evals_tmp.cols());
