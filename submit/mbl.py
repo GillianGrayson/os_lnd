@@ -8,7 +8,7 @@ segment = 'medium'
 
 system = 'mbl'
 
-task = 'odeint_rk4'
+task = 'odeint'
 
 is_continue = 'false'
 step = 0.01
