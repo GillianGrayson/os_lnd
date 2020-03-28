@@ -4,7 +4,7 @@ from common.config import get_global_config,  get_odeint_config, get_smallest_ei
 import os.path
 import numpy as np
 
-segment = 'short'
+segment = 'medium'
 
 system = 'mbl'
 
