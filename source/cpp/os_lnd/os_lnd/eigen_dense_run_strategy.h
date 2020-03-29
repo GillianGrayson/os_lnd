@@ -78,5 +78,10 @@ struct EigenDenseRunStrategy : RunStrategy
 		fn = "rho_evals" + model.suffix;
 		save_vector(rho_evals, fn, save_precision);
 
+		ModelProcessor model_processor;
+		model_processor.set_strategy(model);
+		model_processor.init_model(model);
+		model_processor.release_observables(model);
+		model.log_time_duration();
 	}
 };
