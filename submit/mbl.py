@@ -94,4 +94,6 @@ for seed in seeds:
                 os.system('sbatch run_short.sh ' + data_path)
             elif segment == 'medium':
                 os.system('sbatch run_medium.sh ' + data_path)
+            elif segment == 'long':
+                os.system('sbatch run_long.sh ' + data_path)
 
