@@ -7,7 +7,7 @@ figures_path = '/home/ivanchen/yusipov/os_lnd/figures/mbl';
 num_T = 500;
 step = 0.01;
 
-N = 10;
+N = 12;
 
 diss_type = 1;
 diss_phase = 0.0;
@@ -38,11 +38,12 @@ ratio_std_shade.y_label = '$r$';
 for W_id = 1:num_Ws
     
     W = Ws(W_id);
-    fprintf('W = %d\n', W);
+    fprintf('W = %0.16e\n', W);
     
     for seed_id = 1:num_seeds
+	
         seed = seeds(seed_id);
-        
+		
         suffix = sprintf('times(%0.2e_%0.2e)_ns(%d)_seed(%d)_diss(%d_%0.4f_%0.4f)_prm(%0.4f_%0.4f_%0.4f)', ...
             0, ...
 			num_T, ...
@@ -55,7 +56,7 @@ for W_id = 1:num_Ws
             U, ...
             J);
         
-        fn = sprintf('%s/odeint_rk4_%d_%0.2e/ns_%d/diss_%d_%0.4f_%0.4f/prm_%0.4f_%0.4f_%0.4f/seed_%d/ratios_%s.txt', ...
+        fn = sprintf('%s/odeint_%d_%0.2e/ns_%d/diss_%d_%0.4f_%0.4f/prm_%0.4f_%0.4f_%0.4f/seed_%d/ratios_%s.txt', ...
             path, ...
             num_T, ...
             step, ...

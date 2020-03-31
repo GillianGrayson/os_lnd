@@ -16,7 +16,7 @@ Ns = list(np.linspace(150, 150, 1, dtype=int))
 #ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
 #ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
 ps = [0.1]
-seeds = list(np.linspace(1, 10, 10, dtype=int))
+seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
 
 for N in Ns:
