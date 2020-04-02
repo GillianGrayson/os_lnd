@@ -1,16 +1,21 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-ps = vertcat([0.01]', [0.1:0.02:0.3]', [0.5, 0.8, 1.0]');
-type = 'quantum';
+%ps = vertcat([0.01]', [0.1:0.02:0.3]', [0.5, 0.8, 1.0]');
+ps = [0.1];
+type = 'source';
 
 reshufle_type = 1;
-N = 100;
-seeds = linspace(1, 1000, 1000)';
+N = 150;
+seeds = linspace(1, 100, 100)';
 
-num_hits = 3*N;
+num_hits = N/3;
 
-theory_data = importdata(sprintf('borderline_%s.dat', type'));
+if type == 'source'
+	theory_data = importdata(sprintf('borderline_classical.dat'));
+else
+	theory_data = importdata(sprintf('borderline_%s.dat', type'));
+end
 
 xor_areas = zeros(size(ps, 1), 1);
 xor_areas_normed = zeros(size(ps, 1), 1);
@@ -58,8 +63,10 @@ for p_id = 1:size(ps, 1)
 			evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
         elseif strcmp(type, 'quantum')
 			evals = N / p * (real(evals) + 1) + 1i * N / p * imag(evals);
-        else
-            evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
+        elseif strcmp(type, 'source')
+			evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
+		else
+            error('Wrong type');
         end
         
         s_id = (seed_id - 1) * (N2 - 1) + 1;

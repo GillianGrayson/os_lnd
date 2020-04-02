@@ -4,7 +4,7 @@ from common.config import get_global_config
 import os.path
 import numpy as np
 
-segment = 'medium'
+segment = 'long'
 
 system = 'super_decoh'
 
