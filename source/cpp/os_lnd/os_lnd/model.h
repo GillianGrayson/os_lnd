@@ -30,6 +30,7 @@ struct Model
 	sp_mtx lindbladian_drv;
 	ds_mtx lindbladian_dense;
 	ds_mtx lindbladian_drv_dense;
+	std::complex<double> lindbladian_evals_mult;
 	std::vector<sp_mtx> f_basis;
 	Eigen::MatrixXcd rho;
 	std::chrono::high_resolution_clock::time_point start_run_time;

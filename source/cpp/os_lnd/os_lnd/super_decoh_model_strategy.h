@@ -26,9 +26,11 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
+		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
 
 		std::stringstream fns;
 		fns << "_reshuffle(" << reshuffle_type << ")";
+		fns << "_G(" << G_type << ")";
 		fns << "_N(" << N << ")";
 		fns << "_p(" << std::setprecision(name_precision) << std::fixed << p << ")";
 		fns << "_seed(" << seed << ")";
@@ -160,6 +162,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 	{
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 		const int num_seeds = model.ini.GetInteger("super_decoh", "num_seeds", 0);
+		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
 
 		int M = model.sys_size * model.sys_size - 1;
 		
@@ -192,9 +195,21 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		ds_mtx G = X * X.adjoint();
 
-		const auto trace = G.trace();
-
-		G = double(model.sys_size) * G / trace.real();
+		if (G_type == 0)
+		{
+			const auto trace = G.trace();
+			G = double(model.sys_size) * G / trace.real();
+			model.lindbladian_evals_mult = std::complex<double>(1.0, 0.0);
+		}
+		else if (G_type == 1)
+		{
+			const auto trace = G.trace();
+			model.lindbladian_evals_mult = std::complex<double>(double(model.sys_size) / trace.real(), 0.0);
+		}
+		else
+		{
+			model.throw_error("Unsupported G_type");
+		}
 
 		model.log_message("G generation complete");
 		model.log_time_duration();

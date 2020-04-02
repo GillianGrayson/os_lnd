@@ -209,6 +209,8 @@ struct DimerModelStrategy : ModelStrategy
 				Eigen::kroneckerProduct(diss_tmp_3, eye) -
 				Eigen::kroneckerProduct(eye, diss_tmp_2));
 		}
+
+		model.lindbladian_evals_mult = std::complex<double>(1.0, 0.0);
 	}
 
 	void setup_lindbladian_drv(Model& model) override

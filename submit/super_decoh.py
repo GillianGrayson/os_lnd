@@ -10,8 +10,9 @@ system = 'super_decoh'
 
 task = 'eigen_dense'
 
+G_type = 1
 reshuffle_type = 1
-Ns = list(np.linspace(150, 150, 1, dtype=int))
+Ns = list(np.linspace(100, 100, 1, dtype=int))
 #ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
 #ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
 #ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
@@ -43,6 +44,7 @@ for N in Ns:
             config_list.append('seed = ' + str(seed))
             config_list.append('num_seeds = ' + str(num_seeds))
             config_list.append('p = ' + str(p))
+            config_list.append('G_type = ' + str(G_type))
             config_list.append('reshuffle_type = ' + str(reshuffle_type))
             config_list.append('save_G = false')
             config_list.append('save_A = false')
@@ -56,6 +58,7 @@ for N in Ns:
 
             fn_suffix = \
                 'reshuffle(' + str(reshuffle_type) + ')_' + \
+                'G(' + str(G_type) + ')_' + \
                 'N(' + str(N) + ')_' + \
                 'p('  + str(format(p, '0.10f')) + ')_' + \
                 'seed(' + str(seed) + ')'
