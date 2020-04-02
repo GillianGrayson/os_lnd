@@ -31,6 +31,7 @@ for N in Ns:
             local_path += '/' + task
 
             local_path += \
+                '/G_type_' + str(G_type) + \
                 '/reshuffle_type_' + str(reshuffle_type) + \
                 '/N_' + str(N) + \
                 '/p_' + str(format(p, '0.10f')) + \
