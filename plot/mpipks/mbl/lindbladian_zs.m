@@ -10,11 +10,12 @@ diss_type = 1;
 diss_phase = 0.0;
 diss_gamma = 0.1;
 
-Ws = linspace(1, 20, 20)';
+%Ws = linspace(1, 20, 20)';
+Ws = [1, 20]';
 U = 1.0;
 J = 1.0;
 
-seeds = linspace(1, 100, 100)';
+seeds = linspace(1, 10000, 10000)';
 
 num_Ws = size(Ws, 1);
 num_seeds = size(seeds, 1);

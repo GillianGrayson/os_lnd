@@ -8,7 +8,7 @@ segment = 'medium'
 
 system = 'mbl'
 
-task = 'odeint'
+task = 'eigen_dense'
 
 is_continue = 'false'
 step = 0.01
@@ -20,16 +20,17 @@ current_num_time_points = 2
 max_num_iterations = 100000
 tolerance = 1e-10
 
-num_spins = 12
+num_spins = 8
 
-seeds = list(np.linspace(1, 100, 100, dtype=int))
+seeds = list(np.linspace(1, 10000, 10000, dtype=int))
 num_seeds = 1000000
 
 diss_type = 1
 diss_phase = 0.0
 diss_gamma = 0.1
 
-Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
+#Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
+Ws = [1, 20]
 U = 1.0
 J = 1.0
 
@@ -87,7 +88,13 @@ for seed in seeds:
             'diss(' + str(diss_type) + '_' + str(format(diss_phase, '0.4f')) + '_' + str(format(diss_gamma, '0.4f')) + ')_' + \
             'prm(' + str(format(W, '0.4f')) + '_' + str(format(U, '0.4f')) + '_' + str(format(J, '0.4f')) + ')'
 
-        fn_test = data_path + '/ratios_times(0.00e+00_5.00e+02)_' + fn_suffix + '.txt'
+        if task == 'odeint':
+            fn_test = data_path + '/ratios_times(0.00e+00_' + str(format(total_num_periods, '0.2e')) +')_' + fn_suffix + '.txt'
+        elif task == 'eigen_dense':
+            fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
+        else:
+            fn_test = data_path + '/non_zeros_parts_' + fn_suffix + '.txt'
+
 
         if not os.path.isfile(fn_test) or is_continue == 'true':
             if segment == 'short':

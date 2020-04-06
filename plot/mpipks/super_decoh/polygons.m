@@ -6,6 +6,7 @@ ps = [0.1];
 type = 'source';
 
 reshufle_type = 1;
+G_type = 0;
 N = 150;
 seeds = linspace(1, 100, 100)';
 
@@ -43,10 +44,10 @@ for p_id = 1:size(ps, 1)
         seed = seeds(seed_id);
         fprintf('seed = %d\n', seed);
         
-        suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
+        suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
         
         evals = zeros(N2, 1);
-        fn_cpp = sprintf('%s/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, reshufle_type, N, p, seed, suffix);
+        fn_cpp = sprintf('%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, G_type, reshufle_type, N, p, seed, suffix);
         if ~isfile(fn_cpp)
 			fprintf('Warning! seed = %d\n', seed);
 		end
@@ -64,7 +65,7 @@ for p_id = 1:size(ps, 1)
         elseif strcmp(type, 'quantum')
 			evals = N / p * (real(evals) + 1) + 1i * N / p * imag(evals);
         elseif strcmp(type, 'source')
-			evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
+			evals = evals;
 		else
             error('Wrong type');
         end
@@ -124,7 +125,14 @@ for p_id = 1:size(ps, 1)
     xr = vertcat(xr1, xr2);
     yr = vertcat(yr1, yr2);
     pgonr = polyshape(xr, yr);
+	
+	contour = horzcat(xr, yr);
     
+	fn_txt = sprintf('%s/contour_%s.txt', figures_path, suffix);
+	%save(fn_txt, 'contour', '-double', '-tab');
+    %dlmwrite(sprintf('%s/contour_%s.txt', figures_path, suffix), contour);
+	writematrix(contour, fn_txt, 'Delimiter','tab')
+	
     hold all;
     plot(pgonr);
     
