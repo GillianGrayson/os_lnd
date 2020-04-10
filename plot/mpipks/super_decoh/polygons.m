@@ -2,17 +2,17 @@ clear all;
 addpath('../../../source/matlab/lib')
 
 %ps = vertcat([0.01]', [0.1:0.02:0.3]', [0.5, 0.8, 1.0]');
-ps = [0.1];
+ps = [0.1 0.5 1.0]';
 type = 'source';
 
 reshufle_type = 1;
 G_type = 0;
-N = 150;
-seeds = linspace(1, 100, 100)';
+N = 100;
+seeds = linspace(1, 1000, 1000)';
 
-num_hits = N/3;
+num_hits = N;
 
-if type == 'source'
+if strcmp(type, 'source')
 	theory_data = importdata(sprintf('borderline_classical.dat'));
 else
 	theory_data = importdata(sprintf('borderline_%s.dat', type'));
@@ -44,8 +44,12 @@ for p_id = 1:size(ps, 1)
         seed = seeds(seed_id);
         fprintf('seed = %d\n', seed);
         
-        suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
-        
+		if (N ~= 100)
+			suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
+		else	
+			suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
+        end
+		
         evals = zeros(N2, 1);
         fn_cpp = sprintf('%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, G_type, reshufle_type, N, p, seed, suffix);
         if ~isfile(fn_cpp)
