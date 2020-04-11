@@ -39,30 +39,19 @@ else
     F = reshuffle_0(rho,N); % reshuffling procedure
 end
     
-y1 = zeros(M,1);
-y2 = eye(N);
+AA=zeros(N);
+
 for s1 = 1:N
     for s2 = 1:N
-        kk=s2+(N-1)*s1;
-        y1(kk)=y2(s1,s2);
+        for s3 = 1:N
+            w1=s3+N*(s1-1);
+            w2=s3+N*(s2-1);
+            AA(s1,s2)=AA(s1,s2)+rho(w1,w2);
+        end
     end
 end
 
-FT=ctranspose(F);
-
-S=FT*y1;
-
-S2 = zeros(N,N);
-for s1 = 1:N
-    for s2 = 1:N
-        kk=s2+(N-1)*s1;
-        S2(s1,s2)=S(kk);
-    end
-end
-
-trace(S2)
-
-P = F - (1/2)*(kron(S2,eye(N)) + kron(eye(N),transpose(S2)));
+P = F - (1/2)*(kron(AA,eye(N)) + kron(eye(N),transpose(AA)));
 
 L = zeros(N2);
 fn_cpp = sprintf('%s/lindbladian_mtx_%s.txt', cpp_path, suffix);

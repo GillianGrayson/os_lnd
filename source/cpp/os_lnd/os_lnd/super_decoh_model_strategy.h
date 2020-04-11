@@ -176,37 +176,26 @@ struct SuperDecohModelStrategy : ModelStrategy
 			{
 				model.throw_error("Unsupported reshuffle_type");
 			}
+
+			ds_mtx A = ds_mtx::Zero(model.sys_size, model.sys_size);
+			for (int st_1 = 0; st_1 < model.sys_size; st_1++)
+			{
+				for (int st_2 = 0; st_2 < model.sys_size; st_2++)
+				{
+					for (int st_3 = 0; st_3 < model.sys_size; st_3++)
+					{
+						int index_1 = st_3 + model.sys_size * st_1;
+						int index_2 = st_3 + model.sys_size * st_2;
+
+						A(st_1, st_2) += G(index_1, index_2);
+					}
+				}
+			}
 			
 			ds_mtx eye = ds_mtx::Identity(model.sys_size, model.sys_size);
-			Eigen::VectorXcd eye_vec = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
-			for (int st_1 = 0; st_1 < model.sys_size; st_1++)
-			{
-				for (int st_2 = 0; st_2 < model.sys_size; st_2++)
-				{
-					int index = st_2 + (model.sys_size - 1) * (st_1 + 1);
-					eye_vec(index) = eye(st_1, st_2);
-				}
-			}
-
-			ds_mtx reshuffle_adjoint = reshuffle.adjoint();
-
-			Eigen::VectorXcd S_vec = reshuffle_adjoint * eye_vec;
-			ds_mtx S = ds_mtx::Zero(model.sys_size, model.sys_size);
-			for (int st_1 = 0; st_1 < model.sys_size; st_1++)
-			{
-				for (int st_2 = 0; st_2 < model.sys_size; st_2++)
-				{
-					int index = st_2 + (model.sys_size - 1) * (st_1 + 1);
-					S(st_1, st_2) = S_vec(index);
-				}
-			}
-
-			auto s_trace = S.trace();
-			model.log_message(fmt::format("S trace = {:.16e} +  {:.16e} i", s_trace.real(), s_trace.imag()));
-
+			
 			model.lindbladian_dense = reshuffle;
-
-			model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(S, eye) + Eigen::kroneckerProduct(eye, S.transpose()));
+			model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(A, eye) + Eigen::kroneckerProduct(eye, A.transpose()));
 		}
 		else
 		{
