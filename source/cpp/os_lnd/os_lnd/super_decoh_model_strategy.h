@@ -71,82 +71,147 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
 		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
-		
-		model.init_f_basis();
+		std::string method = model.ini.Get("super_decoh", "method", "origin");
 
-		ds_mtx G = get_G_mtx(model);
-
-		if (debug_dump || save_G)
+		if (method == "origin")
 		{
-			auto fn = "G_mtx" + model.suffix;
-			save_dense_mtx(G, fn, save_precision);
-		}
-		
-		const sp_mtx eye = get_sp_eye(model.sys_size);
+			model.init_f_basis();
 
-		model.lindbladian_dense = ds_mtx::Zero(model.sys_size * model.sys_size, model.sys_size * model.sys_size);
+			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1);
 
-		auto M = model.sys_size * model.sys_size - 1;
-		sp_mtx tmp;
-
-		std::vector<sp_mtx> lefts(M);
-		std::vector<sp_mtx> rights(M);
-		for (auto k1 = 0; k1 < M; k1++)
-		{
-			lefts[k1] = Eigen::kroneckerProduct(model.f_basis[k1 + 1], eye);
-			rights[k1] = Eigen::kroneckerProduct(eye, model.f_basis[k1 + 1].transpose());
-		}
-		model.log_message("Lefts and rights created");
-		model.log_time_duration();
-		
-		for (auto k1 = 0; k1 < M; k1++)
-		{
-			for (auto k2 = 0; k2 < M; k2++)
+			if (debug_dump || save_G)
 			{
-				model.lindbladian_dense += G(k1, k2) * lefts[k1] * rights[k2];
+				auto fn = "G_mtx" + model.suffix;
+				save_dense_mtx(G, fn, save_precision);
 			}
+
+			const sp_mtx eye = get_sp_eye(model.sys_size);
+
+			model.lindbladian_dense = ds_mtx::Zero(model.sys_size * model.sys_size, model.sys_size * model.sys_size);
+
+			auto M = model.sys_size * model.sys_size - 1;
+			sp_mtx tmp;
+
+			std::vector<sp_mtx> lefts(M);
+			std::vector<sp_mtx> rights(M);
+			for (auto k1 = 0; k1 < M; k1++)
+			{
+				lefts[k1] = Eigen::kroneckerProduct(model.f_basis[k1 + 1], eye);
+				rights[k1] = Eigen::kroneckerProduct(eye, model.f_basis[k1 + 1].transpose());
+			}
+			model.log_message("Lefts and rights created");
+			model.log_time_duration();
+
+			for (auto k1 = 0; k1 < M; k1++)
+			{
+				for (auto k2 = 0; k2 < M; k2++)
+				{
+					model.lindbladian_dense += G(k1, k2) * lefts[k1] * rights[k2];
+				}
+			}
+
+			ds_mtx reshuffle;
+			if (reshuffle_type == 1)
+			{
+				reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else if (reshuffle_type == 0)
+			{
+				reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else
+			{
+				model.throw_error("Unsupported reshuffle_type");
+			}
+			model.lindbladian_dense = reshuffle;
+
+			decoherence(model, model.lindbladian_dense);
+
+			ds_mtx A = get_addition_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+
+			if (debug_dump || save_A)
+			{
+				auto fn = "A_mtx" + model.suffix;
+				save_dense_mtx(A, fn, save_precision);
+			}
+
+			if (reshuffle_type == 1)
+			{
+				reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else if (reshuffle_type == 0)
+			{
+				reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else
+			{
+				model.throw_error("Unsupported reshuffle_type");
+			}
+			model.lindbladian_dense = reshuffle;
+
+			model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(A, eye) + Eigen::kroneckerProduct(eye, A.transpose()));
 		}
-		
-		ds_mtx reshuffle;
-		if (reshuffle_type == 1)
+		else if (method == "simple")
 		{
-			reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
-		}
-		else if (reshuffle_type == 0)
-		{
-			reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
+			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size);
+
+			if (debug_dump || save_G)
+			{
+				auto fn = "G_mtx" + model.suffix;
+				save_dense_mtx(G, fn, save_precision);
+			}
+
+			decoherence(model, G);
+
+			ds_mtx reshuffle;
+			if (reshuffle_type == 1)
+			{
+				reshuffle = get_reshuffle_ds_mtx_1(G, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else if (reshuffle_type == 0)
+			{
+				reshuffle = get_reshuffle_ds_mtx_0(G, model.sys_size * model.sys_size, model.sys_size);
+			}
+			else
+			{
+				model.throw_error("Unsupported reshuffle_type");
+			}
+			
+			ds_mtx eye = ds_mtx::Identity(model.sys_size, model.sys_size);
+			Eigen::VectorXcd eye_vec = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
+			for (int st_1 = 0; st_1 < model.sys_size; st_1++)
+			{
+				for (int st_2 = 0; st_2 < model.sys_size; st_2++)
+				{
+					int index = st_2 + (model.sys_size - 1) * (st_1 + 1);
+					eye_vec(index) = eye(st_1, st_2);
+				}
+			}
+
+			ds_mtx reshuffle_adjoint = reshuffle.adjoint();
+
+			Eigen::VectorXcd S_vec = reshuffle_adjoint * eye_vec;
+			ds_mtx S = ds_mtx::Zero(model.sys_size, model.sys_size);
+			for (int st_1 = 0; st_1 < model.sys_size; st_1++)
+			{
+				for (int st_2 = 0; st_2 < model.sys_size; st_2++)
+				{
+					int index = st_2 + (model.sys_size - 1) * (st_1 + 1);
+					S(st_1, st_2) = S_vec(index);
+				}
+			}
+
+			auto s_trace = S.trace();
+			model.log_message(fmt::format("S trace = {:.16e} +  {:.16e} i", s_trace.real(), s_trace.imag()));
+
+			model.lindbladian_dense = reshuffle;
+
+			model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(S, eye) + Eigen::kroneckerProduct(eye, S.transpose()));
 		}
 		else
 		{
-			model.throw_error("Unsupported reshuffle_type");
+			model.throw_error("Unsupported method");
 		}
-		model.lindbladian_dense = reshuffle;
-
-		decoherence(model, model.lindbladian_dense);
-
-		ds_mtx A = get_addition_ds_mtx(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
-
-		if (debug_dump || save_A)
-		{
-			auto fn = "A_mtx" + model.suffix;
-			save_dense_mtx(A, fn, save_precision);
-		}
-
-		if (reshuffle_type == 1)
-		{
-			reshuffle = get_reshuffle_ds_mtx_1(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
-		}
-		else if (reshuffle_type == 0)
-		{
-			reshuffle = get_reshuffle_ds_mtx_0(model.lindbladian_dense, model.sys_size * model.sys_size, model.sys_size);
-		}
-		else
-		{
-			model.throw_error("Unsupported reshuffle_type");
-		}
-		model.lindbladian_dense = reshuffle;
-
-		model.lindbladian_dense -= 0.5 * (Eigen::kroneckerProduct(A, eye) + Eigen::kroneckerProduct(eye, A.transpose()));		
 	}
 
 	void setup_lindbladian_drv(Model& model) override
@@ -158,13 +223,11 @@ struct SuperDecohModelStrategy : ModelStrategy
 	{
 	}
 
-	static ds_mtx get_G_mtx(Model& model)
+	static ds_mtx get_G_mtx(Model& model, size_t M)
 	{
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 		const int num_seeds = model.ini.GetInteger("super_decoh", "num_seeds", 0);
 		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
-
-		int M = model.sys_size * model.sys_size - 1;
 		
 		VSLStreamStatePtr stream;
 		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
