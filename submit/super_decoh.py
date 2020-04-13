@@ -10,6 +10,7 @@ system = 'super_decoh'
 
 task = 'eigen_dense'
 
+method = 'origin'
 G_type = 0
 reshuffle_type = 1
 Ns = list(np.linspace(150, 150, 1, dtype=int))
@@ -31,6 +32,7 @@ for N in Ns:
             local_path += '/' + task
 
             local_path += \
+                '/method_' + str(method) + \
                 '/G_type_' + str(G_type) + \
                 '/reshuffle_type_' + str(reshuffle_type) + \
                 '/N_' + str(N) + \
@@ -41,6 +43,7 @@ for N in Ns:
 
             config_list = []
             config_list.append('[super_decoh]')
+            config_list.append('method = ' + str(method))
             config_list.append('N = ' + str(N))
             config_list.append('seed = ' + str(seed))
             config_list.append('num_seeds = ' + str(num_seeds))
