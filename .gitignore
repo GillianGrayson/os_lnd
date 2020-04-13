@@ -148,3 +148,5 @@ source/cpp/os_lnd/.vs/os_lnd/v16/.suo
 *.fig
 
 *.pdf
+
+*.dat
