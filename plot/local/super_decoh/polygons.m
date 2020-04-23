@@ -13,8 +13,8 @@ y = vertcat(y1, y2);
 
 pgon1 = polyshape(x, y);
 
-figure;
-plot(pgon1);
+%figure;
+%plot(pgon1);
 
 A = area(pgon1);
 
