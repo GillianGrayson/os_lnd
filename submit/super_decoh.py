@@ -3,8 +3,9 @@ from common.file_system import get_root
 from common.config import get_global_config
 import os.path
 import numpy as np
+import math
 
-segment = 'medium'
+segment = 'short'
 
 system = 'super_decoh'
 
@@ -13,15 +14,21 @@ task = 'eigen_dense'
 method = 'simple'
 G_type = 0
 reshuffle_type = 1
-Ns = list(np.linspace(150, 150, 1, dtype=int))
+
+#Ns = list(np.linspace(200, 200, 1, dtype=int))
 #ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
-#ps = list(np.logspace(-10.0, 0.0, num=11, base=10.0))
 #ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
-ps = [0.1]
-seeds = list(np.linspace(1, 500, 500, dtype=int))
+#ps = [0.0, 0.01]
+#seeds = list(np.linspace(1, 20, 20, dtype=int))
+
+ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
+Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
+total_num_evals  = 100000
+all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
 num_seeds = 1000000
 
-for N in Ns:
+for N_id, N in enumerate(Ns):
+    seeds = all_seeds[N_id]
     for p in ps:
         for seed in seeds:
 
@@ -53,7 +60,7 @@ for N in Ns:
             config_list.append('save_G = false')
             config_list.append('save_A = false')
 
-            config_list += get_global_config(system, task, name_precision=10)
+            config_list += get_global_config(system, task, save_rho='false', name_precision=10)
 
             pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
@@ -67,7 +74,7 @@ for N in Ns:
                 'p('  + str(format(p, '0.10f')) + ')_' + \
                 'seed(' + str(seed) + ')'
 
-            fn_test = data_path + '/rho_mtx_' + fn_suffix + '.txt'
+            fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
 
             if not os.path.isfile(fn_test):
                 if segment == 'short':
