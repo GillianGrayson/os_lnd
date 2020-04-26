@@ -5,7 +5,7 @@ import os.path
 import numpy as np
 import math
 
-segment = 'short'
+segment = 'long'
 
 system = 'super_decoh'
 
@@ -21,11 +21,14 @@ reshuffle_type = 1
 #ps = [0.0, 0.01]
 #seeds = list(np.linspace(1, 20, 20, dtype=int))
 
-ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
-total_num_evals  = 100000
-all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
+#ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
+#Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
+#total_num_evals  = 100000
+#all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
 num_seeds = 1000000
+ps = [0.01]
+Ns = [200]
+all_seeds = [list(np.linspace(1, 100, 100, dtype=int))]
 
 for N_id, N in enumerate(Ns):
     seeds = all_seeds[N_id]

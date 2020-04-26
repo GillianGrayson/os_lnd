@@ -5,9 +5,9 @@ method = 'simple';
 reshufle_type = 1;
 G_type = 0;
 N = 200;
-ps = [0.1]';
-scaling_types = [3]';
-seeds = linspace(1, 2, 2)';
+ps = [0 0.01]';
+scaling_types = [1 1]';
+seeds = linspace(1, 20, 20)';
 
 evals_lim = 1e-8;
 
@@ -129,8 +129,8 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/abs_imag_parts_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
-    pdf2d.x_bin_s = -2;
-    pdf2d.x_bin_f = 2;
+    pdf2d.x_bin_s = -4;
+    pdf2d.x_bin_f = 4;
     pdf2d.y_bin_s = -1;
     pdf2d.y_bin_f = 1;
     pdf2d = oqs_pdf_2d_setup(pdf2d);
@@ -141,8 +141,8 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/lindbladian_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
-    pdf2d_rem.x_bin_s = -2;
-    pdf2d_rem.x_bin_f = 2;
+    pdf2d_rem.x_bin_s = -4;
+    pdf2d_rem.x_bin_f = 4;
     pdf2d_rem.y_bin_s = -1;
     pdf2d_rem.y_bin_f = 1;
     pdf2d_rem = oqs_pdf_2d_setup(pdf2d_rem);
