@@ -69,6 +69,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
+		const auto evals_G = model.ini.GetBoolean("super_decoh", "evals_G", false);
 		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
 		std::string method = model.ini.Get("super_decoh", "method", "origin");
@@ -83,6 +84,11 @@ struct SuperDecohModelStrategy : ModelStrategy
 			{
 				auto fn = "G_mtx" + model.suffix;
 				save_dense_mtx(G, fn, save_precision);
+			}
+
+			if (evals_G)
+			{
+				calc_evals_G(model, G);
 			}
 
 			const sp_mtx eye = get_sp_eye(model.sys_size);
@@ -159,6 +165,11 @@ struct SuperDecohModelStrategy : ModelStrategy
 			{
 				auto fn = "G_mtx" + model.suffix;
 				save_dense_mtx(G, fn, save_precision);
+			}
+
+			if (evals_G)
+			{
+				calc_evals_G(model, G);
 			}
 
 			decoherence(model, G);
@@ -278,5 +289,24 @@ struct SuperDecohModelStrategy : ModelStrategy
 		mtx = p * mtx;
 
 		mtx.diagonal() = diag_vec;
+	}
+
+	static void calc_evals_G(Model& model, ds_mtx& mtx)
+	{
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		
+		model.log_time_duration();
+		model.log_message("G eigen...");
+
+		Eigen::ComplexEigenSolver<ds_mtx> es;
+		es.compute(mtx, true);
+
+		auto evals_tmp = es.eigenvalues();
+		std::vector<std::complex<double>> evals(evals_tmp.data(), evals_tmp.data() + evals_tmp.rows() * evals_tmp.cols());
+		auto fn = "G_evals" + model.suffix;
+		save_vector(evals, fn, save_precision);
+
+		model.log_time_duration();
+		model.log_message("G eigen done");
 	}
 };

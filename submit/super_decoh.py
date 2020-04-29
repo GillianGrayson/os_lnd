@@ -61,6 +61,7 @@ for N_id, N in enumerate(Ns):
             config_list.append('G_type = ' + str(G_type))
             config_list.append('reshuffle_type = ' + str(reshuffle_type))
             config_list.append('save_G = false')
+            config_list.append('evals_G = false')
             config_list.append('save_A = false')
 
             config_list += get_global_config(system, task, save_rho='false', name_precision=10)
