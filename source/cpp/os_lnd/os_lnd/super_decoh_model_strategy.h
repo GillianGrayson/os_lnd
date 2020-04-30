@@ -69,7 +69,6 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
-		const auto evals_G = model.ini.GetBoolean("super_decoh", "evals_G", false);
 		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
 		std::string method = model.ini.Get("super_decoh", "method", "origin");
@@ -84,11 +83,6 @@ struct SuperDecohModelStrategy : ModelStrategy
 			{
 				auto fn = "G_mtx" + model.suffix;
 				save_dense_mtx(G, fn, save_precision);
-			}
-
-			if (evals_G)
-			{
-				calc_evals_G(model, G);
 			}
 
 			const sp_mtx eye = get_sp_eye(model.sys_size);
@@ -167,11 +161,6 @@ struct SuperDecohModelStrategy : ModelStrategy
 				save_dense_mtx(G, fn, save_precision);
 			}
 
-			if (evals_G)
-			{
-				calc_evals_G(model, G);
-			}
-
 			decoherence(model, G);
 
 			ds_mtx reshuffle;
@@ -228,6 +217,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 		const int num_seeds = model.ini.GetInteger("super_decoh", "num_seeds", 0);
 		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
+		const auto evals_G = model.ini.GetBoolean("super_decoh", "evals_G", false);
 		
 		VSLStreamStatePtr stream;
 		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
@@ -255,6 +245,11 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		delete[] disorder_real;
 		delete[] disorder_imag;
+
+		if (evals_G)
+		{
+			calc_evals_G(model, X);
+		}
 
 		ds_mtx G = X * X.adjoint();
 

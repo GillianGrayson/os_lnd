@@ -5,7 +5,7 @@ num = str2num(str1);
 %%%% parameters %%%%
 
 Nr = 1; % number of realizations of a random state
-N = 50;
+N = 10;
 M = N^2; % size of rho-matrix
 p = 0.8; % parameter for partial decoherence 0<=p<=1
 
