@@ -7,7 +7,7 @@ function [i_max, j_max] = oqs_find_range(x, y)
     R2_max = 0;
     for i = 1:size(x)
         for j = i:size(x)
-            [~, ~, R2_pow, ~, ~, cnt] = powerlaw_regression(x, y, x(i), x(j));
+            [~, ~, R2_pow, ~, ~, cnt] = oqs_powerlaw_regression(x, y, x(i), x(j));
             if cnt < 10
                 continue;
             end
