@@ -13,7 +13,7 @@ task = 'eigen_dense'
 
 method = 'origin'
 G_type = 1
-aux_dim = 20000
+aux_dim = 50000
 reshuffle_type = 1
 
 #Ns = list(np.linspace(200, 200, 1, dtype=int))

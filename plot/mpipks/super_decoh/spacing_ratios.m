@@ -3,7 +3,9 @@ addpath('../../../source/matlab/lib')
 
 ps = [1.0]';
 
-method = 'origin';
+name = 'G_evals';
+
+method = 'simple';
 reshufle_type = 1;
 G_type = 0;
 N = 100;
@@ -52,14 +54,10 @@ for p_id = 1:size(ps, 1)
         seed = seeds(seed_id);
         fprintf('seed = %d\n', seed);
         
-        if (N ~= 100)
-            suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
-        else
-            suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
-        end
-        
+        suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
+
         evals = zeros(N2, 1);
-        fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, reshufle_type, N, p, seed, suffix);
+        fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/%s_%s.txt', path, method, G_type, reshufle_type, N, p, seed, name, suffix);
         if ~isfile(fn_cpp)
             fprintf('Warning! seed = %d\n', seed);
         end
@@ -110,7 +108,7 @@ for p_id = 1:size(ps, 1)
         angles_all(s_id : f_id) = angles;
     end
     
-    suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', reshufle_type, N, p, size(seeds, 1));
+    suffix = sprintf('%s_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', name, reshufle_type, N, p, size(seeds, 1));
 	
 	fn_txt = sprintf('%s/zs_%s.txt', figures_path, suffix);
 	%save(fn_txt, 'zs_all', '-double', '-tab');

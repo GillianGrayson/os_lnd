@@ -1,13 +1,14 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-method = 'simple';
+method = 'origin';
 reshufle_type = 1;
-G_type = 0;
-N = 200;
-ps = [0 0.01]';
-scaling_types = [1 1]';
-seeds = linspace(1, 20, 20)';
+G_type = 1;
+aux_dim = 5000;
+N = 100;
+ps = [1]';
+scaling_types = [0]';
+seeds = linspace(1, 100, 100)';
 
 evals_lim = 1e-8;
 
@@ -47,12 +48,13 @@ for p_id = 1:size(ps, 1)
     all_evec_sub_diag_norms = zeros((N - 1) * size(seeds, 1), 1);
     
     for seed_id = 1:size(seeds, 1)
+        
         seed = seeds(seed_id)
         
-		suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
+		suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_ad(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, aux_dim, p, seed);
 		
         evals = zeros(N2, 1);
-		fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, reshufle_type, N, p, seed, suffix);
+		fn_cpp = sprintf('%s/method_%s/G_type_%d_ad_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, aux_dim, reshufle_type, N, p, seed, suffix);
         if ~isfile(fn_cpp)
 			fprintf('Warning! seed = %d\n', seed);
 		end
@@ -64,7 +66,7 @@ for p_id = 1:size(ps, 1)
         end
 		
         evecs_norms = zeros(N2, 1);
-        fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/evec_sub_diag_norms_%s.txt', path, method, G_type, reshufle_type, N, p, seed, suffix);
+        fn_cpp = sprintf('%s/method_%s/G_type_%d_ad_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/evec_sub_diag_norms_%s.txt', path, method, G_type, aux_dim, reshufle_type, N, p, seed, suffix);
         cpp_data = importdata(fn_cpp);
         for str_id = 1:N2
             str = string(cpp_data(str_id));
@@ -79,6 +81,8 @@ for p_id = 1:size(ps, 1)
 			evals = N * sqrt(N) * (real(evals) + 1) + 1i * N * sqrt(N) * imag(evals);
         elseif (scaling_types(p_id) == 3)
 			evals = N / p * (real(evals) + 1) + 1i * N / p * imag(evals);
+        elseif (scaling_types(p_id) == 0)
+            nothing_to_do_here = 0;
 		else
 			evals = N * (real(evals) + 1) + 1i * N * imag(evals);
 		end
@@ -106,7 +110,7 @@ for p_id = 1:size(ps, 1)
         all_evals(s_id : f_id) = evals;
     end
     
-    suffix = sprintf('method(%s)_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)_logLim(%0.4f)', method, reshufle_type, N, p, size(seeds, 1), log10(evals_lim));
+    suffix = sprintf('method(%s)_reshuffle(%d)_N(%d)_ad(%d)_p(%0.10f)_numSeeds(%d)_logLim(%0.4f)', method, reshufle_type, N, aux_dim, p, size(seeds, 1), log10(evals_lim));
     
     num_passed_evals.x_bin_s = min(all_num_passed_evals);
     num_passed_evals.x_bin_f = max(all_num_passed_evals);
@@ -117,7 +121,7 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/passed_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
-    suffix = sprintf('method(%s)_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', method, reshufle_type, N, p, size(seeds, 1));
+    suffix = sprintf('method(%s)_reshuffle(%d)_N(%d)_ad(%d)_p(%0.10f)_numSeeds(%d)', method, reshufle_type, N, aux_dim, p, size(seeds, 1));
     
     abs_imag_parts = sort(abs(imag(all_evals)), 'descend');
     pdf1dlog.x_bin_s = max(min(abs_imag_parts), 1e-17);
@@ -129,22 +133,61 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/abs_imag_parts_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig);
     
-    pdf2d.x_bin_s = -4;
-    pdf2d.x_bin_f = 4;
-    pdf2d.y_bin_s = -1;
-    pdf2d.y_bin_f = 1;
+    if (scaling_types(p_id) == 1)
+        pdf2d.x_bin_s = -4;
+        pdf2d.x_bin_f = 4;
+        pdf2d.y_bin_s = -1;
+        pdf2d.y_bin_f = 1;
+    elseif (scaling_types(p_id) == 3)
+        pdf2d.x_bin_s = -2;
+        pdf2d.x_bin_f = 2;
+        pdf2d.y_bin_s = -1;
+        pdf2d.y_bin_s = 1;
+    elseif (scaling_types(p_id) == 0)
+        pdf2d.x_bin_s = min(real(all_evals));
+        pdf2d.x_bin_f = max(real(all_evals));
+        pdf2d.y_bin_s = min(imag(all_evals));
+        pdf2d.y_bin_f = max(imag(all_evals));
+    end
     pdf2d = oqs_pdf_2d_setup(pdf2d);
     data2d = horzcat(real(all_evals), imag(all_evals));
     pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
     pdf2d = oqs_pdf_2d_release(pdf2d);
     fig = oqs_pdf_2d_plot(pdf2d);
+    
+    limit_pdf = 0.00000001;
+    xr1 = pdf2d.x_bin_centers';
+    yr1 = zeros(size(pdf2d.x_bin_centers, 2), 1);
+    for x_id = 1:size(pdf2d.x_bin_centers, 2)
+        is_found = 0;
+        for y_id = 1:size(pdf2d.y_bin_centers, 2)
+            if pdf2d.pdf(x_id, y_id) > limit_pdf
+                yr1(x_id) = pdf2d.y_bin_centers(y_id);
+                is_found = 1;
+                break;
+            end
+            if is_found == 0
+                yr1(x_id) = 0;
+            end
+        end
+    end
+    yr1 = smooth(yr1 * -1.0);
+    xr2 = flip(xr1);
+    yr2 = -flip(yr1);
+    xr = vertcat(xr1, xr2);
+    yr = vertcat(yr1, yr2);
+    
+    figure(fig)
+    hold all;
+    plot(xr, yr, 'LineWidth', 2)
+    
     fn_fig = sprintf('%s/lindbladian_evals_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
-    pdf2d_rem.x_bin_s = -4;
-    pdf2d_rem.x_bin_f = 4;
-    pdf2d_rem.y_bin_s = -1;
-    pdf2d_rem.y_bin_f = 1;
+    pdf2d_rem.x_bin_s = pdf2d.x_bin_s;
+    pdf2d_rem.x_bin_f = pdf2d.x_bin_f;
+    pdf2d_rem.y_bin_s = pdf2d.y_bin_s;
+    pdf2d_rem.y_bin_f = pdf2d.y_bin_s;
     pdf2d_rem = oqs_pdf_2d_setup(pdf2d_rem);
     data2d = horzcat(real(all_evals_rem), imag(all_evals_rem));
     pdf2d_rem = oqs_pdf_2d_update(pdf2d_rem, data2d);

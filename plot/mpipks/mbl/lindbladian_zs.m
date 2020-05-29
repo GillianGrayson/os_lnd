@@ -15,13 +15,13 @@ Ws = [1, 20]';
 U = 1.0;
 J = 1.0;
 
-seeds = linspace(1, 10000, 10000)';
+seeds = linspace(1, 100, 100)';
 
 num_Ws = size(Ws, 1);
 num_seeds = size(seeds, 1);
 
-x_num_bins = 301;
-y_num_bins = 301;
+x_num_bins = 101;
+y_num_bins = 101;
 x_label = '$Re(z)$';
 y_label = '$Im(z)$';
 
