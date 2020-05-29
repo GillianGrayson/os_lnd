@@ -5,14 +5,15 @@ import os.path
 import numpy as np
 import math
 
-segment = 'long'
+segment = 'medium'
 
 system = 'super_decoh'
 
 task = 'eigen_dense'
 
-method = 'simple'
-G_type = 0
+method = 'origin'
+G_type = 1
+aux_dim = 20000
 reshuffle_type = 1
 
 #Ns = list(np.linspace(200, 200, 1, dtype=int))
@@ -26,9 +27,11 @@ reshuffle_type = 1
 #total_num_evals  = 100000
 #all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
 num_seeds = 1000000
-ps = [0.01]
-Ns = [200]
+ps = [1.0]
+Ns = [100]
 all_seeds = [list(np.linspace(1, 100, 100, dtype=int))]
+
+
 
 for N_id, N in enumerate(Ns):
     seeds = all_seeds[N_id]
@@ -43,7 +46,7 @@ for N_id, N in enumerate(Ns):
 
             local_path += \
                 '/method_' + str(method) + \
-                '/G_type_' + str(G_type) + \
+                '/G_type_' + str(G_type) + '_ad_' + str(aux_dim) + \
                 '/reshuffle_type_' + str(reshuffle_type) + \
                 '/N_' + str(N) + \
                 '/p_' + str(format(p, '0.10f')) + \
@@ -55,6 +58,7 @@ for N_id, N in enumerate(Ns):
             config_list.append('[super_decoh]')
             config_list.append('method = ' + str(method))
             config_list.append('N = ' + str(N))
+            config_list.append('aux_dim = ' + str(aux_dim))
             config_list.append('seed = ' + str(seed))
             config_list.append('num_seeds = ' + str(num_seeds))
             config_list.append('p = ' + str(p))
@@ -75,6 +79,7 @@ for N_id, N in enumerate(Ns):
                 'reshuffle(' + str(reshuffle_type) + ')_' + \
                 'G(' + str(G_type) + ')_' + \
                 'N(' + str(N) + ')_' + \
+                'ad(' + str(aux_dim) + ')_' + \
                 'p('  + str(format(p, '0.10f')) + ')_' + \
                 'seed(' + str(seed) + ')'
 

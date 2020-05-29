@@ -31,8 +31,6 @@ struct EigenDenseRunStrategy : RunStrategy
 		es.compute(model.lindbladian_dense, true);
 
 		auto lind_evals_tmp = es.eigenvalues();
-		model.log_message(fmt::format("lindbladian_evals_mult = {:16e} + {:16e} i", model.lindbladian_evals_mult.real(), model.lindbladian_evals_mult.imag()));
-		lind_evals_tmp *= model.lindbladian_evals_mult;
 		std::vector<std::complex<double>> lind_evals(lind_evals_tmp.data(), lind_evals_tmp.data() + lind_evals_tmp.rows() * lind_evals_tmp.cols());
 		auto fn = "lindbladian_evals" + model.suffix;
 		save_vector(lind_evals, fn, save_precision);

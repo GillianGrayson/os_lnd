@@ -150,3 +150,7 @@ source/cpp/os_lnd/.vs/os_lnd/v16/.suo
 *.pdf
 
 *.dat
+
+*.db-shm
+
+*.db-wal

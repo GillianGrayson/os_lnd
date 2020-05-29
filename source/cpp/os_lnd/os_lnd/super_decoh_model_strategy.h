@@ -28,10 +28,13 @@ struct SuperDecohModelStrategy : ModelStrategy
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
 		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
 
+		const int aux_dim = model.ini.GetInteger("super_decoh", "aux_dim", 0);
+
 		std::stringstream fns;
 		fns << "_reshuffle(" << reshuffle_type << ")";
 		fns << "_G(" << G_type << ")";
 		fns << "_N(" << N << ")";
+		fns << "_ad(" << aux_dim << ")";
 		fns << "_p(" << std::setprecision(name_precision) << std::fixed << p << ")";
 		fns << "_seed(" << seed << ")";
 		fns << ".txt";
@@ -68,6 +71,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
 		const auto save_G = model.ini.GetBoolean("super_decoh", "save_G", false);
 		const auto save_A = model.ini.GetBoolean("super_decoh", "save_A", false);
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
@@ -76,8 +80,21 @@ struct SuperDecohModelStrategy : ModelStrategy
 		if (method == "origin")
 		{
 			model.init_f_basis();
-
-			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1);
+			
+			ds_mtx G;
+			if (G_type == 1)
+			{
+				const int aux_dim = model.ini.GetInteger("super_decoh", "aux_dim", 0);
+				G = get_G_mtx(model, model.sys_size * model.sys_size - 1, aux_dim);
+			}
+			else if (G_type == 0)
+			{
+				G = get_G_mtx(model, model.sys_size * model.sys_size - 1, model.sys_size * model.sys_size - 1);
+			}
+			else
+			{
+				model.throw_error("Unsupported G_type");
+			}
 
 			if (debug_dump || save_G)
 			{
@@ -153,7 +170,7 @@ struct SuperDecohModelStrategy : ModelStrategy
 		}
 		else if (method == "simple")
 		{
-			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size);
+			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size, model.sys_size * model.sys_size);
 
 			if (debug_dump || save_G)
 			{
@@ -212,33 +229,32 @@ struct SuperDecohModelStrategy : ModelStrategy
 	{
 	}
 
-	static ds_mtx get_G_mtx(Model& model, size_t M)
+	static ds_mtx get_G_mtx(Model& model, size_t dim_main, size_t dim_aux)
 	{
 		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 		const int num_seeds = model.ini.GetInteger("super_decoh", "num_seeds", 0);
-		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
 		const auto evals_G = model.ini.GetBoolean("super_decoh", "evals_G", false);
 		
 		VSLStreamStatePtr stream;
 		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
 		vslLeapfrogStream(stream, seed, num_seeds);
 		
-		double* disorder_real = new double[M * M];
-		double* disorder_imag = new double[M * M];
+		double* disorder_real = new double[dim_main * dim_aux];
+		double* disorder_imag = new double[dim_main * dim_aux];
 
-		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, M * M, disorder_real, 0.0, 1.0);
-		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, M * M, disorder_imag, 0.0, 1.0);
+		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, dim_main * dim_aux, disorder_real, 0.0, 1.0);
+		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, dim_main * dim_aux, disorder_imag, 0.0, 1.0);
 
 		model.log_message("G random complete");
 		model.log_time_duration();
 
-		ds_mtx X(M, M);
+		ds_mtx X(dim_main, dim_aux);
 
-		for (auto st_id_1 = 0; st_id_1 < M; st_id_1++)
+		for (auto st_id_1 = 0; st_id_1 < dim_main; st_id_1++)
 		{
-			for (auto st_id_2 = 0; st_id_2 < M; st_id_2++)
+			for (auto st_id_2 = 0; st_id_2 < dim_aux; st_id_2++)
 			{
-				auto index = st_id_1 * M + st_id_2;
+				auto index = st_id_1 * dim_aux + st_id_2;
 				X(st_id_1, st_id_2) = std::complex<double>(0.5 * disorder_real[index], 0.5 * disorder_imag[index]);
 			}
 		}
@@ -248,26 +264,22 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 		if (evals_G)
 		{
-			calc_evals_G(model, X);
+			if (dim_main == dim_aux)
+			{
+				calc_evals_G(model, X);
+			}
+			else
+			{
+				model.log_message("Can't calc_evals_G");
+			}
 		}
 
 		ds_mtx G = X * X.adjoint();
 
-		if (G_type == 0)
-		{
-			const auto trace = G.trace();
-			G = double(model.sys_size) * G / trace.real();
-			model.lindbladian_evals_mult = std::complex<double>(1.0, 0.0);
-		}
-		else if (G_type == 1)
-		{
-			const auto trace = G.trace();
-			model.lindbladian_evals_mult = std::complex<double>(double(model.sys_size) / trace.real(), 0.0);
-		}
-		else
-		{
-			model.throw_error("Unsupported G_type");
-		}
+		model.log_message(fmt::format("G_size = {:d} rows,  {:d} cols ", G.rows(), G.cols()));
+
+		const auto trace = G.trace();
+		G = double(model.sys_size) * G / trace.real();
 
 		model.log_message("G generation complete");
 		model.log_time_duration();
