@@ -5,15 +5,15 @@ import os.path
 import numpy as np
 import math
 
-segment = 'medium'
+segment = 'long'
 
 system = 'super_decoh'
 
 task = 'eigen_dense'
 
 method = 'origin'
-G_type = 1
-aux_dim = 50000
+G_type = 0
+aux_dim = 0
 reshuffle_type = 1
 
 #Ns = list(np.linspace(200, 200, 1, dtype=int))
@@ -28,8 +28,8 @@ reshuffle_type = 1
 #all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
 num_seeds = 1000000
 ps = [1.0]
-Ns = [100]
-all_seeds = [list(np.linspace(1, 100, 100, dtype=int))]
+Ns = [200]
+all_seeds = [list(np.linspace(1, 20, 20, dtype=int))]
 
 
 

@@ -4,13 +4,16 @@ addpath('../../../source/matlab/lib')
 method = 'origin';
 reshufle_type = 1;
 G_type = 1;
-aux_dim = 5000;
+aux_dim = 100000;
 N = 100;
 ps = [1]';
-scaling_types = [0]';
+scaling_types = [4]';
 seeds = linspace(1, 100, 100)';
 
 evals_lim = 1e-8;
+
+coeff = sqrt(aux_dim / (N * N))
+%coeff = 1;
 
 for p_id = 1:size(ps, 1)
 
@@ -83,6 +86,8 @@ for p_id = 1:size(ps, 1)
 			evals = N / p * (real(evals) + 1) + 1i * N / p * imag(evals);
         elseif (scaling_types(p_id) == 0)
             nothing_to_do_here = 0;
+		elseif (scaling_types(p_id) == 4)
+            evals = coeff * (real(evals) + 1) + 1i * coeff  * imag(evals);
 		else
 			evals = N * (real(evals) + 1) + 1i * N * imag(evals);
 		end
@@ -143,7 +148,7 @@ for p_id = 1:size(ps, 1)
         pdf2d.x_bin_f = 2;
         pdf2d.y_bin_s = -1;
         pdf2d.y_bin_s = 1;
-    elseif (scaling_types(p_id) == 0)
+    else
         pdf2d.x_bin_s = min(real(all_evals));
         pdf2d.x_bin_f = max(real(all_evals));
         pdf2d.y_bin_s = min(imag(all_evals));

@@ -1,15 +1,20 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
+path = '/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/eigen_dense';
+figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
+
 ps = [1.0]';
 
-name = 'G_evals';
+bow_eps = 1e-3;
 
-method = 'simple';
+name = 'lindbladian_evals';
+
+method = 'origin';
 reshufle_type = 1;
 G_type = 0;
 N = 100;
-seeds = linspace(1, 100, 100)';
+seeds = linspace(1, 1000, 1000)';
 
 x_num_bins = 301;
 y_num_bins = 301;
@@ -17,6 +22,13 @@ x_label = '$Re(z)$';
 y_label = '$Im(z)$';
 
 N2 = N * N;
+
+phase = 0 : pi/50 : 2*pi;
+radius = 1.0;
+l_circle_x = radius * cos(phase) + (1 - bow_eps);
+r_circle_x = radius * cos(phase) + (1 + bow_eps);
+l_circle_y = radius * sin(phase);
+r_circle_y = radius * sin(phase);
 
 for p_id = 1:size(ps, 1)
     
@@ -28,6 +40,16 @@ for p_id = 1:size(ps, 1)
     pdf2d.y_num_bins = y_num_bins;
     pdf2d.x_label = x_label;
     pdf2d.y_label = y_label;
+    
+    pdf2d_zs_bow.x_num_bins = x_num_bins;
+    pdf2d_zs_bow.y_num_bins = y_num_bins;
+    pdf2d_zs_bow.x_label = x_label;
+    pdf2d_zs_bow.y_label = y_label;
+	
+	pdf2d_evals_bow.x_num_bins = x_num_bins;
+    pdf2d_evals_bow.y_num_bins = y_num_bins;
+    pdf2d_evals_bow.x_label = '$Re(\lambda)$';
+    pdf2d_evals_bow.y_label = '$Im(\lambda)$';
     
     pdfrs.x_num_bins = x_num_bins;
     pdfrs.x_label = '$r$';
@@ -44,18 +66,21 @@ for p_id = 1:size(ps, 1)
     abses_all = zeros((N2 - 1) * size(seeds, 1), 1);
     angles_all = zeros((N2 - 1) * size(seeds, 1), 1);
     
-    path = '/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/eigen_dense';
-    figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
     
-    N2 = N * N;
+    zs_bow = [];
+    evals_bow = [];
     
     for seed_id = 1:size(seeds, 1)
         
         seed = seeds(seed_id);
         fprintf('seed = %d\n', seed);
         
-        suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
-
+		if (method == 'origin')
+			suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
+		else
+			suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
+		end
+		
         evals = zeros(N2, 1);
         fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/%s_%s.txt', path, method, G_type, reshufle_type, N, p, seed, name, suffix);
         if ~isfile(fn_cpp)
@@ -79,21 +104,19 @@ for p_id = 1:size(ps, 1)
         for z_id = 1 : N2 - 1
             target_2D = horzcat(real(evals(z_id)), imag(evals(z_id)));
             target = evals(z_id);
-            %distances = sqrt(sum(bsxfun(@minus, neighbours_2D, target_2D).^2, 2));
-			%distances = zeros(N2 - 1, 1);
-			%for tmp_id = 1 : N2 - 1
-			%	tmp_2D = horzcat(real(evals(tmp_id)), imag(evals(tmp_id)));
-			%	distances(tmp_id) = norm(target_2D - tmp_2D);
-			%end
 			distances = sqrt((neighbours_2D(:, 1) - target_2D(:, 1)).^2 + (neighbours_2D(:, 2) - target_2D(:, 2)).^2);
             [sorted_distances, order] = sort(distances);
-			%fprintf('target(1) = %0.16e + %0.16e * i\n', real(evals(z_id)), imag(evals(z_id)));
-            %fprintf('sorted_distances(1) = %0.16e\n', sorted_distances(1));
-			%fprintf('sorted_distances(2) = %0.16e\n', sorted_distances(2));
-			%fprintf('sorted_distances(3) = %0.16e\n', sorted_distances(3));
             nn = evals(order(2));
             nnn = evals(order(3));
             zs(z_id) = (nn - target) / (nnn - target);
+            
+            l_in = inpolygon(real(zs(z_id)), imag(zs(z_id)), l_circle_x, l_circle_y);
+            r_in = inpolygon(real(zs(z_id)), imag(zs(z_id)), r_circle_x, r_circle_y);
+            if (l_in == 1) && (r_in == 0)
+                zs_bow = vertcat(zs_bow, zs(z_id));
+                evals_bow = vertcat(evals_bow, [target; nn; nnn]);
+            end
+            
             rs(z_id) = abs(zs(z_id)) * sign(angle(zs(z_id)));
             abses(z_id) = abs(zs(z_id));
             angles(z_id) = angle(zs(z_id));
@@ -110,19 +133,20 @@ for p_id = 1:size(ps, 1)
     
     suffix = sprintf('%s_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', name, reshufle_type, N, p, size(seeds, 1));
 	
-	fn_txt = sprintf('%s/zs_%s.txt', figures_path, suffix);
+	%fn_txt = sprintf('%s/zs_%s.txt', figures_path, suffix);
 	%save(fn_txt, 'zs_all', '-double', '-tab');
     %dlmwrite(sprintf('%s/contour_%s.txt', figures_path, suffix), contour);
 	%writematrix(zs_all, fn_txt, 'Delimiter','tab')
-	fn_dat = sprintf('%s/evals_%s.dat', figures_path, suffix);
-	dlmwrite(fn_dat, horzcat(real(evals_all(:)), imag(evals_all(:))))
+	%fn_dat = sprintf('%s/evals_%s.dat', figures_path, suffix);
+	%dlmwrite(fn_dat, horzcat(real(evals_all(:)), imag(evals_all(:))))
 		
-	fid = fopen(fn_txt,'wt');
-	for ii = 1:size(zs_all,1)
-		fprintf(fid,'%0.16e\t%0.16e\n', real(zs_all(ii)), imag(zs_all(ii)));
-	end
-	fclose(fid)
+	%fid = fopen(fn_txt,'wt');
+	%for ii = 1:size(zs_all,1)
+	%	fprintf(fid,'%0.16e\t%0.16e\n', real(zs_all(ii)), imag(zs_all(ii)));
+	%end
+	%fclose(fid)
     
+
     pdf2d.x_bin_s = min(real(zs_all));
     pdf2d.x_bin_f = max(real(zs_all));
     pdf2d.y_bin_s = min(imag(zs_all));
@@ -135,6 +159,31 @@ for p_id = 1:size(ps, 1)
     fn_fig = sprintf('%s/zs_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
+    pdf2d_zs_bow.x_bin_s = min(real(zs_all));
+    pdf2d_zs_bow.x_bin_f = max(real(zs_all));
+    pdf2d_zs_bow.y_bin_s = min(imag(zs_all));
+    pdf2d_zs_bow.y_bin_f = max(imag(zs_all));
+    pdf2d_zs_bow = oqs_pdf_2d_setup(pdf2d_zs_bow);
+    data2d = horzcat(real(zs_bow), imag(zs_bow));
+    pdf2d_zs_bow = oqs_pdf_2d_update(pdf2d_zs_bow, data2d);
+	pdf2d_zs_bow.pdf = pdf2d_zs_bow.pdf / (pdf2d.inc_count * pdf2d.x_bin_shift * pdf2d.y_bin_shift);
+	pdf2d_zs_bow.norm = sum(sum(pdf2d_zs_bow.pdf)) * pdf2d_zs_bow.x_bin_shift * pdf2d_zs_bow.y_bin_shift;
+	fprintf('pdf_norm = %0.16e\n', pdf2d_zs_bow.norm);
+    fig = oqs_pdf_2d_plot(pdf2d_zs_bow);
+    fn_fig = sprintf('%s/zs_bow_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_evals_bow.x_bin_s = min(real(evals_bow));
+    pdf2d_evals_bow.x_bin_f = max(real(evals_bow));
+    pdf2d_evals_bow.y_bin_s = min(imag(evals_bow));
+    pdf2d_evals_bow.y_bin_f = max(imag(evals_bow));
+    pdf2d_evals_bow = oqs_pdf_2d_setup(pdf2d_evals_bow);
+    data2d = horzcat(real(evals_bow), imag(evals_bow));
+    pdf2d_evals_bow = oqs_pdf_2d_update(pdf2d_evals_bow, data2d);
+    pdf2d_evals_bow = oqs_pdf_2d_release(pdf2d_evals_bow);
+    fig = oqs_pdf_2d_plot(pdf2d_evals_bow);
+    fn_fig = sprintf('%s/evals_bow_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
     
     pdfrs.x_bin_s = min(rs_all);
     pdfrs.x_bin_f = max(rs_all);
