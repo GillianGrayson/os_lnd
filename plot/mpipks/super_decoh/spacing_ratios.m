@@ -6,7 +6,7 @@ figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
 
 ps = [1.0]';
 
-bow_eps = 1e-3;
+region_eps = 1e-3;
 
 name = 'lindbladian_evals';
 
@@ -25,10 +25,16 @@ N2 = N * N;
 
 phase = 0 : pi/50 : 2*pi;
 radius = 1.0;
-l_circle_x = radius * cos(phase) + (1 - bow_eps);
-r_circle_x = radius * cos(phase) + (1 + bow_eps);
+l_circle_x = radius * cos(phase) + (1 - region_eps);
+r_circle_x = radius * cos(phase) + (1 + region_eps);
 l_circle_y = radius * sin(phase);
 r_circle_y = radius * sin(phase);
+
+bowstring_x = [0.5 - region_eps, 0.5 - region_eps, 0.5 + region_eps, 0.5 + region_eps, 0.5 - region_eps]';
+bowstring_y = [-1, 1, 1, -1, -1]';
+
+arrow_x = [-1, -1, 0, 0, -1];
+arrow_y = [-region_eps, region_eps, region_eps, -region_eps, -region_eps];
 
 for p_id = 1:size(ps, 1)
     
@@ -51,6 +57,26 @@ for p_id = 1:size(ps, 1)
     pdf2d_evals_bow.x_label = '$Re(\lambda)$';
     pdf2d_evals_bow.y_label = '$Im(\lambda)$';
     
+    pdf2d_zs_bowstring.x_num_bins = x_num_bins;
+    pdf2d_zs_bowstring.y_num_bins = y_num_bins;
+    pdf2d_zs_bowstring.x_label = x_label;
+    pdf2d_zs_bowstring.y_label = y_label;
+	
+	pdf2d_evals_bowstring.x_num_bins = x_num_bins;
+    pdf2d_evals_bowstring.y_num_bins = y_num_bins;
+    pdf2d_evals_bowstring.x_label = '$Re(\lambda)$';
+    pdf2d_evals_bowstring.y_label = '$Im(\lambda)$';
+    
+    pdf2d_zs_arrow.x_num_bins = x_num_bins;
+    pdf2d_zs_arrow.y_num_bins = y_num_bins;
+    pdf2d_zs_arrow.x_label = x_label;
+    pdf2d_zs_arrow.y_label = y_label;
+	
+	pdf2d_evals_arrow.x_num_bins = x_num_bins;
+    pdf2d_evals_arrow.y_num_bins = y_num_bins;
+    pdf2d_evals_arrow.x_label = '$Re(\lambda)$';
+    pdf2d_evals_arrow.y_label = '$Im(\lambda)$';
+    
     pdfrs.x_num_bins = x_num_bins;
     pdfrs.x_label = '$r$';
     
@@ -66,9 +92,14 @@ for p_id = 1:size(ps, 1)
     abses_all = zeros((N2 - 1) * size(seeds, 1), 1);
     angles_all = zeros((N2 - 1) * size(seeds, 1), 1);
     
-    
     zs_bow = [];
     evals_bow = [];
+    
+    zs_bowstring = [];
+    evals_bowstring = [];
+    
+    zs_arrow = [];
+    evals_arrow = [];
     
     for seed_id = 1:size(seeds, 1)
         
@@ -117,6 +148,18 @@ for p_id = 1:size(ps, 1)
                 evals_bow = vertcat(evals_bow, [target; nn; nnn]);
             end
             
+            bow_string_in = inpolygon(real(zs(z_id)), imag(zs(z_id)), bowstring_x, bowstring_y);
+            if (bow_string_in == 1)
+                zs_bowstring = vertcat(zs_bowstring, zs(z_id));
+                evals_bowstring = vertcat(evals_bowstring, [target; nn; nnn]);
+            end
+            
+            arrow_in = inpolygon(real(zs(z_id)), imag(zs(z_id)), arrow_x, arrow_y);
+            if (arrow_in == 1)
+                zs_arrow = vertcat(zs_arrow, zs(z_id));
+                evals_arrow = vertcat(evals_arrow, [target; nn; nnn]);
+            end
+            
             rs(z_id) = abs(zs(z_id)) * sign(angle(zs(z_id)));
             abses(z_id) = abs(zs(z_id));
             angles(z_id) = angle(zs(z_id));
@@ -146,7 +189,6 @@ for p_id = 1:size(ps, 1)
 	%end
 	%fclose(fid)
     
-
     pdf2d.x_bin_s = min(real(zs_all));
     pdf2d.x_bin_f = max(real(zs_all));
     pdf2d.y_bin_s = min(imag(zs_all));
@@ -158,6 +200,15 @@ for p_id = 1:size(ps, 1)
     fig = oqs_pdf_2d_plot(pdf2d);
     fn_fig = sprintf('%s/zs_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
+	
+	fn_txt = sprintf('%s/zs_pdf_%s.txt', figures_path, suffix);
+	fid = fopen(fn_txt,'wt');
+	for x_id = 1:size(pdf2d.x_bin_centers, 2)
+		for y_id = 1:size(pdf2d.y_bin_centers, 2)
+			fprintf(fid,'%0.16e\t%0.16e\t%0.16e\n', pdf2d.x_bin_centers(x_id), pdf2d.y_bin_centers(y_id), pdf2d.pdf(x_id, y_id));
+		end
+	end
+	fclose(fid)
     
     pdf2d_zs_bow.x_bin_s = min(real(zs_all));
     pdf2d_zs_bow.x_bin_f = max(real(zs_all));
@@ -183,6 +234,58 @@ for p_id = 1:size(ps, 1)
     pdf2d_evals_bow = oqs_pdf_2d_release(pdf2d_evals_bow);
     fig = oqs_pdf_2d_plot(pdf2d_evals_bow);
     fn_fig = sprintf('%s/evals_bow_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_zs_bowstring.x_bin_s = min(real(zs_all));
+    pdf2d_zs_bowstring.x_bin_f = max(real(zs_all));
+    pdf2d_zs_bowstring.y_bin_s = min(imag(zs_all));
+    pdf2d_zs_bowstring.y_bin_f = max(imag(zs_all));
+    pdf2d_zs_bowstring = oqs_pdf_2d_setup(pdf2d_zs_bowstring);
+    data2d = horzcat(real(zs_bowstring), imag(zs_bowstring));
+    pdf2d_zs_bowstring = oqs_pdf_2d_update(pdf2d_zs_bowstring, data2d);
+	pdf2d_zs_bowstring.pdf = pdf2d_zs_bowstring.pdf / (pdf2d.inc_count * pdf2d.x_bin_shift * pdf2d.y_bin_shift);
+	pdf2d_zs_bowstring.norm = sum(sum(pdf2d_zs_bowstring.pdf)) * pdf2d_zs_bowstring.x_bin_shift * pdf2d_zs_bowstring.y_bin_shift;
+	fprintf('pdf_norm = %0.16e\n', pdf2d_zs_bowstring.norm);
+    fig = oqs_pdf_2d_plot(pdf2d_zs_bowstring);
+    fn_fig = sprintf('%s/zs_bowstring_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_evals_bowstring.x_bin_s = min(real(evals_bow));
+    pdf2d_evals_bowstring.x_bin_f = max(real(evals_bow));
+    pdf2d_evals_bowstring.y_bin_s = min(imag(evals_bow));
+    pdf2d_evals_bowstring.y_bin_f = max(imag(evals_bow));
+    pdf2d_evals_bowstring = oqs_pdf_2d_setup(pdf2d_evals_bowstring);
+    data2d = horzcat(real(evals_bowstring), imag(evals_bowstring));
+    pdf2d_evals_bowstring = oqs_pdf_2d_update(pdf2d_evals_bowstring, data2d);
+    pdf2d_evals_bowstring = oqs_pdf_2d_release(pdf2d_evals_bowstring);
+    fig = oqs_pdf_2d_plot(pdf2d_evals_bowstring);
+    fn_fig = sprintf('%s/evals_bowstring_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_zs_arrow.x_bin_s = min(real(zs_all));
+    pdf2d_zs_arrow.x_bin_f = max(real(zs_all));
+    pdf2d_zs_arrow.y_bin_s = min(imag(zs_all));
+    pdf2d_zs_arrow.y_bin_f = max(imag(zs_all));
+    pdf2d_zs_arrow = oqs_pdf_2d_setup(pdf2d_zs_arrow);
+    data2d = horzcat(real(zs_arrow), imag(zs_arrow));
+    pdf2d_zs_arrow = oqs_pdf_2d_update(pdf2d_zs_arrow, data2d);
+	pdf2d_zs_arrow.pdf = pdf2d_zs_arrow.pdf / (pdf2d.inc_count * pdf2d.x_bin_shift * pdf2d.y_bin_shift);
+	pdf2d_zs_arrow.norm = sum(sum(pdf2d_zs_arrow.pdf)) * pdf2d_zs_arrow.x_bin_shift * pdf2d_zs_arrow.y_bin_shift;
+	fprintf('pdf_norm = %0.16e\n', pdf2d_zs_arrow.norm);
+    fig = oqs_pdf_2d_plot(pdf2d_zs_arrow);
+    fn_fig = sprintf('%s/zs_arrow_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig)
+    
+    pdf2d_evals_arrow.x_bin_s = min(real(evals_bow));
+    pdf2d_evals_arrow.x_bin_f = max(real(evals_bow));
+    pdf2d_evals_arrow.y_bin_s = min(imag(evals_bow));
+    pdf2d_evals_arrow.y_bin_f = max(imag(evals_bow));
+    pdf2d_evals_arrow = oqs_pdf_2d_setup(pdf2d_evals_arrow);
+    data2d = horzcat(real(evals_arrow), imag(evals_arrow));
+    pdf2d_evals_arrow = oqs_pdf_2d_update(pdf2d_evals_arrow, data2d);
+    pdf2d_evals_arrow = oqs_pdf_2d_release(pdf2d_evals_arrow);
+    fig = oqs_pdf_2d_plot(pdf2d_evals_arrow);
+    fn_fig = sprintf('%s/evals_arrow_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
     pdfrs.x_bin_s = min(rs_all);

@@ -1,8 +1,13 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-path = '/data/condmat/ivanchen/yusipov/os_lnd/mbl';
+task = 'eigen_dense';
+
+path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/mbl/%s', task);
+
 figures_path = '/home/ivanchen/yusipov/os_lnd/figures/mbl';
+
+without_line = 1;
 
 ns = 8;
 
@@ -10,22 +15,25 @@ diss_type = 1;
 diss_phase = 0.0;
 diss_gamma = 0.1;
 
-%Ws = linspace(1, 20, 20)';
 Ws = [1, 20]';
 U = 1.0;
 J = 1.0;
 
-seeds = linspace(1, 100, 100)';
+global_seeds = 10000;
+target_seeds = 1000;
+
+seeds = linspace(1, target_seeds, target_seeds)';
 
 num_Ws = size(Ws, 1);
 num_seeds = size(seeds, 1);
 
-x_num_bins = 101;
-y_num_bins = 101;
+x_num_bins = 201;
+y_num_bins = 201;
 x_label = '$Re(z)$';
 y_label = '$Im(z)$';
 
-N2 = (nchoosek(ns, ns/2)).^2
+N = (nchoosek(ns, ns/2));
+N2 = N^2;
 
 for W_id = 1:num_Ws
     
@@ -46,60 +54,69 @@ for W_id = 1:num_Ws
     pdfangles.x_num_bins = x_num_bins;
     pdfangles.x_label = '$arg(z)$';
     
-    zs_all = zeros((N2 - 1) * size(seeds, 1), 1);
-    rs_all = zeros((N2 - 1) * size(seeds, 1), 1);
-    abses_all = zeros((N2 - 1) * size(seeds, 1), 1);
-    angles_all = zeros((N2 - 1) * size(seeds, 1), 1);
+    zs_all = zeros(N2 * size(seeds, 1), 1);
+    rs_all = zeros(N2 * size(seeds, 1), 1);
+    abses_all = zeros(N2 * size(seeds, 1), 1);
+    angles_all = zeros(N2 * size(seeds, 1), 1);
+       
+    prefix = sprintf('ns_%d/diss_%d_%0.4f_%0.4f/prm_%0.4f_%0.4f_%0.4f', ...
+        ns, ...
+        diss_type, ...
+        diss_phase, ...
+        diss_gamma, ...
+        W, ...
+        U, ...
+        J);
+    
+    aggr_path = sprintf('%s/aggregator/%s', ...
+        path, ...
+        prefix);
+    
+    suffix = sprintf('ns(%d)_seeds(%d_%d_%d)_diss(%d_%0.4f_%0.4f)_prm(%0.4f_%0.4f_%0.4f)', ...
+        ns, ...
+        1, ...
+        1, ...
+        global_seeds, ...
+        diss_type, ...
+        diss_phase, ...
+        diss_gamma, ...
+        W, ...
+        U, ...
+        J);
+    
+    fn = sprintf('%s/lindbladian_evals_%s.txt', aggr_path, suffix);
+
+    lind_evals_all = importdata(fn);
+    
+    curr_fin_id = 0;
     
     for seed_id = 1:num_seeds
 	
         seed = seeds(seed_id);
 		fprintf('seed = %d\n', seed);
 		
-        suffix = sprintf('ns(%d)_seed(%d)_diss(%d_%0.4f_%0.4f)_prm(%0.4f_%0.4f_%0.4f)', ...
-			ns, ...
-            seed, ...
-            diss_type, ...
-            diss_phase, ...
-            diss_gamma, ...
-            W, ...
-            U, ...
-            J);
-        
-        fn = sprintf('%s/eigen_dense/ns_%d/diss_%d_%0.4f_%0.4f/prm_%0.4f_%0.4f_%0.4f/seed_%d/lindbladian_evals_%s.txt', ...
-            path, ...
-            ns, ...
-            diss_type, ...
-            diss_phase, ...
-            diss_gamma, ...
-            W, ...
-            U, ...
-            J, ...
-            seed, ...
-            suffix);
-        
-        evals = zeros(N2, 1);
-        data = importdata(fn);
-        for str_id = 1:N2
-            str = string(data(str_id));
-            data2d = sscanf(str, '(%e,%e)', 2);
-            evals(str_id) = data2d(1) + 1i * data2d(2);
-        end
+        evals = lind_evals_all((seed_id - 1) * N2 + 1 : seed_id * N2, 1) + 1i * lind_evals_all((seed_id - 1) * N2 + 1 : seed_id * N2, 2);
         [evals, order] = sort(evals, 'ComparisonMethod', 'abs');
-        %fprintf('evals_first = %0.16e + i*%0.16e\n', real(evals(1)), imag(evals(1)));
         evals = evals(2:end);
         
-        zs = zeros(N2 - 1, 1);
-        rs = zeros(N2 - 1, 1);
-        abses = zeros(N2 - 1, 1);
-        angles = zeros(N2 - 1, 1);
+        if without_line == 1
+            evals = evals(abs(imag(evals(:))) > 1e-2); 
+        end
+        
+        s_id = curr_fin_id + 1;
+        f_id = curr_fin_id + size(evals, 1);
+        curr_fin_id = f_id;
+        
+        zs = zeros(size(evals, 1), 1);
+        rs = zeros(size(evals, 1), 1);
+        abses = zeros(size(evals, 1), 1);
+        angles = zeros(size(evals, 1), 1);
         neighbours_2D = horzcat(real(evals), imag(evals));
-        for z_id = 1 : N2 - 1
+        for z_id = 1 : size(evals, 1)
             target_2D = horzcat(real(evals(z_id)), imag(evals(z_id)));
             target = evals(z_id);
             distances = sqrt(sum(bsxfun(@minus, neighbours_2D, target_2D).^2, 2));
             [sorted_distances, order] = sort(distances);
-            %fprintf('sorted_distances(1) = %0.16e\n', sorted_distances(1));
             nn = evals(order(2));
             nnn = evals(order(3));
             zs(z_id) = (nn - target) / (nnn - target);
@@ -108,14 +125,18 @@ for W_id = 1:num_Ws
             angles(z_id) = angle(zs(z_id));
         end
         
-        
-        s_id = (seed_id - 1) * (N2 - 1) + 1;
-        f_id = seed_id * (N2 - 1);
         zs_all(s_id : f_id) = zs;
         rs_all(s_id : f_id) = rs;
         abses_all(s_id : f_id) = abses;
         angles_all(s_id : f_id) = angles;
     end
+    
+	fprintf('curr_fin_id = %d\n', curr_fin_id);
+	
+    zs_all = zs_all(1 : curr_fin_id);
+    rs_all = rs_all(1 : curr_fin_id);
+    abses_all = abses_all(1 : curr_fin_id);
+    angles_all = angles_all(1 : curr_fin_id);
     
     suffix = sprintf('ns(%d)_numSeeds(%d)_diss(%d_%0.4f_%0.4f)_prm(%0.4f_%0.4f_%0.4f)', ...
         ns, ...
