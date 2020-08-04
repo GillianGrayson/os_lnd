@@ -7,7 +7,7 @@ path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/mbl/%s', task);
 
 figures_path = '/home/ivanchen/yusipov/os_lnd/figures/mbl';
 
-without_line = 1;
+without_line = 0;
 
 ns = 8;
 
@@ -48,6 +48,9 @@ for W_id = 1:num_Ws
     pdfrs.x_num_bins = x_num_bins;
     pdfrs.x_label = '$r$';
     
+    pdfzs.x_num_bins = x_num_bins;
+    pdfzs.x_label = '$z$';
+    
     pdfabses.x_num_bins = x_num_bins;
     pdfabses.x_label = '$|z|$';
     
@@ -58,6 +61,8 @@ for W_id = 1:num_Ws
     rs_all = zeros(N2 * size(seeds, 1), 1);
     abses_all = zeros(N2 * size(seeds, 1), 1);
     angles_all = zeros(N2 * size(seeds, 1), 1);
+    
+    zs_slice_all = zeros(N2 * size(seeds, 1), 1);
        
     prefix = sprintf('ns_%d/diss_%d_%0.4f_%0.4f/prm_%0.4f_%0.4f_%0.4f', ...
         ns, ...
@@ -89,6 +94,7 @@ for W_id = 1:num_Ws
     lind_evals_all = importdata(fn);
     
     curr_fin_id = 0;
+    curr_fin_slice_id = 0;
     
     for seed_id = 1:num_seeds
 	
@@ -111,6 +117,9 @@ for W_id = 1:num_Ws
         rs = zeros(size(evals, 1), 1);
         abses = zeros(size(evals, 1), 1);
         angles = zeros(size(evals, 1), 1);
+        
+        zs_slice = [];
+        
         neighbours_2D = horzcat(real(evals), imag(evals));
         for z_id = 1 : size(evals, 1)
             target_2D = horzcat(real(evals(z_id)), imag(evals(z_id)));
@@ -120,6 +129,11 @@ for W_id = 1:num_Ws
             nn = evals(order(2));
             nnn = evals(order(3));
             zs(z_id) = (nn - target) / (nnn - target);
+            
+            if abs(imag(zs(z_id))) < 1e-2
+                zs_slice = vertcat(zs_slice, zs(z_id));
+            end
+            
             rs(z_id) = abs(zs(z_id)) * sign(angle(zs(z_id)));
             abses(z_id) = abs(zs(z_id));
             angles(z_id) = angle(zs(z_id));
@@ -129,6 +143,10 @@ for W_id = 1:num_Ws
         rs_all(s_id : f_id) = rs;
         abses_all(s_id : f_id) = abses;
         angles_all(s_id : f_id) = angles;
+        
+        zs_slice_all(curr_fin_slice_id + 1 : curr_fin_slice_id + size(zs_slice, 1)) = zs_slice;
+        curr_fin_slice_id = curr_fin_slice_id + size(zs_slice, 1);
+        
     end
     
 	fprintf('curr_fin_id = %d\n', curr_fin_id);
@@ -137,6 +155,8 @@ for W_id = 1:num_Ws
     rs_all = rs_all(1 : curr_fin_id);
     abses_all = abses_all(1 : curr_fin_id);
     angles_all = angles_all(1 : curr_fin_id);
+    
+    zs_slice_all = zs_slice_all(1 : curr_fin_slice_id);
     
     suffix = sprintf('ns(%d)_numSeeds(%d)_diss(%d_%0.4f_%0.4f)_prm(%0.4f_%0.4f_%0.4f)', ...
         ns, ...
@@ -160,6 +180,14 @@ for W_id = 1:num_Ws
     fn_fig = sprintf('%s/zs_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
     
+    pdfzs.x_bin_s = -1;
+    pdfzs.x_bin_f = +1;
+    pdfzs = oqs_pdf_1d_setup(pdfzs);
+    pdfzs = oqs_pdf_1d_update(pdfzs, real(zs_slice_all));
+    pdfzs = oqs_pdf_1d_release(pdfzs);
+    fig = oqs_pdf_1d_plot(pdfzs);
+    fn_fig = sprintf('%s/zs_slice_%s', figures_path, suffix);
+    oqs_save_fig(fig, fn_fig);
     
     pdfrs.x_bin_s = min(rs_all);
     pdfrs.x_bin_f = max(rs_all);

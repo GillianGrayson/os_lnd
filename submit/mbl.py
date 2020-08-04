@@ -22,15 +22,15 @@ tolerance = 1e-10
 
 num_spins = 8
 
-seeds = list(np.linspace(1, 10000, 10000, dtype=int))
+seeds = list(np.linspace(1, 250, 250, dtype=int))
 num_seeds = 1000000
 
 diss_type = 1
 diss_phase = 0.0
 diss_gamma = 0.1
 
-#Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
-Ws = [1, 20]
+Ws = list(np.linspace(0.2, 20.0, 100, dtype=float))
+#Ws = [1, 20]
 U = 1.0
 J = 1.0
 
