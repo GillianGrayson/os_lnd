@@ -1,15 +1,19 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
+task = 'eigen_dense';
+path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/%s', task);
+
+figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
+
 num_hits = 0;
 
 method = 'simple';
 G_type = 0;
-reshuffle_type = 1;
+reshuffle_type = 0;
 
 ps = logspace(-3, 0, 31)';
 Ns = floor(logspace(1, 2, 11)');
-%Ns = [79 100]';
 total_num_evals = 100000;
 num_seeds = zeros(size(Ns, 1), 1);
 
@@ -21,6 +25,7 @@ fig_global = figure;
 for N_id = 1:size(Ns, 1)
     
     N = Ns(N_id);
+    N2 = N * N;
     
     num_seeds(N_id) = ceil(total_num_evals / (Ns(N_id).^2));
     
@@ -48,32 +53,39 @@ for N_id = 1:size(Ns, 1)
         pdf2d_quantum.y_num_bins = 201;
         pdf2d_quantum.x_label = '$Re(\lambda)$';
         pdf2d_quantum.y_label = '$Im(\lambda)$';
-        
-        path = '/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/eigen_dense';
-        figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
-        
-        N2 = N * N;
-        
+
         all_evals_classical = zeros((N2 - 1) * num_seeds(N_id), 1);
         all_evals_quantum = zeros((N2 - 1) * num_seeds(N_id), 1);
+  
+        prefix = sprintf('method_%s/G_type_%d_ad_0/reshuffle_type_%d/N_%d/p_%0.10f', ...
+            method, ...
+            G_type, ...
+            reshuffle_type, ...
+            N, ...
+            p);
+        
+        aggr_path = sprintf('%s/aggregator/%s', ...
+            path, ...
+            prefix);
+        mkdir(aggr_path);
+        
+        suffix = sprintf('reshuffle(%d)_G(%d)_ad(0)_N(%d)_p(%0.10f)_seeds(%d_%d_%d)', ...
+            reshuffle_type, ...
+            G_type, ...
+            N, ...
+            p, ...
+            1, ...
+            1, ...
+            num_seeds(N_id));
+        
+        fn_txt = sprintf('%s/lindbladian_evals_%s.txt', aggr_path, suffix);
+        lind_evals_all = importdata(fn_txt);
         
         for seed_id = 1:num_seeds(N_id)
             
             seed = seed_id;
             
-            suffix_quantum = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshuffle_type, G_type, N, p, seed);
-            
-            evals = zeros(N2, 1);
-            fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, reshuffle_type, N, p, seed, suffix_quantum);
-            if ~isfile(fn_cpp)
-                fprintf('Warning! seed = %d\n', seed);
-            end
-            cpp_data = importdata(fn_cpp);
-            for str_id = 1:N2
-                str = string(cpp_data(str_id));
-                data2d = sscanf(str, '(%e,%e)', 2);
-                evals(str_id) = data2d(1) + 1i * data2d(2);
-            end
+            evals = lind_evals_all((seed_id - 1) * N2 + 1 : seed_id * N2, 1)  + 1i * lind_evals_all((seed_id - 1) * N2 + 1 : seed_id * N2, 2);
             
             [evals, order] = sort(evals, 'ComparisonMethod', 'abs');
             evals = evals(2:end);
@@ -198,8 +210,8 @@ for N_id = 1:size(Ns, 1)
         iou_quantum(p_id) = area(poly_intersect_quantum) / area(poly_union_quantum);
         iou_classical(p_id) = area(poly_intersect_classical) / area(poly_union_classical);
         
-        fprintf('iou_area = %0.16e\n', iou_quantum(p_id));
-        fprintf('iou_area = %0.16e\n', iou_classical(p_id));
+        fprintf('iou_area_quantum = %0.16e\n', iou_quantum(p_id));
+        fprintf('iou_area_lassical = %0.16e\n', iou_classical(p_id));
         
         %oqs_save_fig(fig_quantum, fn_fig_quantum);
         %oqs_save_fig(fig_classical, fn_fig_classical);

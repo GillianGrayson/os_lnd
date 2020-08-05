@@ -5,33 +5,27 @@ import os.path
 import numpy as np
 import math
 
-segment = 'long'
+segment = 'medium'
 
 system = 'super_decoh'
 
 task = 'eigen_dense'
 
-method = 'origin'
+method = 'simple'
 G_type = 0
 aux_dim = 0
-reshuffle_type = 1
+reshuffle_type = 0
 
-#Ns = list(np.linspace(200, 200, 1, dtype=int))
-#ps = list(np.linspace(0.1, 1.0, 10, dtype=float))
-#ps = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.26, 0.28]
-#ps = [0.0, 0.01]
-#seeds = list(np.linspace(1, 20, 20, dtype=int))
+ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
+Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
+total_num_evals  = 100000
+all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
 
-#ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-#Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
-#total_num_evals  = 100000
-#all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
+#ps = [1.0]
+#Ns = [200]
+#all_seeds = [list(np.linspace(1, 20, 20, dtype=int))]
+
 num_seeds = 1000000
-ps = [1.0]
-Ns = [200]
-all_seeds = [list(np.linspace(1, 20, 20, dtype=int))]
-
-
 
 for N_id, N in enumerate(Ns):
     seeds = all_seeds[N_id]
@@ -86,6 +80,7 @@ for N_id, N in enumerate(Ns):
             fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
 
             if not os.path.isfile(fn_test):
+                print('file does not exist')
                 if segment == 'short':
                     os.system('sbatch run_short.sh ' + data_path)
                 elif segment == 'medium':
