@@ -154,3 +154,5 @@ source/cpp/os_lnd/.vs/os_lnd/v16/.suo
 *.db-shm
 
 *.db-wal
+
+source/cpp/os_lnd/os_lnd/x64/Release/
