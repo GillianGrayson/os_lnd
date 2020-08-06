@@ -77,7 +77,7 @@ struct MBLModelStrategy : ModelStrategy
 	void setup_aux_data(Model& model) override
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
-		const int num_global_states = std::pow(2, num_spins);
+		const int num_global_states = int(std::pow(2, num_spins));
 		adj = std::vector<int>(num_global_states, 0);
 		x_to_id = std::vector<int>(num_global_states, 0);
 		id_to_x = std::vector<int>(model.sys_size, 0);
@@ -479,7 +479,7 @@ struct MBLModelStrategy : ModelStrategy
 		int skip = model.sys_size / 3;
 
 		std::vector<double> cutted_evals = std::vector<double>(evals.begin() + skip, evals.end() - skip);
-		int size_cutted = cutted_evals.size();
+		int size_cutted = int(cutted_evals.size());
 		
 		std::vector<double> evals_diff(size_cutted - 1);
 		for (int st_id = 0; st_id < size_cutted - 1; st_id++)
@@ -510,7 +510,7 @@ struct MBLModelStrategy : ModelStrategy
 	double get_entanglement_entropy(Model& model)
 	{
 		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
-		int xtd_size = std::pow(2, num_spins);
+		int xtd_size = int(std::pow(2, num_spins));
 		
 		Eigen::MatrixXcd rho_xtd = Eigen::MatrixXcd::Zero(xtd_size, xtd_size);
 		for (int st_id_1 = 0; st_id_1 < model.sys_size; st_id_1++)
@@ -525,7 +525,7 @@ struct MBLModelStrategy : ModelStrategy
 			}
 		}
 
-		int red_size = pow(2, num_spins / 2);
+		int red_size = int(std::pow(2, num_spins / 2));
 		double eps_eval = 1.0e-14;
 
 		Eigen::MatrixXcd R = Eigen::MatrixXcd::Zero(xtd_size, xtd_size);

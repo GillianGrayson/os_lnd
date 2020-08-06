@@ -238,9 +238,9 @@ struct SuperDecohModelStrategy : ModelStrategy
 		VSLStreamStatePtr stream;
 		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
 		vslLeapfrogStream(stream, seed, num_seeds);
-		
-		double* disorder_real = new double[dim_main * dim_aux];
-		double* disorder_imag = new double[dim_main * dim_aux];
+
+		auto disorder_real = new double[dim_main * dim_aux];
+		auto disorder_imag = new double[dim_main * dim_aux];
 
 		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, dim_main * dim_aux, disorder_real, 0.0, 1.0);
 		vdRngGaussian(VSL_RNG_METHOD_GAUSSIAN_BOXMULLER, stream, dim_main * dim_aux, disorder_imag, 0.0, 1.0);
