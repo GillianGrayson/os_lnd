@@ -18,12 +18,22 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 	void setup_suffix(Model& model) override
 	{
+		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
+
+		int seed;
+		if (run_type == "serial")
+		{
+			seed = std::round(model.serial_state);
+		}
+		else
+		{
+			seed = model.ini.GetInteger("super_decoh", "seed", 0);
+		}
+		
 		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
 
 		const int N = model.ini.GetInteger("super_decoh", "N", 0);
 		const auto p = model.ini.GetReal("super_decoh", "p", 0.0);
-
-		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
 
 		const int reshuffle_type = model.ini.GetInteger("super_decoh", "reshuffle_type", 0);
 		const int G_type = model.ini.GetInteger("super_decoh", "G_type", 0);
@@ -36,10 +46,19 @@ struct SuperDecohModelStrategy : ModelStrategy
 		fns << "_N(" << N << ")";
 		fns << "_ad(" << aux_dim << ")";
 		fns << "_p(" << std::setprecision(name_precision) << std::fixed << p << ")";
-		fns << "_seed(" << seed << ")";
+		
+		std::stringstream serial;
+		serial << fns.rdbuf();
+		if (run_type == "regular")
+		{
+			fns << "_seed(" << seed << ")";
+		}
+		
 		fns << ".txt";
+		serial << ".txt";
 
 		model.suffix = fns.str();
+		model.suffix_serial = serial.str();
 	}
 
 	void setup_sys_size(Model& model) override
@@ -231,7 +250,19 @@ struct SuperDecohModelStrategy : ModelStrategy
 
 	static ds_mtx get_G_mtx(Model& model, size_t dim_main, size_t dim_aux)
 	{
-		const int seed = model.ini.GetInteger("super_decoh", "seed", 0);
+		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
+
+		int seed;
+
+		if (run_type == "serial")
+		{
+			seed = std::round(model.serial_state);
+		}
+		else
+		{
+			seed = model.ini.GetInteger("super_decoh", "seed", 0);
+		}
+
 		const int num_seeds = model.ini.GetInteger("super_decoh", "num_seeds", 0);
 		const auto evals_G = model.ini.GetBoolean("super_decoh", "evals_G", false);
 		

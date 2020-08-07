@@ -31,10 +31,15 @@ struct Model
 	ds_mtx lindbladian_dense;
 	ds_mtx lindbladian_drv_dense;
 	std::complex<double> lindbladian_evals_mult;
+	std::vector<std::complex<double>> lindbladian_evals;
 	std::vector<sp_mtx> f_basis;
 	Eigen::MatrixXcd rho;
+	std::vector<std::complex<double>> rho_evals;
 	std::chrono::high_resolution_clock::time_point start_run_time;
 	std::vector<double> run_times;
+
+	std::string suffix_serial;
+	double serial_state;
 
 	Model(INIReader& ini) : ini(ini)
 	{
@@ -43,6 +48,11 @@ struct Model
 		logger_type = ini.Get("global", "logger_type", "unknown");
 		silent = ini.GetBoolean("global", "silent", false);
 		auto logger = spdlog::stdout_color_mt(logger_type);
+	}
+
+	void set_serial_state(const double _serial_state)
+	{
+		serial_state = _serial_state;
 	}
 
 	void throw_error(const std::string message) const
@@ -64,6 +74,9 @@ struct Model
 
 	void log_time_duration()
 	{
+		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
+		const auto save_run_times = ini.GetBoolean("global", "save_run_times", false);
+		
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 		
 		const auto run_time = std::chrono::high_resolution_clock::now();
@@ -72,12 +85,18 @@ struct Model
 
 		run_times.push_back(duration);
 
-		auto fn = "run_times" + suffix;
-		save_vector(run_times, fn, save_precision);
+		if (save_run_times || debug_dump)
+		{
+			auto fn = "run_times" + suffix;
+			save_vector(run_times, fn, save_precision);
+		}
 	}
 
 	void log_setup_info()
 	{
+		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
+		const auto save_non_zeros_part = ini.GetBoolean("global", "save_non_zeros_part", false);
+		
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 		
 		log_message(fmt::format("sys_size = {}\n", sys_size));
@@ -102,15 +121,20 @@ struct Model
 		non_zeros_parts.push_back(lindbladian_non_zeros_part);
 		non_zeros_parts.push_back(lindbladian_drv_non_zeros_part);
 
-		auto fn = "non_zeros_parts" + suffix;
-		save_vector(non_zeros_parts, fn, save_precision);
-
+		if (save_non_zeros_part || debug_dump)
+		{
+			auto fn = "non_zeros_parts" + suffix;
+			save_vector(non_zeros_parts, fn, save_precision);
+		}
+		
 		log_time_duration();
 		log_memory_usage();
 	}
 
 	void log_memory_usage() const
 	{
+		const auto debug_dump = ini.GetBoolean("global", "debug_dump", false);
+		const auto save_mem_info = ini.GetBoolean("global", "save_mem_info", false);
 		const int save_precision = ini.GetInteger("global", "save_precision", 0);
 
 		double currentSize = double(getCurrentRSS()) / std::pow(1024.0, 2);
@@ -123,8 +147,11 @@ struct Model
 		mem_info.push_back(currentSize);
 		mem_info.push_back(peakSize);
 
-		auto fn = "mem_info" + suffix;
-		save_vector(mem_info, fn, save_precision);
+		if (save_mem_info || debug_dump)
+		{
+			auto fn = "mem_info" + suffix;
+			save_vector(mem_info, fn, save_precision);
+		}
 	}
 
 	void save_data() const

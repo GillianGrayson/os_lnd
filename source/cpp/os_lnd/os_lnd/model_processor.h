@@ -10,17 +10,39 @@ struct ModelProcessor
 	void set_strategy(Model& model)
 	{
 		const std::string system = model.ini.Get("global", "system", "unknown");
+		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
 		if (system == "mbl")
 		{
-			model_strategy = std::make_unique<MBLModelStrategy>();
+			if (run_type == "regular")
+			{
+				model_strategy = std::make_unique<MBLModelStrategy>();
+			}
+			else
+			{
+				model.throw_error(fmt::format("Unsupported run_type for {s}", system));
+			}
 		}
 		else if (system == "dimer")
 		{
-			model_strategy = std::make_unique<DimerModelStrategy>();
+			if (run_type == "regular")
+			{
+				model_strategy = std::make_unique<DimerModelStrategy>();
+			}
+			else
+			{
+				model.throw_error(fmt::format("Unsupported run_type for {s}", system));
+			}
 		}
 		else if (system == "super_decoh")
 		{
-			model_strategy = std::make_unique<SuperDecohModelStrategy>();
+			if (run_type == "regular" || run_type == "serial")
+			{
+				model_strategy = std::make_unique<SuperDecohModelStrategy>();
+			}
+			else
+			{
+				model.throw_error(fmt::format("Unsupported run_type for {s}", system));
+			}
 		}
 		else
 		{
