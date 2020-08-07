@@ -25,9 +25,9 @@ def get_serial_global_config(system, task, start, shift, num, name_precision=4):
     config_list = []
     config_list.append('[global]')
     config_list.append('run_type = serial')
-    config_list.append('serial_start = ' + start)
-    config_list.append('serial_shift = ' + shift)
-    config_list.append('serial_num = ' + num)
+    config_list.append('serial_start = ' + str(start))
+    config_list.append('serial_shift = ' + str(shift))
+    config_list.append('serial_num = ' + str(num))
     config_list.append('serial_rho_evals = true')
     config_list.append('serial_lindbladian_evals = true')
     config_list.append('logger_type = console')

@@ -78,7 +78,7 @@ for N_id, N in enumerate(Ns):
             fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
 
             if not os.path.isfile(fn_test):
-                print('file does not exist')
+                # print('file does not exist')
                 if segment == 'short':
                     os.system('sbatch run_short.sh ' + data_path)
                 elif segment == 'medium':
