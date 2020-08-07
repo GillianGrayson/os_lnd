@@ -1,6 +1,6 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
+from common.config import get_regular_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
 import os.path
 import numpy as np
 import math
@@ -39,7 +39,7 @@ for N in Ns:
 
         print("N = " + str(N))
         print("U = " + str(U))
-        local_path = '/' + system
+        local_path = '/regular/' + system
         if task == 'odeint':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
@@ -70,7 +70,7 @@ for N in Ns:
         config_list.append('drv_freq = ' + str(drv_freq))
         config_list.append('drv_phase = ' + str(drv_phase))
 
-        config_list += get_global_config(system, task)
+        config_list += get_regular_global_config(system, task)
         if task == 'odeint':
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':

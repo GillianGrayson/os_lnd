@@ -1,19 +1,54 @@
-def get_global_config(system, task, save_rho='true', name_precision=4):
+def get_regular_global_config(system, task, save_rho='true', name_precision=4):
     config_list = []
     config_list.append('[global]')
+    config_list.append('run_type = regular')
     config_list.append('logger_type = console')
     config_list.append('silent = false')
     config_list.append('system = ' + system)
     config_list.append('task = ' + task)
     config_list.append('debug_dump = false')
-    config_list.append('save_rho = ' + save_rho)
     config_list.append('save_hamiltonians = false')
     config_list.append('save_dissipators = false')
-    config_list.append('save_lindbladians = false')
     config_list.append('save_f_basis = false')
+    config_list.append('save_lindbladians = false')
+    config_list.append('save_lindbladian_evals = true')
+    config_list.append('save_rho = ' + save_rho)
+    config_list.append('save_rho_evals = true')
+    config_list.append('save_run_times = true')
+    config_list.append('save_non_zeros_part = true')
+    config_list.append('save_mem_info = true')
     config_list.append('name_precision = ' + str(name_precision))
     config_list.append('save_precision = 16')
     return config_list
+
+def get_serial_global_config(system, task, start, shift, num, name_precision=4):
+    config_list = []
+    config_list.append('[global]')
+    config_list.append('run_type = serial')
+    config_list.append('serial_start = ' + start)
+    config_list.append('serial_shift = ' + shift)
+    config_list.append('serial_num = ' + num)
+    config_list.append('serial_rho_evals = true')
+    config_list.append('serial_lindbladian_evals = true')
+    config_list.append('logger_type = console')
+    config_list.append('silent = false')
+    config_list.append('system = ' + system)
+    config_list.append('task = ' + task)
+    config_list.append('debug_dump = false')
+    config_list.append('save_hamiltonians = false')
+    config_list.append('save_dissipators = false')
+    config_list.append('save_f_basis = false')
+    config_list.append('save_lindbladians = false')
+    config_list.append('save_lindbladian_evals = false')
+    config_list.append('save_rho = false')
+    config_list.append('save_rho_evals = false')
+    config_list.append('save_run_times = false')
+    config_list.append('save_non_zeros_part = false')
+    config_list.append('save_mem_info = false')
+    config_list.append('name_precision = ' + str(name_precision))
+    config_list.append('save_precision = 16')
+    return config_list
+
 
 def get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, continue_path):
 

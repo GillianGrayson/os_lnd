@@ -1,6 +1,6 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
+from common.config import get_regular_global_config,  get_odeint_config, get_smallest_eigen_vector_config, get_all_evals_config
 import os.path
 import numpy as np
 
@@ -39,7 +39,7 @@ for seed in seeds:
 
         print("seed = " + str(seed))
         print("W = " + str(W))
-        local_path = '/' + system
+        local_path = '/regular/' + system
         if task == 'odeint':
             local_path += '/' + task + '_' + str(total_num_periods) + '_' + str(format(step, '0.2e'))
         elif task == 'smallest_eigen_vector':
@@ -69,7 +69,7 @@ for seed in seeds:
         config_list.append('U = ' + str(U))
         config_list.append('J = ' + str(J))
 
-        config_list += get_global_config(system, task, save_rho='false')
+        config_list += get_regular_global_config(system, task, save_rho='false')
         if task == 'odeint':
             config_list += get_odeint_config(step, total_num_periods, current_num_periods, current_num_time_points, is_continue, data_path + '/')
         elif task == 'smallest_eigen_vector':

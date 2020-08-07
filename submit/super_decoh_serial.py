@@ -1,6 +1,6 @@
 import pathlib
 from common.file_system import get_root
-from common.config import get_global_config
+from common.config import get_serial_global_config
 import os.path
 import numpy as np
 import math
@@ -16,16 +16,14 @@ G_type = 0
 aux_dim = 0
 reshuffle_type = 0
 
-ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
-total_num_evals  = 100000
-all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
-
-#ps = [1.0]
-#Ns = [200]
-#all_seeds = [list(np.linspace(1, 20, 20, dtype=int))]
-
+num_seeds_total = 100000
+num_seeds_serial = 100
+num_runs = int(num_seeds_total / num_seeds_serial)
 num_seeds = 1000000
+
+ps = [1.0]
+Ns = [64]
+all_seeds = [list(np.linspace(0, num_seeds_total - num_seeds_serial, num_runs, dtype=int) + 1)]
 
 for N_id, N in enumerate(Ns):
     seeds = all_seeds[N_id]
@@ -35,7 +33,7 @@ for N_id, N in enumerate(Ns):
             print("N = " + str(N))
             print("p = " + str(p))
             print("seed = " + str(seed))
-            local_path = '/' + system
+            local_path = '/serial/' + system
             local_path += '/' + task
 
             local_path += \
@@ -62,7 +60,7 @@ for N_id, N in enumerate(Ns):
             config_list.append('evals_G = false')
             config_list.append('save_A = false')
 
-            config_list += get_global_config(system, task, save_rho='false', name_precision=10)
+            config_list += get_serial_global_config(system, task, seed, 1, num_seeds_serial, name_precision=10)
 
             pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
