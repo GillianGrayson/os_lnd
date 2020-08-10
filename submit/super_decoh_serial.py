@@ -41,7 +41,7 @@ for N_id, N in enumerate(Ns):
                 '/G_type_' + str(G_type) + '_ad_' + str(aux_dim) + \
                 '/reshuffle_type_' + str(reshuffle_type) + \
                 '/N_' + str(N) + \
-                '/p_' + str(format(p, '0.10f')) + \
+                '/p_' + str(format(p, '0.4f')) + \
                 '/seed_' + str(seed)
 
             data_path = get_root() + local_path
@@ -60,7 +60,7 @@ for N_id, N in enumerate(Ns):
             config_list.append('evals_G = false')
             config_list.append('save_A = false')
 
-            config_list += get_serial_global_config(system, task, seed, 1, num_seeds_serial, name_precision=10)
+            config_list += get_serial_global_config(system, task, seed, 1, num_seeds_serial, name_precision=4)
 
             pathlib.Path(data_path).mkdir(parents=True, exist_ok=True)
 
@@ -68,17 +68,17 @@ for N_id, N in enumerate(Ns):
             file_config.write('\n'.join(config_list))
 
             fn_suffix = \
+                'serial(' + str(format(seed, '0.4f')) + '_' + str(format(1, '0.4f')) + '_' + str(num_seeds_serial) + ')_' + \
                 'reshuffle(' + str(reshuffle_type) + ')_' + \
                 'G(' + str(G_type) + ')_' + \
                 'N(' + str(N) + ')_' + \
                 'ad(' + str(aux_dim) + ')_' + \
-                'p('  + str(format(p, '0.10f')) + ')_' + \
-                'seed(' + str(seed) + ')'
+                'p('  + str(format(p, '0.4f')) + ')'
 
-            fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
+            fn_test = data_path + '/serial_rho_evals_' + fn_suffix + '.txt'
 
             if not os.path.isfile(fn_test):
-                # print('file does not exist')
+                # print(fn_test)
                 if segment == 'short':
                     os.system('sbatch run_short.sh ' + data_path)
                 elif segment == 'medium':
