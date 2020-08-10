@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 		Model model(ini);
 		
 		std::string format = fmt::format("0:.{:d}f", name_precision);
-		auto suffix = fmt::format(fmt::format("_serial({{{:s}}}_{{{:s}}}", format, format), serial_start, serial_shift) + fmt::format("_{:d})", serial_num);
+		auto suffix = fmt::format(fmt::format("_serial({{{:s}}}", format), serial_start) + fmt::format(fmt::format("_{{{:s}}}", format), serial_shift) + fmt::format("_{:d})", serial_num);
 		std::vector<std::complex<double>> rho_evals;
 		std::vector<std::complex<double>> lindbladian_evals;
 		
