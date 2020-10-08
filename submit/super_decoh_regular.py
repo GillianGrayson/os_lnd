@@ -11,7 +11,7 @@ system = 'super_decoh'
 
 task = 'eigen_dense'
 
-method = 'origin'
+method = 'simple'
 G_type = 0
 aux_dim = 0
 reshuffle_type = 0
