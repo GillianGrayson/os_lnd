@@ -2,13 +2,13 @@ clear all;
 addpath('../../../source/matlab/lib')
 
 task = 'eigen_dense';
-path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/%s', task);
+path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/regular/super_decoh/%s', task);
 
 figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
 
 num_hits = 0;
 
-method = 'simple';
+method = 'origin';
 G_type = 0;
 reshuffle_type = 0;
 

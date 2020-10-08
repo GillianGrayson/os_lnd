@@ -7,14 +7,15 @@ mem_size = 1;
 non_zeros_size = 2;
 run_times_size = 1;
 
-path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/%s', task);
+path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/regular/super_decoh/%s', task);
 
-method = 'simple';
+method = 'origin';
 G_type = 0;
 reshuffle_type = 0;
 
 ps = logspace(-3, 0, 31)';
-Ns = floor(logspace(1, 2, 11)');
+%Ns = floor(logspace(1, 2, 11)');
+Ns = [100]';
 total_num_evals = 100000;
 num_seeds = zeros(size(Ns, 1), 1);
 

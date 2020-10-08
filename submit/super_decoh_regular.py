@@ -5,21 +5,23 @@ import os.path
 import numpy as np
 import math
 
-segment = 'medium'
+segment = 'long'
 
 system = 'super_decoh'
 
 task = 'eigen_dense'
 
-method = 'simple'
+method = 'origin'
 G_type = 0
 aux_dim = 0
 reshuffle_type = 0
 
 ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
+#Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
+Ns = [200]
 total_num_evals  = 100000
-all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
+#all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
+all_seeds = [list(np.linspace(1, 10, 10, dtype=int))]
 
 #ps = [1.0]
 #Ns = [200]
