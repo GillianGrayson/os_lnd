@@ -8,12 +8,13 @@ figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
 
 num_hits = 0;
 
-method = 'origin';
+method = 'simple';
 G_type = 0;
 reshuffle_type = 0;
 
 ps = logspace(-3, 0, 31)';
-Ns = floor(logspace(1, 2, 11)');
+%Ns = floor(logspace(1, 2, 11)');
+Ns = vertcat(floor(logspace(1, 2, 11)'), 200);
 total_num_evals = 100000;
 num_seeds = zeros(size(Ns, 1), 1);
 
@@ -27,8 +28,12 @@ for N_id = 1:size(Ns, 1)
     N = Ns(N_id);
     N2 = N * N;
     
-    num_seeds(N_id) = ceil(total_num_evals / (Ns(N_id).^2));
-    
+	if N == 200
+		num_seeds(N_id) = 10;
+	else
+		num_seeds(N_id) = ceil(total_num_evals / (Ns(N_id).^2));
+    end
+	
     fprintf('N = %d\n', N);
     fprintf('num_seeds = %d\n', num_seeds(N_id));
     
@@ -232,6 +237,10 @@ for N_id = 1:size(Ns, 1)
     %mean_iou = (max(iou_quantum) + min(iou_quantum)) * 0.5;
     %[xi, yi] = polyxpoly(ps, iou_quantum, [ps(1) ps(end)], [mean_iou mean_iou]);
     [xi, yi] = polyxpoly(ps, iou_quantum, ps, iou_classical);
+	if size(xi, 1) > 1
+		xi = xi(end);
+		yi = yi(end);
+	end
     hline = plot(xi, yi, 'o', 'MarkerSize', 10, 'MarkerFaceColor', color);
     hline.Annotation.LegendInformation.IconDisplayStyle = 'off';
     hold all;
