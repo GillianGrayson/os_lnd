@@ -63,8 +63,8 @@ for p_id = 1:size(ps, 1)
     x_lim = max(abs(min(real(all_evals_classical))), abs(max(real(all_evals_classical))));
     pdf2d_classical.x_bin_s = -x_lim - 1e-16;
     pdf2d_classical.x_bin_f = x_lim + 1e-16;
-    pdf2d_classical.y_bin_s = min(imag(all_evals_classical)) - 1e-16;
-    pdf2d_classical.y_bin_f = max(imag(all_evals_classical)) + 1e-16;
+    pdf2d_classical.y_bin_s = min(min(imag(all_evals_classical)) - 1e-16, -0.8);
+    pdf2d_classical.y_bin_f = max(max(imag(all_evals_classical)) + 1e-16, 0.8);
     pdf2d_classical = oqs_pdf_2d_setup(pdf2d_classical);
     data2d = horzcat(real(all_evals_classical), imag(all_evals_classical));
     pdf2d_classical = oqs_pdf_2d_update(pdf2d_classical, data2d);
@@ -82,15 +82,16 @@ for p_id = 1:size(ps, 1)
     pgont_classical = polyshape(xt, yt);
     figure(fig_classical_1)
     hold all;
-    hline = plot(xt, yt, 'LineWidth', 3, 'Color', 'cyan');
+    hLine = plot(xt, yt, 'LineWidth', 3, 'Color', 'green');
+    legend(hLine, 'classical');
     fn_fig_classical = sprintf('%s/lindbladian_evals_classical_N(%d)_p(%0.4f)', path_figures, N, p);
     oqs_save_fig(fig_classical_1, fn_fig_classical);
     
     x_lim = max(abs(min(real(all_evals_quantum))), abs(max(real(all_evals_quantum))));
     pdf2d_quantum.x_bin_s = -x_lim - 1e-16;
     pdf2d_quantum.x_bin_f = x_lim + 1e-16;
-    pdf2d_quantum.y_bin_s = min(imag(all_evals_quantum)) - 1e-16;
-    pdf2d_quantum.y_bin_f = max(imag(all_evals_quantum)) + 1e-16;
+    pdf2d_quantum.y_bin_s = min(min(imag(all_evals_quantum)) - 1e-16, -1.0);
+    pdf2d_quantum.y_bin_f = max(max(imag(all_evals_quantum)) + 1e-16, 1.0);
     pdf2d_quantum = oqs_pdf_2d_setup(pdf2d_quantum);
     data2d = horzcat(real(all_evals_quantum), imag(all_evals_quantum));
     pdf2d_quantum = oqs_pdf_2d_update(pdf2d_quantum, data2d);
@@ -108,7 +109,8 @@ for p_id = 1:size(ps, 1)
     pgont_quantum = polyshape(xt, yt);
     figure(fig_quantum_1)
     hold all;
-    hline = plot(xt, yt, 'LineWidth', 3, 'Color', 'cyan');
+    hLine = plot(xt, yt, 'LineWidth', 3, 'Color', 'blue');
+    legend(hLine, 'quantum');
     fn_fig_quantum = sprintf('%s/lindbladian_evals_quantum_N(%d)_p(%0.4f)', path_figures, N, p);
     oqs_save_fig(fig_quantum_1, fn_fig_quantum);
         
