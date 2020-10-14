@@ -1,13 +1,13 @@
 clear all;
 
-path_figures = ''
+path_figures = 'E:/YandexDisk/Work/os_lnd/figures/super_decoh/N300_kozinov';
 path_data = 'E:/YandexDisk/Work/os_lnd/data/N300_kozinov';
 path_border_line = 'E:/YandexDisk/Work/os_lnd/data';
 
 num_hits = 0
 
 N = 300;
-ps = [0.001 0.01 0.05 0.1 0]';
+ps = [0.001 0.1 0.01 0.05]';
 seeds = [linspace(0, 0, 1)]';
 
 N2 = N * N;
@@ -72,7 +72,6 @@ for p_id = 1:size(ps, 1)
     pdf2d_classical = oqs_pdf_2d_release(pdf2d_classical);
     fig_classical_1 = oqs_pdf_2d_plot(pdf2d_classical);
     fig_classical_2 = oqs_pdf_2d_plot(pdf2d_classical);
-    fn_fig_classical = sprintf('%s/lindbladian_evals_classical', path_figures);
     hold all;
     xt1 = theory_data_classical(:, 1);
     yt1 = theory_data_classical(:, 2);
@@ -84,6 +83,8 @@ for p_id = 1:size(ps, 1)
     figure(fig_classical_1)
     hold all;
     hline = plot(xt, yt, 'LineWidth', 3, 'Color', 'cyan');
+    fn_fig_classical = sprintf('%s/lindbladian_evals_classical_N(%d)_p(%0.4f)', path_figures, N, p);
+    oqs_save_fig(fig_classical_1, fn_fig_classical);
     
     x_lim = max(abs(min(real(all_evals_quantum))), abs(max(real(all_evals_quantum))));
     pdf2d_quantum.x_bin_s = -x_lim - 1e-16;
@@ -97,7 +98,6 @@ for p_id = 1:size(ps, 1)
     pdf2d_quantum = oqs_pdf_2d_release(pdf2d_quantum);
     fig_quantum_1 = oqs_pdf_2d_plot(pdf2d_quantum);
     fig_quantum_2 = oqs_pdf_2d_plot(pdf2d_quantum);
-    fn_fig_quantum = sprintf('%s/lindbladian_evals_quantum', path_figures);
     hold all;
     xt1 = theory_data_quantum(:, 1);
     yt1 = theory_data_quantum(:, 2);
@@ -109,6 +109,8 @@ for p_id = 1:size(ps, 1)
     figure(fig_quantum_1)
     hold all;
     hline = plot(xt, yt, 'LineWidth', 3, 'Color', 'cyan');
+    fn_fig_quantum = sprintf('%s/lindbladian_evals_quantum_N(%d)_p(%0.4f)', path_figures, N, p);
+    oqs_save_fig(fig_quantum_1, fn_fig_quantum);
         
     limit_pdf_classical = num_hits / (size(all_evals_classical, 1) * pdf2d_classical.x_bin_shift * pdf2d_classical.y_bin_shift);
     limit_pdf_quantum = num_hits / (size(all_evals_quantum, 1) * pdf2d_quantum.x_bin_shift * pdf2d_quantum.y_bin_shift);
@@ -168,10 +170,20 @@ for p_id = 1:size(ps, 1)
     plot(pgont_classical);
     plot(pgonr_classical);
     plot(poly_intersect_classical);
+    fn_fig_classical = sprintf('%s/lindbladian_evals_classical_poly_N(%d)_p(%0.4f)', path_figures, N, p);
+    oqs_save_fig(fig_classical_2, fn_fig_classical);
     
     figure(fig_quantum_2)
     hold all;
     plot(pgont_quantum);
     plot(pgonr_quantum);
     plot(poly_intersect_quantum);
+    fn_fig_quantum = sprintf('%s/lindbladian_evals_quantum_poly_N(%d)_p(%0.4f)', path_figures, N, p);
+    oqs_save_fig(fig_quantum_2, fn_fig_quantum);
+    
+    iou_quantum(p_id) = area(poly_intersect_quantum) / area(poly_union_quantum);
+    iou_classical(p_id) = area(poly_intersect_classical) / area(poly_union_classical);
+    
 end
+
+close all
