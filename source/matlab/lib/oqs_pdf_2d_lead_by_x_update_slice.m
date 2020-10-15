@@ -1,4 +1,4 @@
-function pdf = oqs_pdf_2d_lead_by_x_update(pdf, data, x_id)
+function pdf = oqs_pdf_2d_lead_by_x_update_slice(pdf, data, x_id)
 
 for y_id = 1:size(data, 1)
     y = data(y_id);
