@@ -7,7 +7,7 @@ path_border_line = 'E:/YandexDisk/Work/os_lnd/data';
 num_hits = 0
 
 N = 300;
-ps = [0.001 0.1 0.01 0.05]';
+ps = [1]';
 seeds = [linspace(0, 0, 1)]';
 
 N2 = N * N;
@@ -88,8 +88,8 @@ for p_id = 1:size(ps, 1)
     oqs_save_fig(fig_classical_1, fn_fig_classical);
     
     x_lim = max(abs(min(real(all_evals_quantum))), abs(max(real(all_evals_quantum))));
-    pdf2d_quantum.x_bin_s = -x_lim - 1e-16;
-    pdf2d_quantum.x_bin_f = x_lim + 1e-16;
+    pdf2d_quantum.x_bin_s = min(-x_lim - 1e-16, -2);
+    pdf2d_quantum.x_bin_f = max(x_lim + 1e-16, 2);
     pdf2d_quantum.y_bin_s = min(min(imag(all_evals_quantum)) - 1e-16, -1.0);
     pdf2d_quantum.y_bin_f = max(max(imag(all_evals_quantum)) + 1e-16, 1.0);
     pdf2d_quantum = oqs_pdf_2d_setup(pdf2d_quantum);
