@@ -14,7 +14,7 @@ reshuffle_type = 0;
 
 ps = [1]';
 Ns = [100];
-num_seeds = [10];
+num_seeds = [1000];
 
 for N_id = 1:size(Ns, 1)
     
@@ -119,11 +119,11 @@ for N_id = 1:size(Ns, 1)
         fn_fig_classical = sprintf('%s/lindbladian_evals_%s', figures_path, suffix_classical);
         oqs_save_fig(fig_classical_1, fn_fig_classical);
         
-        x_lim = max(abs(min(real(all_evals_quantum))), abs(max(real(all_evals_quantum))));
-        pdf2d_quantum.x_bin_s = -x_lim - 1e-16;
-        pdf2d_quantum.x_bin_f = x_lim + 1e-16;
-        pdf2d_quantum.y_bin_s = min(min(imag(all_evals_quantum)) - 1e-16, -1.0);
-        pdf2d_quantum.y_bin_f = max(max(imag(all_evals_quantum)) + 1e-16, 1.0);
+		x_lim = max(abs(min(real(all_evals_quantum))), abs(max(real(all_evals_quantum))));
+		pdf2d_quantum.x_bin_s = min(-x_lim - 1e-16, -2);
+		pdf2d_quantum.x_bin_f = max(x_lim + 1e-16, 2);
+		pdf2d_quantum.y_bin_s = min(min(imag(all_evals_quantum)) - 1e-16, -1.1);
+		pdf2d_quantum.y_bin_f = max(max(imag(all_evals_quantum)) + 1e-16, 1.1);
         pdf2d_quantum = oqs_pdf_2d_setup(pdf2d_quantum);
         data2d = horzcat(real(all_evals_quantum), imag(all_evals_quantum));
         pdf2d_quantum = oqs_pdf_2d_update(pdf2d_quantum, data2d);

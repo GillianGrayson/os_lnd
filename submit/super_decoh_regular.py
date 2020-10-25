@@ -5,7 +5,7 @@ import os.path
 import numpy as np
 import math
 
-segment = 'long'
+segment = 'medium'
 
 system = 'super_decoh'
 
@@ -16,12 +16,13 @@ G_type = 0
 aux_dim = 0
 reshuffle_type = 0
 
-ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
+#ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
+ps = [0.8]
 #Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
-Ns = [200]
+Ns = [100]
 total_num_evals  = 100000
 #all_seeds = [list(np.linspace(1, math.ceil(total_num_evals/(N * N)), math.ceil(total_num_evals/(N * N)), dtype=int))  for N in Ns]
-all_seeds = [list(np.linspace(1, 10, 10, dtype=int))]
+all_seeds = [list(np.linspace(1, 1000, 1000, dtype=int))]
 
 #ps = [1.0]
 #Ns = [200]

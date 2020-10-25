@@ -3,12 +3,12 @@ addpath('../../../source/matlab/lib')
 
 method = 'origin';
 reshufle_type = 1;
-G_type = 1;
-aux_dim = 100000;
+G_type = 0;
+aux_dim = 0;
 N = 100;
 ps = [1]';
-scaling_types = [4]';
-seeds = linspace(1, 100, 100)';
+scaling_types = [3]';
+seeds = linspace(1, 1000, 1000)';
 
 evals_lim = 1e-8;
 
@@ -40,7 +40,7 @@ for p_id = 1:size(ps, 1)
     evec_sub_diag_norms.x_num_bins = 50;
     evec_sub_diag_norms.x_label = '$\log_{10}norm$';
     
-    path = '/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/eigen_dense';
+    path = '/data/condmat/ivanchen/yusipov/os_lnd/regular/super_decoh/eigen_dense';
     figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
     
     N2 = N * N;
@@ -54,10 +54,10 @@ for p_id = 1:size(ps, 1)
         
         seed = seeds(seed_id)
         
-		suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_ad(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, aux_dim, p, seed);
+		suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
 		
         evals = zeros(N2, 1);
-		fn_cpp = sprintf('%s/method_%s/G_type_%d_ad_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, aux_dim, reshufle_type, N, p, seed, suffix);
+		fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/lindbladian_evals_%s.txt', path, method, G_type, reshufle_type, N, p, seed, suffix);
         if ~isfile(fn_cpp)
 			fprintf('Warning! seed = %d\n', seed);
 		end
@@ -69,7 +69,7 @@ for p_id = 1:size(ps, 1)
         end
 		
         evecs_norms = zeros(N2, 1);
-        fn_cpp = sprintf('%s/method_%s/G_type_%d_ad_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/evec_sub_diag_norms_%s.txt', path, method, G_type, aux_dim, reshufle_type, N, p, seed, suffix);
+        fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/evec_sub_diag_norms_%s.txt', path, method, G_type, reshufle_type, N, p, seed, suffix);
         cpp_data = importdata(fn_cpp);
         for str_id = 1:N2
             str = string(cpp_data(str_id));

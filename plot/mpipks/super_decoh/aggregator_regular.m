@@ -9,13 +9,14 @@ run_times_size = 1;
 
 path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/regular/super_decoh/%s', task);
 
-method = 'simple';
+method = 'origin';
 G_type = 0;
 reshuffle_type = 0;
 
-ps = logspace(-3, 0, 31)';
+%ps = logspace(-3, 0, 31)';
+ps = [1];
 %Ns = floor(logspace(1, 2, 11)');
-Ns = [200]';
+Ns = [100]';
 total_num_evals = 100000;
 num_seeds = zeros(size(Ns, 1), 1);
 
@@ -25,7 +26,7 @@ for N_id = 1:size(Ns, 1)
     N2 = N * N;
     
     %num_seeds(N_id) = ceil(total_num_evals / (Ns(N_id).^2));
-	num_seeds(N_id) = 10;
+	num_seeds(N_id) = 1000;
     
     fprintf('N = %d\n', N);
     fprintf('num_seeds = %d\n', num_seeds(N_id));
