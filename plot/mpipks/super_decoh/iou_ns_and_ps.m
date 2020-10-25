@@ -23,7 +23,11 @@ point_y = zeros(size(Ns, 1), 1);
 
 fig_global = figure;
 
+colors = distinguishable_colors(size(Ns, 1));
+
 for N_id = 1:size(Ns, 1)
+
+	color = colors(N_id, :)
     
     N = Ns(N_id);
     N2 = N * N;
@@ -223,9 +227,9 @@ for N_id = 1:size(Ns, 1)
     end
     
     figure(fig_global)
-    hline = plot(ps, iou_quantum, 'LineWidth', 2);
+    hline = plot(ps, iou_quantum, 'LineWidth', 2, 'Color', color);
     color = get(hline,'Color');
-    legend(hline, sprintf('log_{10}N=%0.1f (%d)', log10(N), N))
+    legend(hline, sprintf('N=%d', N))
     set(gca, 'FontSize', 30);
     xlabel('p', 'Interpreter', 'latex');
     set(gca, 'FontSize', 30);
@@ -250,7 +254,11 @@ for N_id = 1:size(Ns, 1)
 	if ps(idx) < xi
 		start_index = idx + 1;
 	end	
-    hline = plot(vertcat(xi, ps(start_index:end)), vertcat(yi, iou_classical(start_index:end)), 'LineWidth', 2, 'Color', color);
+    %hline = plot(vertcat(xi, ps(start_index:end)), vertcat(yi, iou_classical(start_index:end)), 'LineWidth', 2, 'Color', color);
+    %hline.Annotation.LegendInformation.IconDisplayStyle = 'off';
+    %hold all;
+	
+	hline = plot(ps(1:end), iou_classical(1:end), 'LineWidth', 2, 'Color', color, 'LineStyle', '--');
     hline.Annotation.LegendInformation.IconDisplayStyle = 'off';
     hold all;
     
