@@ -1,4 +1,4 @@
-clear;
+clear all;
 
 Nr = 3;
 rr = 2;
