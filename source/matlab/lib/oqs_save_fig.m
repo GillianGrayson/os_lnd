@@ -5,5 +5,6 @@ set(fig,'PaperOrientation','landscape');
 set(fig,'PaperUnits','normalized');
 set(fig,'PaperPosition', [0 0 1 1]);
 print(fig, '-dpdf', sprintf('%s.pdf', fn));
+saveas(gcf, sprintf('%s.png', fn));
 
 end
