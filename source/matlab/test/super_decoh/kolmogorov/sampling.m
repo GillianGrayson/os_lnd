@@ -41,6 +41,8 @@ for seed = 1:num_seeds
     toc
 end
 
+pdf2d = oqs_pdf_2d_release(oqs_pdf_2d_release);
+
 fig = oqs_pdf_2d_plot(pdf2d);
 hold all;
 xt1 = theory_data_classical(:, 1);
