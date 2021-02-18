@@ -4,7 +4,7 @@ savefig(sprintf('%s.fig', fn));
 set(fig,'PaperOrientation','landscape');
 set(fig,'PaperUnits','normalized');
 set(fig,'PaperPosition', [0 0 1 1]);
-print(fig, '-dpdf', sprintf('%s.pdf', fn));
+print(fig, sprintf('%s.pdf', fn), '-dpdf', '-fillpage');
 saveas(gcf, sprintf('%s.png', fn));
 
 end
