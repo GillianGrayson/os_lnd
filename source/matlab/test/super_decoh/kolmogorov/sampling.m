@@ -1,15 +1,15 @@
 clear all;
 
 N = 2000;
-num_seeds = 10;
+num_seeds = 1000;
 
 path_border_line = 'E:/YandexDisk/Work/os_lnd/data';
 theory_data_classical = importdata(sprintf('%s/borderline_classical.dat', path_border_line));
 
 pdf2d.x_num_bins = 201;
 pdf2d.y_num_bins = 201;
-pdf2d.x_label = 'Re$(\lambda)$';
-pdf2d.y_label = 'Im$(\lambda)$';
+pdf2d.x_label = 'Re$(\chi'')$';
+pdf2d.y_label = 'Im$(\chi'')$';
 pdf2d.x_bin_s = -4;
 pdf2d.x_bin_f = 4;
 pdf2d.y_bin_s = -1;
@@ -41,7 +41,7 @@ for seed = 1:num_seeds
     toc
 end
 
-pdf2d = oqs_pdf_2d_release(oqs_pdf_2d_release);
+pdf2d = oqs_pdf_2d_release(pdf2d);
 
 fig = oqs_pdf_2d_plot(pdf2d);
 hold all;
