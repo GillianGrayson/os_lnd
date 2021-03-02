@@ -6,10 +6,10 @@ lind_real = importdata(sprintf('%s/Kolmogorov_density_real_eigenvalues.dat', the
 lind_strip = importdata(sprintf('%s/Kolmogorov_density_complex_x_section.dat', thery_data_path));
 
 figure;
-h = plot(lind_real(:, 1), 0.97 * lind_real(:, 2), 'LineWidth', 2);
+h = plot(lind_real(480:920, 1), 0.97 * lind_real(480:920, 2), 'LineWidth', 2);
 legend(h, 'real eigenvalues', 'interpeter', 'latex')
 hold all;
-h = plot(lind_strip(:, 1), 0.97 * 0.390 * sqrt(lind_strip(:, 2)), 'LineWidth', 2);
+h = plot(lind_strip(480:920, 1), 0.97 * 0.390 * sqrt(lind_strip(480:920, 2)), 'LineWidth', 2);
 legend(h, 'y=0', 'interpeter', 'latex')
 hold all;
 
