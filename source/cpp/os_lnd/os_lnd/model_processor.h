@@ -2,6 +2,7 @@
 #include "mbl_model_strategy.h"
 #include "dimer_model_strategy.h"
 #include "super_decoh_model_strategy.h"
+#include "xxz_model_strategy.h"
 
 struct ModelProcessor
 {
@@ -16,6 +17,17 @@ struct ModelProcessor
 			if (run_type == "regular")
 			{
 				model_strategy = std::make_unique<MBLModelStrategy>();
+			}
+			else
+			{
+				model.throw_error(fmt::format("Unsupported run_type for {s}", system));
+			}
+		}
+		else if (system == "xxz")
+		{
+			if (run_type == "regular")
+			{
+				model_strategy = std::make_unique<XXZModelStrategy>();
 			}
 			else
 			{

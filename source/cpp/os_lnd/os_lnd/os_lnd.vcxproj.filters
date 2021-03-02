@@ -134,5 +134,14 @@
     <ClInclude Include="xxz_model_strategy.h">
       <Filter>Header Files\strategy\model</Filter>
     </ClInclude>
+    <ClInclude Include="xxz_system.h">
+      <Filter>Header Files\odeint\system</Filter>
+    </ClInclude>
+    <ClInclude Include="xxz_observer.h">
+      <Filter>Header Files\odeint\observer</Filter>
+    </ClInclude>
+    <ClInclude Include="xxz_integrate_strategy.h">
+      <Filter>Header Files\odeint\integrator</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

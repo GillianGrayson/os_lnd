@@ -16,9 +16,68 @@
 struct XXZModelStrategy : ModelStrategy
 {
 	std::vector<double> energies;
+	sp_mtx j_k0;
 
 	void setup_aux_data(Model& model) override
 	{
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		
+		const int quantity_index = model.ini.GetInteger("xxz", "quantity_index", 0);
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
+
+		sp_mtx sigma_0 = get_sp_eye(2);
+		sp_mtx sigma_x = get_sigma_x();
+		sp_mtx sigma_y = get_sigma_y();
+		sp_mtx sigma_z = get_sigma_z();
+
+		sp_mtx s_x_k0;
+		sp_mtx s_x_k1 = sigma_0;
+		sp_mtx s_y_k0;
+		sp_mtx s_y_k1 = sigma_0;
+		if (quantity_index == 0)
+		{
+			s_x_k0 = 0.5 * sigma_x;
+			s_y_k0 = 0.5 * sigma_y;
+		}
+		else
+		{
+			s_x_k0 = sigma_0;
+			s_y_k0 = sigma_0;
+		}
+
+		for (auto inner_id = 1; inner_id < num_spins; inner_id++)
+		{
+			if (inner_id == quantity_index)
+			{
+				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, 0.5 * sigma_x).eval();
+				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, 0.5 * sigma_y).eval();
+			}
+			else
+			{
+				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, sigma_0).eval();
+				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, sigma_0).eval();
+			}
+
+			if (inner_id == quantity_index + 1)
+			{
+				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, 0.5 * sigma_x).eval();
+				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, 0.5 * sigma_y).eval();
+			}
+			else
+			{
+				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, sigma_0).eval();
+				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, sigma_0).eval();
+			}
+		}
+
+		j_k0 = (s_x_k0 * s_y_k1 - s_y_k0 * s_x_k1);
+
+		if (debug_dump)
+		{
+			auto fn = "j_k0_mtx" + model.suffix;
+			save_sp_mtx(j_k0, fn, save_precision);
+		}
 	}
 
 	void setup_suffix(Model& model) override
@@ -244,56 +303,6 @@ struct XXZModelStrategy : ModelStrategy
 
 	double get_quantity(Model& model)
 	{
-		const int quantity_index = model.ini.GetInteger("xxz", "quantity_index", 0);
-		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
-
-		sp_mtx sigma_0 = get_sp_eye(2);
-		sp_mtx sigma_x = get_sigma_x();
-		sp_mtx sigma_y = get_sigma_y();
-		sp_mtx sigma_z = get_sigma_z();
-
-		sp_mtx s_x_k0;
-		sp_mtx s_x_k1 = sigma_0;
-		sp_mtx s_y_k0;
-		sp_mtx s_y_k1 = sigma_0;
-		if (quantity_index == 0)
-		{
-			s_x_k0 = 0.5 * sigma_x;
-			s_y_k0 = 0.5 * sigma_y;
-		}
-		else
-		{
-			s_x_k0 = sigma_0;
-			s_y_k0 = sigma_0;
-		}
-
-		for (auto inner_id = 1; inner_id < num_spins; inner_id++)
-		{
-			if (inner_id == quantity_index)
-			{
-				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, 0.5 * sigma_x).eval();
-				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, 0.5 * sigma_y).eval();
-			}
-			else
-			{
-				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, sigma_0).eval();
-				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, sigma_0).eval();
-			}
-
-			if (inner_id == quantity_index + 1)
-			{
-				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, 0.5 * sigma_x).eval();
-				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, 0.5 * sigma_y).eval();
-			}
-			else
-			{
-				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, sigma_0).eval();
-				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, sigma_0).eval();
-			}
-		}
-
-		sp_mtx j_k0 = (s_x_k0 * s_y_k1 - s_y_k0 * s_x_k1);
-
 		Eigen::MatrixXcd op = j_k0 * model.rho;
 
 		double quantity = model.rho.trace().real();
