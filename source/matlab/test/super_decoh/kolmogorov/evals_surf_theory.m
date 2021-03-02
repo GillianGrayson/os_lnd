@@ -18,6 +18,9 @@ for x_id = 1:size(xs, 1)
     end
 end
 
+xs = xs(500:900);
+pdf = pdf(500:900, :);
+
 f = figure;
 pdf = pdf';
 s = surf(xs, ys, pdf, 'FaceAlpha', 0.8);

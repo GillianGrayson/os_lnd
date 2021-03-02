@@ -26,6 +26,8 @@ end
 
 pdf(101, :) = 0.5 * (pdf(100, :) + pdf(102, :));
 
+pdf = smooth2a(pdf, 5, 5);
+
 s = surf(pdf2d.x_bin_centers, pdf2d.y_bin_centers, pdf, 'FaceAlpha', 0.8);
 set(gca, 'FontSize', 30);
 xlabel(pdf2d.x_label, 'Interpreter', 'latex');
@@ -39,6 +41,40 @@ set(gca,'YDir','normal');
 hold all;
 propertyeditor('on')
 
-hLine = plot(xt, yt, 'LineWidth', 3, 'Color', 'cyan');
+hold all;
+theory_data_quantum = importdata(sprintf('%s/borderline_classical.dat', thery_data_path));
+xt1 = theory_data_quantum(:, 1);
+yt1 = theory_data_quantum(:, 2);
+xt2 = flip(xt1);
+yt2 = -flip(yt1);
+xt = vertcat(xt1, xt2);
+yt = vertcat(yt1, yt2);
+hLine = plot3(xt, yt, zeros(size(xt, 1), 1), 'LineWidth', 3, 'Color', 'k');
 
+hold all
+slice_id = 101;
+xs = pdf2d.x_bin_centers(slice_id) * ones(size(pdf2d.y_bin_centers, 2), 1);
+ys = pdf2d.y_bin_centers;
+zs = pdf(:, slice_id);
+plot3(xs, ys, zs)
+
+slice_id = 76;
+xs = pdf2d.x_bin_centers(slice_id) * ones(size(pdf2d.y_bin_centers, 2), 1);
+ys = pdf2d.y_bin_centers;
+zs = pdf(:, slice_id);
+plot3(xs, ys, zs)
+
+slice_id = 126;
+xs = pdf2d.x_bin_centers(slice_id) * ones(size(pdf2d.y_bin_centers, 2), 1);
+ys = pdf2d.y_bin_centers;
+zs = pdf(:, slice_id);
+plot3(xs, ys, zs)
+
+slice_id = 81;
+xs = pdf2d.x_bin_centers;
+ys = pdf2d.y_bin_centers(slice_id) * ones(size(pdf2d.x_bin_centers, 2), 1);
+zs = pdf(slice_id, :);
+plot3(xs, ys, zs)
+zs_zeros = zeros(size(xs, 2), 1);
+plot3(xs, ys, zs_zeros)
 
