@@ -131,5 +131,8 @@
     <ClInclude Include="eigen_dense_run_strategy.h">
       <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
+    <ClInclude Include="xxz_model_strategy.h">
+      <Filter>Header Files\strategy\model</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

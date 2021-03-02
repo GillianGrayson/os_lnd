@@ -1,8 +1,8 @@
 f = figure;
 pdf = pdf2d.pdf';
 
-c_lim = 0.05;
-width = 3;
+c_lim = 0.1;
+width = 6;
 for c_id = 1:size(pdf, 2)
     
     if (c_id == 7)

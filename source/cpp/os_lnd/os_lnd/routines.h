@@ -1,6 +1,60 @@
 #pragma once
 #include "init.h"
 
+
+inline sp_mtx get_sigma_x()
+{
+	std::vector<triplet> vec_triplets;
+	vec_triplets.push_back(triplet(0, 1, { 1.0, 0.0 }));
+	vec_triplets.push_back(triplet(1, 0, { 1.0, 0.0 }));
+	sp_mtx sigma(2, 2);
+	sigma.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+	return sigma;
+}
+
+inline sp_mtx get_sigma_y()
+{
+	std::vector<triplet> vec_triplets;
+	vec_triplets.push_back(triplet(0, 1, { 0.0, -1.0 }));
+	vec_triplets.push_back(triplet(1, 0, { 0.0, 1.0 }));
+	sp_mtx sigma(2, 2);
+	sigma.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+	return sigma;
+}
+
+inline sp_mtx get_sigma_z()
+{
+	std::vector<triplet> vec_triplets;
+	vec_triplets.push_back(triplet(0, 0, { 1.0, 0.0 }));
+	vec_triplets.push_back(triplet(1, 1, { -1.0, 0.0 }));
+	sp_mtx sigma(2, 2);
+	sigma.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+	return sigma;
+}
+
+inline sp_mtx get_sigma_m()
+{
+	std::vector<triplet> vec_triplets;
+	vec_triplets.push_back(triplet(1, 0, { 1.0, 0.0 }));
+	sp_mtx sigma(2, 2);
+	sigma.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+	return sigma;
+}
+
+inline sp_mtx get_sigma_p()
+{
+	std::vector<triplet> vec_triplets;
+	vec_triplets.push_back(triplet(0, 1, { 1.0, 0.0 }));
+	sp_mtx sigma(2, 2);
+	sigma.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
+
+	return sigma;
+}
+
 inline sp_mtx get_sp_eye(const int size)
 {
 	std::vector<triplet> vec_triplets;

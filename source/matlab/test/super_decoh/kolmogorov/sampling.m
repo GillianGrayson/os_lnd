@@ -1,7 +1,7 @@
 clear all;
 
 N = 2000;
-num_seeds = 1000;
+num_seeds = 10000;
 
 path_border_line = 'E:/YandexDisk/Work/os_lnd/data';
 theory_data_classical = importdata(sprintf('%s/borderline_classical.dat', path_border_line));
