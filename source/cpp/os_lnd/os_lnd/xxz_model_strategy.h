@@ -63,8 +63,6 @@ struct XXZModelStrategy : ModelStrategy
 	void setup_hamiltonian(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		
 		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 		
@@ -184,13 +182,13 @@ struct XXZModelStrategy : ModelStrategy
 			}
 		}
 
-		sp_mtx L1 = std::sqrt(1.0 + diss_mu) * s_p_l;
+		sp_mtx L1 = s_p_l;
 		model.dissipators.push_back(L1);
-		sp_mtx L2 = std::sqrt(1.0 - diss_mu) * s_m_l;
+		sp_mtx L2 = s_m_l;
 		model.dissipators.push_back(L2);
-		sp_mtx L3 = std::sqrt(1.0 - diss_mu) * s_p_r;
+		sp_mtx L3 = s_p_r;
 		model.dissipators.push_back(L3);
-		sp_mtx L4 = std::sqrt(1.0 + diss_mu) * s_m_r;
+		sp_mtx L4 = s_m_r;
 		model.dissipators.push_back(L4);
 	}
 
@@ -258,19 +256,15 @@ struct XXZModelStrategy : ModelStrategy
 		sp_mtx s_x_k1 = sigma_0;
 		sp_mtx s_y_k0;
 		sp_mtx s_y_k1 = sigma_0;
-		sp_mtx s_z_k0;
-		sp_mtx s_z_k1 = sigma_0;
 		if (quantity_index == 0)
 		{
 			s_x_k0 = 0.5 * sigma_x;
 			s_y_k0 = 0.5 * sigma_y;
-			s_z_k0 = 0.5 * sigma_z;
 		}
 		else
 		{
 			s_x_k0 = sigma_0;
 			s_y_k0 = sigma_0;
-			s_z_k0 = sigma_0;
 		}
 
 		for (auto inner_id = 1; inner_id < num_spins; inner_id++)
@@ -279,26 +273,22 @@ struct XXZModelStrategy : ModelStrategy
 			{
 				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, 0.5 * sigma_x).eval();
 				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, 0.5 * sigma_y).eval();
-				s_z_k0 = Eigen::kroneckerProduct(s_z_k0, 0.5 * sigma_z).eval();
 			}
 			else
 			{
 				s_x_k0 = Eigen::kroneckerProduct(s_x_k0, sigma_0).eval();
 				s_y_k0 = Eigen::kroneckerProduct(s_y_k0, sigma_0).eval();
-				s_z_k0 = Eigen::kroneckerProduct(s_z_k0, sigma_0).eval();
 			}
 
 			if (inner_id == quantity_index + 1)
 			{
 				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, 0.5 * sigma_x).eval();
 				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, 0.5 * sigma_y).eval();
-				s_z_k1 = Eigen::kroneckerProduct(s_z_k1, 0.5 * sigma_z).eval();
 			}
 			else
 			{
 				s_x_k1 = Eigen::kroneckerProduct(s_x_k1, sigma_0).eval();
 				s_y_k1 = Eigen::kroneckerProduct(s_y_k1, sigma_0).eval();
-				s_z_k1 = Eigen::kroneckerProduct(s_z_k1, sigma_0).eval();
 			}
 		}
 
