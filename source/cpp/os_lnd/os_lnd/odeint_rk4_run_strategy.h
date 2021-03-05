@@ -31,13 +31,13 @@ struct ODEIntRK4RunStrategy : RunStrategy
 			load_vector(last_state, fn);
 
 			double start_time = last_dump_info[0];
-			times = get_times_vector(model, start_time);
+			times = get_times_vector(model, start_time, is_continue);
 
 			start_state = Eigen::Map<Eigen::VectorXcd, Eigen::Unaligned>(last_state.data(), last_state.size());
 		}
 		else
 		{
-			times = get_times_vector(model, 0.0);
+			times = get_times_vector(model, 0.0, is_continue);
 
 			start_state = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
 			start_state[start_state_id * model.sys_size + start_state_id] = std::complex<double>(1.0, 0.0);
