@@ -68,6 +68,7 @@ struct XXZModelStrategy : ModelStrategy
 		const int seed = model.ini.GetInteger("xxz", "seed", 0);
 
 		const auto W = model.ini.GetReal("xxz", "W", 0.0);
+		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
 		const auto mu = model.ini.GetReal("xxz", "mu", 0.0);
 		const int drv_type = model.ini.GetInteger("xxz", "drv_type", 0);
 		const auto T1 = model.ini.GetReal("xxz", "T1", 0.0);
@@ -78,7 +79,7 @@ struct XXZModelStrategy : ModelStrategy
 		std::stringstream fns;
 		fns << "_ns(" << num_spins << ")";
 		fns << "_seed(" << seed << ")";
-		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << W << "_" << mu << "_" << drv_type << "_" << T1 << "_" << T2 << ")";
+		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << Delta << "_" << W << "_" << mu << "_" << drv_type << "_" << T1 << "_" << T2 << ")";
 		fns << "_j(" << quantity_index << ")";
 		fns << ".txt";
 
@@ -108,7 +109,8 @@ struct XXZModelStrategy : ModelStrategy
 		
 		const int seed = model.ini.GetInteger("xxz", "seed", 0);
 		const int num_seeds = model.ini.GetInteger("xxz", "num_seeds", 0);
-		
+
+		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
 		const auto W = model.ini.GetReal("xxz", "W", 0.0);
 
 		model.hamiltonian = sp_mtx(model.sys_size, model.sys_size);
@@ -127,7 +129,7 @@ struct XXZModelStrategy : ModelStrategy
 		{
 			if (spin_id < num_spins - 1)
 			{
-				model.hamiltonian += (sigma_x_mtxs[spin_id] * sigma_x_mtxs[spin_id + 1] + sigma_y_mtxs[spin_id] * sigma_y_mtxs[spin_id + 1] + sigma_z_mtxs[spin_id] * sigma_z_mtxs[spin_id + 1]);
+				model.hamiltonian += (sigma_x_mtxs[spin_id] * sigma_x_mtxs[spin_id + 1] + sigma_y_mtxs[spin_id] * sigma_y_mtxs[spin_id + 1] + Delta * sigma_z_mtxs[spin_id] * sigma_z_mtxs[spin_id + 1]);
 			}
 			model.hamiltonian += W * energies[spin_id] * sigma_z_mtxs[spin_id];
 		}
