@@ -14,7 +14,7 @@ struct ModelStrategy
 	virtual void setup_hamiltonian_drv(Model& model) = 0;
 	virtual void setup_dissipators(Model& model) = 0;
 	virtual void setup_lindbladian(Model& model) = 0;
-	virtual void setup_lindbladian_drv(Model& model) = 0;
+	virtual void setup_lindbladians_drv(Model& model) = 0;
 
 	virtual void release_observables(Model& model) = 0;
 };

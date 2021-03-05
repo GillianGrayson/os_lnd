@@ -1,6 +1,6 @@
 #pragma once
 #include "init.h"
-
+#include <unsupported/Eigen/KroneckerProduct>
 
 inline sp_mtx get_sigma_x()
 {
@@ -68,6 +68,83 @@ inline sp_mtx get_sp_eye(const int size)
 	mtx.setFromTriplets(vec_triplets.begin(), vec_triplets.end());
 
 	return mtx;
+}
+
+inline std::vector<sp_mtx> get_kronecker_mtxs(const int num_particles, std::string mtx_type)
+{
+	std::vector<sp_mtx> kronecker_mtxs;
+
+	sp_mtx sigma_0 = get_sp_eye(2);
+	sp_mtx sigma_x = get_sigma_x();
+	sp_mtx sigma_y = get_sigma_y();
+	sp_mtx sigma_z = get_sigma_z();
+	sp_mtx sigma_p = get_sigma_p();
+	sp_mtx sigma_m = get_sigma_m();
+
+	sp_mtx target_mtx;
+	if (mtx_type == "sigma_0")
+	{
+		target_mtx = sigma_0;
+	}
+	else if (mtx_type == "sigma_x")
+	{
+		target_mtx = sigma_x;
+	}
+	else if (mtx_type == "sigma_y")
+	{
+		target_mtx = sigma_y;
+	}
+	else if (mtx_type == "sigma_z")
+	{
+		target_mtx = sigma_z;
+	}
+	else if (mtx_type == "sigma_p")
+	{
+		target_mtx = sigma_p;
+	}
+	else if (mtx_type == "sigma_m")
+	{
+		target_mtx = sigma_m;
+	}
+	else
+	{
+		throw std::runtime_error("Unsupported kronecker matrix type");
+	}
+
+
+	for (auto spin_id = 0; spin_id < num_particles; spin_id++)
+	{
+		sp_mtx curr_mtx;
+
+		if (spin_id == 0)
+		{
+			curr_mtx = target_mtx;
+		}
+		else
+		{
+			curr_mtx = sigma_0;
+		}
+
+		for (auto inner_id = 1; inner_id < num_particles; inner_id++)
+		{
+			if (inner_id == spin_id)
+			{
+				curr_mtx = Eigen::kroneckerProduct(curr_mtx, target_mtx).eval();
+			}
+			else
+			{
+				curr_mtx = Eigen::kroneckerProduct(curr_mtx, sigma_0).eval();
+			}
+		}
+		kronecker_mtxs.push_back(curr_mtx);
+	}
+
+	if (kronecker_mtxs.size() != num_particles)
+	{
+		throw std::runtime_error("Error during kronecker matrices initialization");
+	}
+	
+	return kronecker_mtxs;
 }
 
 inline ds_mtx get_reshuffle_ds_mtx_1(ds_mtx& mtx, int full_size, int part_size)

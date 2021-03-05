@@ -44,6 +44,6 @@ struct DimerSystem : BaseSystem
 			model.throw_error("Unsupported drv_type");
 		}
 
-		dxdt.noalias() = (model.lindbladian - driving * model.lindbladian_drv) * x;
+		dxdt.noalias() = (model.lindbladian - driving * model.lindbladians_drv[0]) * x;
 	}
 };

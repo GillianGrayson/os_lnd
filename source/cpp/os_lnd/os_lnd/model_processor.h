@@ -84,7 +84,7 @@ struct ModelProcessor
 		model_strategy->setup_hamiltonian_drv(model);
 		model_strategy->setup_dissipators(model);
 		model_strategy->setup_lindbladian(model);
-		model_strategy->setup_lindbladian_drv(model);
+		model_strategy->setup_lindbladians_drv(model);
 		
 		model.save_data();
 		model.log_setup_info();

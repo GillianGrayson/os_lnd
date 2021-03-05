@@ -27,9 +27,9 @@ struct Model
 	std::vector<sp_mtx> dissipators;
 	std::vector<ds_mtx> dissipators_dense;
 	sp_mtx lindbladian;
-	sp_mtx lindbladian_drv;
+	std::vector<sp_mtx> lindbladians_drv;
 	ds_mtx lindbladian_dense;
-	ds_mtx lindbladian_drv_dense;
+	std::vector<ds_mtx> lindbladians_drv_dense;
 	std::complex<double> lindbladian_evals_mult;
 	std::vector<std::complex<double>> lindbladian_evals;
 	std::vector<sp_mtx> f_basis;
@@ -109,17 +109,20 @@ struct Model
 			log_message(fmt::format("Part of non-zero elements in lindbladian = {:.16e}\n", lindbladian_non_zeros_part));
 		}
 
-		const auto lindbladian_drv_non_zeros = lindbladian_drv.nonZeros();
-		const auto lindbladian_drv_non_zeros_part = double(lindbladian_drv_non_zeros) / (std::pow(double(sys_size), 4.0));
-		if (lindbladian_drv_non_zeros > 0)
-		{
-			log_message(fmt::format("Number of non-zero elements in lindbladian_drv = {}", lindbladian_drv_non_zeros));
-			log_message(fmt::format("Part of non-zero elements in lindbladian_drv = {:.16e}\n", lindbladian_drv_non_zeros_part));
-		}
-
 		std::vector<double> non_zeros_parts;
 		non_zeros_parts.push_back(lindbladian_non_zeros_part);
-		non_zeros_parts.push_back(lindbladian_drv_non_zeros_part);
+		
+		for (auto l_drv_i = 0; l_drv_i != lindbladians_drv.size(); l_drv_i++) 
+		{
+			const auto lindbladian_drv_non_zeros = lindbladians_drv[l_drv_i].nonZeros();
+			const auto lindbladian_drv_non_zeros_part = double(lindbladian_drv_non_zeros) / (std::pow(double(sys_size), 4.0));
+			if (lindbladian_drv_non_zeros > 0)
+			{
+				log_message(fmt::format("Number of non-zero elements in lindbladian_drv_{} = {}", l_drv_i, lindbladian_drv_non_zeros));
+				log_message(fmt::format("Part of non-zero elements in lindbladian_drv_{} = {:.16e}\n", l_drv_i, lindbladian_drv_non_zeros_part));
+			}
+			non_zeros_parts.push_back(lindbladian_drv_non_zeros_part);
+		}
 
 		if (save_non_zeros_part || debug_dump)
 		{
@@ -247,22 +250,25 @@ struct Model
 			{
 				log_message("Can't save: Empty lindbladian");
 			}
-			
-			is_sp_empty = (lindbladian_drv.outerSize() > 0) ? false : true;
-			is_ds_empty = (lindbladian_drv_dense.outerSize() > 0) ? false : true;
-			fn = "lindbladian_drv_mtx" + suffix;
 
-			if (!is_sp_empty)
+			for (auto l_drv_i = 0; l_drv_i != lindbladians_drv.size(); l_drv_i++)
 			{
-				save_sp_mtx(lindbladian_drv, fn, save_precision);
-			}
-			else if (is_sp_empty and !is_ds_empty)
-			{
-				save_dense_mtx(lindbladian_drv_dense, fn, save_precision);
-			}
-			else
-			{
-				log_message("Can't save: Empty lindbladian_drv");
+				is_sp_empty = (lindbladians_drv[l_drv_i].outerSize() > 0) ? false : true;
+				is_ds_empty = (lindbladians_drv_dense[l_drv_i].outerSize() > 0) ? false : true;
+				fn = "lindbladian_drv_mtx_" + std::to_string(l_drv_i) + suffix;
+
+				if (!is_sp_empty)
+				{
+					save_sp_mtx(lindbladians_drv[l_drv_i], fn, save_precision);
+				}
+				else if (is_sp_empty and !is_ds_empty)
+				{
+					save_dense_mtx(lindbladians_drv_dense[l_drv_i], fn, save_precision);
+				}
+				else
+				{
+					log_message("Can't save: Empty lindbladian_drv");
+				}
 			}
 		}
 

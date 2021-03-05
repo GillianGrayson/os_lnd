@@ -230,9 +230,9 @@ struct MBLModelStrategy : ModelStrategy
 		}
 	}
 
-	void setup_lindbladian_drv(Model& model) override
+	void setup_lindbladians_drv(Model& model) override
 	{
-		model.log_message("lindbladian_drv is absent in this model");
+		model.log_message("lindbladians_drv is absent in this model");
 	}
 
 	sp_mtx get_disorder_mtx(Model& model)

@@ -211,7 +211,7 @@ struct DimerModelStrategy : ModelStrategy
 		}
 	}
 
-	void setup_lindbladian_drv(Model& model) override
+	void setup_lindbladians_drv(Model& model) override
 	{
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
@@ -220,7 +220,7 @@ struct DimerModelStrategy : ModelStrategy
 		const sp_mtx eye = get_sp_eye(model.sys_size);
 		const sp_mtx hamiltonian_transposed(model.hamiltonian_drv.transpose());
 
-		model.lindbladian_drv = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye));
+		model.lindbladians_drv.push_back(-i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)));
 	}
 
 	void release_observables(Model& model) override

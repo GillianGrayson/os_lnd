@@ -6,7 +6,8 @@
 struct XXZObserver : BaseObserver
 {
 	XXZModelStrategy model_strategy;
-	std::vector<double> quantities;
+	std::vector<double> znds;
+	std::vector<double> vaks;
 
 	XXZObserver(
 		Model& model,
@@ -22,12 +23,15 @@ struct XXZObserver : BaseObserver
 	{
 		process_observables_basic(x, t);
 
-		double quantity = model_strategy.get_quantity(model);
-		quantities.push_back(quantity);
+		double znd = model_strategy.get_quantity_znd(model);
+		znds.push_back(znd);
+		double vak = model_strategy.get_quantity_vak(model);
+		vaks.push_back(vak);
 
 		if (dump_progress || is_last_time(t))
 		{
-			rewrite_observables("quantities", quantities, t_pre, t);
+			rewrite_observables("znds", znds, t_pre, t);
+			rewrite_observables("vaks", vaks, t_pre, t);
 		}
 	}
 };
