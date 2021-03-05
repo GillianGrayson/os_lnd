@@ -69,6 +69,7 @@ struct XXZModelStrategy : ModelStrategy
 
 		const auto W = model.ini.GetReal("xxz", "W", 0.0);
 		const auto mu = model.ini.GetReal("xxz", "mu", 0.0);
+		const int drv_type = model.ini.GetInteger("xxz", "drv_type", 0);
 		const auto T1 = model.ini.GetReal("xxz", "T1", 0.0);
 		const auto T2 = model.ini.GetReal("xxz", "T2", 0.0);
 
@@ -77,7 +78,7 @@ struct XXZModelStrategy : ModelStrategy
 		std::stringstream fns;
 		fns << "_ns(" << num_spins << ")";
 		fns << "_seed(" << seed << ")";
-		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << W << "_" << mu << "_" << T1 << "_" << T2 << ")";
+		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << W << "_" << mu << "_" << drv_type << "_" << T1 << "_" << T2 << ")";
 		fns << "_j(" << quantity_index << ")";
 		fns << ".txt";
 
