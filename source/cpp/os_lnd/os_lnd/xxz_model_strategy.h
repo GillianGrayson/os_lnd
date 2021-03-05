@@ -140,7 +140,7 @@ struct XXZModelStrategy : ModelStrategy
 
 	void setup_dissipators(Model& model) override
 	{
-		const int num_spins = model.ini.GetInteger("mbl", "num_spins", 0);
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 		
 		int num_diss = 4;
 		model.dissipators.push_back(sigma_p_mtxs[0]);
