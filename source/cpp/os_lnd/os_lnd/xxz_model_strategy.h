@@ -42,9 +42,10 @@ struct XXZModelStrategy : ModelStrategy
 
 		jznd_mtx = (sigma_x_mtxs[quantity_index] * sigma_y_mtxs[quantity_index + 1] - sigma_y_mtxs[quantity_index] * sigma_x_mtxs[quantity_index + 1]);
 
+		jvak_mtx = sp_mtx(model.sys_size, model.sys_size);
 		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
 		{
-			jvak_mtx += sigma_p_mtxs[spin_id] * sigma_m_mtxs[spin_id + 1] - sigma_m_mtxs[spin_id] * sigma_p_mtxs[spin_id + 1];
+			jvak_mtx += (sigma_p_mtxs[spin_id] * sigma_m_mtxs[spin_id + 1] - sigma_m_mtxs[spin_id] * sigma_p_mtxs[spin_id + 1]);
 		}
 		jvak_mtx = 2.0 * i1 / double(num_spins - 1) * jvak_mtx;
 

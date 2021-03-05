@@ -254,7 +254,7 @@ struct Model
 			for (auto l_drv_i = 0; l_drv_i != lindbladians_drv.size(); l_drv_i++)
 			{
 				is_sp_empty = (lindbladians_drv[l_drv_i].outerSize() > 0) ? false : true;
-				is_ds_empty = (lindbladians_drv_dense[l_drv_i].outerSize() > 0) ? false : true;
+				is_ds_empty = (lindbladians_drv_dense.size() > 0) ? false : true;
 				fn = "lindbladian_drv_mtx_" + std::to_string(l_drv_i) + suffix;
 
 				if (!is_sp_empty)
