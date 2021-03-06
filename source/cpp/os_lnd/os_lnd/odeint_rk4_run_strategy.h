@@ -37,14 +37,14 @@ struct ODEIntRK4RunStrategy : RunStrategy
 		}
 		else
 		{
+			is_continue = false;
 			times = get_times_vector(model, 0.0, is_continue);
 
 			start_state = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
 			start_state[start_state_id * model.sys_size + start_state_id] = std::complex<double>(1.0, 0.0);
 		}
 		
-		IntegrateProcessor integrate_processor;
-		integrate_processor.set_strategy(model, times, step, start_state);
+		IntegrateProcessor integrate_processor(model, times, step, start_state);
 		integrate_processor.process();
 	}
 };

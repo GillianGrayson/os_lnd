@@ -68,9 +68,6 @@
     <ClInclude Include="run_processor.h">
       <Filter>Header Files\strategy\run</Filter>
     </ClInclude>
-    <ClInclude Include="integrate_strategy.h">
-      <Filter>Header Files\odeint\integrator</Filter>
-    </ClInclude>
     <ClInclude Include="integrate_processor.h">
       <Filter>Header Files\odeint\integrator</Filter>
     </ClInclude>
@@ -79,12 +76,6 @@
     </ClInclude>
     <ClInclude Include="mbl_observer.h">
       <Filter>Header Files\odeint\observer</Filter>
-    </ClInclude>
-    <ClInclude Include="mbl_integrate_strategy.h">
-      <Filter>Header Files\odeint\integrator</Filter>
-    </ClInclude>
-    <ClInclude Include="dimer_integrate_strategy.h">
-      <Filter>Header Files\odeint\integrator</Filter>
     </ClInclude>
     <ClInclude Include="dimer_observer.h">
       <Filter>Header Files\odeint\observer</Filter>
@@ -140,8 +131,11 @@
     <ClInclude Include="xxz_observer.h">
       <Filter>Header Files\odeint\observer</Filter>
     </ClInclude>
-    <ClInclude Include="xxz_integrate_strategy.h">
-      <Filter>Header Files\odeint\integrator</Filter>
+    <ClInclude Include="pimpl_observer.h">
+      <Filter>Header Files\odeint\observer</Filter>
+    </ClInclude>
+    <ClInclude Include="pimpl_system.h">
+      <Filter>Header Files\odeint\system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

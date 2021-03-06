@@ -54,6 +54,9 @@ int main(int argc, char* argv[])
 		auto suffix = fmt::format(fmt::format("_serial({{{:s}}}", format), serial_start) + fmt::format(fmt::format("_{{{:s}}}", format), serial_shift) + fmt::format("_{:d})", serial_num);
 		std::vector<std::complex<double>> rho_evals;
 		std::vector<std::complex<double>> lindbladian_evals;
+
+		std::map<std::string, std::vector<double>> features_double;
+		std::map<std::string, std::vector<std::complex<double>>> features_complex;
 		
 		for (int serial_id = 0; serial_id < serial_num; serial_id++)
 		{

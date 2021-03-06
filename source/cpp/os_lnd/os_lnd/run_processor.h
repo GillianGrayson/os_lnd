@@ -48,4 +48,9 @@ struct RunProcessor
 		run_strategy->run(model);
 		model.log_memory_usage();
 	}
+
+	void process_serial(Model& model, std::map<std::string, std::vector<double>>& features_double, std::map<std::string, std::vector<std::complex<double>>>& features_complex)
+	{
+		
+	}
 };

@@ -1,27 +1,40 @@
 #pragma once
-#include "mbl_integrate_strategy.h"
-#include "dimer_integrate_strategy.h"
-#include "xxz_integrate_strategy.h"
-
+#include "pimpl_observer.h"
+#include "dimer_observer.h"
+#include "mbl_observer.h"
+#include "xxz_observer.h"
+#include "pimpl_system.h"
+#include "dimer_system.h"
+#include "mbl_system.h"
+#include "xxz_system.h"
 
 struct IntegrateProcessor
 {
-	std::unique_ptr<IntegrateStrategy> integrate_strategy;
+	PImplObserver observer;
+	PImplSystem system;
 
-	void set_strategy(Model& model, std::vector<double>& times, double& step, Eigen::VectorXcd& start_state)
+	Model& model;
+	std::vector<double>& times;
+	double& step;
+	Eigen::VectorXcd& start_state;
+
+	IntegrateProcessor(Model& model, std::vector<double>& times, double& step, Eigen::VectorXcd& start_state) : model(model), times(times), step(step), start_state(start_state)
 	{
-		const std::string system = model.ini.Get("global", "system", "unknown");
-		if (system == "mbl")
+		const std::string system_type = model.ini.Get("global", "system", "unknown");
+		if (system_type == "mbl")
 		{
-			integrate_strategy = std::make_unique<MBLIntegrateStrategy>(model, times, step, start_state);
+			observer = PImplObserver(std::make_shared<MBLObserver>(model, times, start_state));
+			system = PImplSystem(std::make_shared<MBLSystem>(model));
 		}
-		else if (system == "dimer")
+		else if (system_type == "dimer")
 		{
-			integrate_strategy = std::make_unique<DimerIntegrateStrategy>(model, times, step, start_state);
+			observer = PImplObserver(std::make_shared<DimerObserver>(model, times, start_state));
+			system = PImplSystem(std::make_shared<DimerSystem>(model));
 		}
-		else if (system == "xxz")
+		else if (system_type == "xxz")
 		{
-			integrate_strategy = std::make_unique<XXZIntegrateStrategy>(model, times, step, start_state);
+			observer = PImplObserver(std::make_shared<XXZObserver>(model, times, start_state));
+			system = PImplSystem(std::make_shared<XXZSystem>(model));
 		}
 		else
 		{
@@ -31,6 +44,14 @@ struct IntegrateProcessor
 
 	void process() const
 	{
-		integrate_strategy->integrate_times_rk4();
+		const runge_kutta4_stepper rk4_stepper;
+		boost::numeric::odeint::integrate_times(
+			rk4_stepper,
+			system,
+			start_state,
+			times,
+			step,
+			observer
+		);
 	}
 };
