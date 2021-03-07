@@ -39,4 +39,10 @@ struct MBLObserver : BaseObserver
 			rewrite_observables("imbalances", imbalances, t_pre, t);
 		}
 	}
+
+	void fill_serial_features(
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
 };

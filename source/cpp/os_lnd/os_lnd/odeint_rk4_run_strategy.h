@@ -8,18 +8,20 @@
 
 struct ODEIntRK4RunStrategy : RunStrategy
 {
-	void run(Model& model) override
+	std::vector<double> times;
+	Eigen::VectorXcd start_state;
+	double step;
+	
+	void init(Model& model)
 	{
 		const int start_state_id = model.ini.GetInteger("odeint", "start_state_id", 0);
 		bool is_continue = model.ini.GetBoolean("odeint", "continue", false);
 		std::string continue_path = model.ini.Get("odeint", "continue_path", "");
-		double step = model.ini.GetReal("odeint", "step", 0.0);
+		step = model.ini.GetReal("odeint", "step", 0.0);
 
-		std::vector<double> times;
-		Eigen::VectorXcd start_state;
 		auto fn_curr_dump = continue_path + "curr_dump" + model.suffix;
 		auto fn_rho_mtx = continue_path + "rho_mtx" + model.suffix;
-		
+
 		if (is_continue && ghc::filesystem::exists(fn_curr_dump) && ghc::filesystem::exists(fn_rho_mtx))
 		{
 			auto fn = continue_path + "curr_dump" + model.suffix;
@@ -43,7 +45,11 @@ struct ODEIntRK4RunStrategy : RunStrategy
 			start_state = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
 			start_state[start_state_id * model.sys_size + start_state_id] = std::complex<double>(1.0, 0.0);
 		}
-		
+	}
+	
+	void run(Model& model) override
+	{
+		init(model);
 		IntegrateProcessor integrate_processor(model, times, step, start_state);
 		integrate_processor.process();
 	}
@@ -53,5 +59,8 @@ struct ODEIntRK4RunStrategy : RunStrategy
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{
+		init(model);
+		IntegrateProcessor integrate_processor(model, times, step, start_state);
+		integrate_processor.process_serial(features_double, features_complex);
 	}
 };

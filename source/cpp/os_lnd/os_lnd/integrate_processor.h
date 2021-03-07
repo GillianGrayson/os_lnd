@@ -54,4 +54,12 @@ struct IntegrateProcessor
 			observer
 		);
 	}
+
+	void process_serial(
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex)
+	{
+		process();
+		observer.fill_serial_features(features_double, features_complex);
+	}
 };

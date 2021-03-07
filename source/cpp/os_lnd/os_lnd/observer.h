@@ -24,6 +24,10 @@ struct BaseObserver
 
 	virtual void operator()(const Eigen::VectorXcd& x, double t) = 0;
 
+	virtual void fill_serial_features(
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) = 0;
+
 	bool is_last_time(double t)
 	{
 		if (abs(t - times.back()) < 1e-12)

@@ -14,9 +14,12 @@ struct DimerObserver : BaseObserver
 
 	void operator()(const Eigen::VectorXcd& x, double t) override
 	{
-		if (t > times[0] + std::numeric_limits<double>::epsilon())
-		{
-			process_observables_basic(x, t);
-		}
+		process_observables_basic(x, t);
+	}
+
+	void fill_serial_features(
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
 	}
 };

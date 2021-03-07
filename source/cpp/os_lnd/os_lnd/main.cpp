@@ -52,8 +52,6 @@ int main(int argc, char* argv[])
 		
 		std::string format = fmt::format("0:.{:d}f", name_precision);
 		auto suffix = fmt::format(fmt::format("_serial({{{:s}}}", format), serial_start) + fmt::format(fmt::format("_{{{:s}}}", format), serial_shift) + fmt::format("_{:d})", serial_num);
-		std::vector<std::complex<double>> rho_evals;
-		std::vector<std::complex<double>> lindbladian_evals;
 
 		std::map<std::string, std::vector<double>> features_double;
 		std::map<std::string, std::vector<std::complex<double>>> features_complex;
@@ -67,52 +65,30 @@ int main(int argc, char* argv[])
 		
 		for (int serial_id = 0; serial_id < serial_num; serial_id++)
 		{
+			if (serial_id == 0)
+			{
+				suffix += model.suffix_serial;
+			}
+			
 			double serial_state = serial_start + serial_shift * serial_id;
 
 			model.set_serial_state(serial_state);
 
 			setup_processor.create_model(model);
 			
-			run_processor.process(model);
-
-			if (serial_id == 0)
-			{
-				suffix += model.suffix_serial;
-				
-				if (serial_rho_evals)
-				{
-					rho_evals = model.rho_evals;
-				}
-
-				if (serial_lindbladian_evals)
-				{
-					lindbladian_evals = model.lindbladian_evals;
-				}
-			}
-			else
-			{
-				if (serial_rho_evals)
-				{
-					rho_evals.insert(std::end(rho_evals), std::begin(model.rho_evals), std::end(model.rho_evals));
-				}
-				
-				if (serial_lindbladian_evals)
-				{
-					lindbladian_evals.insert(std::end(lindbladian_evals), std::begin(model.lindbladian_evals), std::end(model.lindbladian_evals));
-				}
-			}
+			run_processor.process_serial(model, features_double, features_complex);
 		}
 
-		if (serial_rho_evals)
+		for (auto const& x : features_double)
 		{
-			auto fn = "serial_rho_evals" + suffix;
-			save_vector(rho_evals, fn, save_precision);
+			auto fn = "serial_" + x.first + suffix;
+			save_vector(x.second, fn, save_precision);
 		}
 
-		if (serial_lindbladian_evals)
+		for (auto const& x : features_complex)
 		{
-			auto fn = "serial_lindbladian_evals" + suffix;
-			save_vector(lindbladian_evals, fn, save_precision);
+			auto fn = "serial_" + x.first + suffix;
+			save_vector(x.second, fn, save_precision);
 		}
 	}
 	else

@@ -30,8 +30,16 @@ struct XXZObserver : BaseObserver
 
 		if (dump_progress || is_last_time(t))
 		{
-			rewrite_observables("znds", znds, t_pre, t);
-			rewrite_observables("vaks", vaks, t_pre, t);
+			rewrite_observables("znd", znds, t_pre, t);
+			rewrite_observables("vak", vaks, t_pre, t);
 		}
+	}
+
+	void fill_serial_features(
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		features_double["znd"].insert(features_double["znd"].end(), znds.begin(), znds.end());
+		features_double["vak"].insert(features_double["vak"].end(), vaks.begin(), vaks.end());
 	}
 };
