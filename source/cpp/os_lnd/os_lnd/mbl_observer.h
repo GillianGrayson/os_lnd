@@ -32,7 +32,7 @@ struct MBLObserver : BaseObserver
 		double imbalance = model_strategy.get_imbalance(model);
 		imbalances.push_back(imbalance);
 		
-		if (dump_progress || is_last_time(t))
+		if (is_dump_now(t))
 		{
 			rewrite_observables("ratios", ratios, t_pre, t);
 			rewrite_observables("ees", ees, t_pre, t);

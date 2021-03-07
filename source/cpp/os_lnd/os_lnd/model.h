@@ -43,11 +43,9 @@ struct Model
 
 	Model(INIReader& ini) : ini(ini)
 	{
-		start_run_time = std::chrono::high_resolution_clock::now();
-
 		logger_type = ini.Get("global", "logger_type", "unknown");
+		start_run_time = std::chrono::high_resolution_clock::now();
 		silent = ini.GetBoolean("global", "silent", false);
-		auto logger = spdlog::stdout_color_mt(logger_type);
 	}
 
 	void set_serial_state(const double _serial_state)

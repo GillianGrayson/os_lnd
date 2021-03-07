@@ -12,12 +12,14 @@ struct BaseObserver
 	double t_pre;
 	
 	bool dump_progress;
+	bool dump_last_time;
 	std::vector<double> passed_times;
 	std::vector<double> diffs;
 
 	BaseObserver(Model& model, std::vector<double>& times, Eigen::VectorXcd& base_state) : model(model), times(times), base_state(base_state)
 	{
 		dump_progress = model.ini.GetBoolean("odeint", "dump_progress", false);
+		dump_last_time = model.ini.GetBoolean("odeint", "dump_last_time", false);
 	}
 
 	virtual ~BaseObserver() = default;
@@ -40,6 +42,27 @@ struct BaseObserver
 		}
 	}
 
+	bool is_dump_now(double t)
+	{
+		bool last = is_last_time(t);
+
+		if (dump_progress)
+		{
+			return true;
+		}
+		else
+		{
+			if (last && dump_last_time)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}	
+	}
+	
 	void process_observables_basic(const Eigen::VectorXcd& x, double t)
 	{
 		t_pre = get_t_pre();
@@ -64,7 +87,7 @@ struct BaseObserver
 		model.log_message(fmt::format("time = {:.16e}", t));
 		model.log_message(fmt::format("diff = {:.16e}\n", diff));
 
-		if (dump_progress || is_last_time(t))
+		if (is_dump_now(t))
 		{
 			rewrite_observables("times", passed_times, t_pre, t);
 			rewrite_observables("diffs", diffs, t_pre, t);

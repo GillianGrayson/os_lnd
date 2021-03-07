@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
 		throw std::runtime_error("Can't load 'test.ini'\n");
 	}
 
+	std::string logger_type = ini.Get("global", "logger_type", "unknown");
+	auto logger = spdlog::stdout_color_mt(logger_type);
+
 	const int save_precision = ini.GetInteger("global", "save_precision", 0);
 	const int name_precision = ini.GetInteger("global", "name_precision", 0);
 
@@ -31,8 +34,6 @@ int main(int argc, char* argv[])
 	const auto serial_start = ini.GetReal("global", "serial_start", 0.0);
 	const auto serial_shift = ini.GetReal("global", "serial_shift", 0.0);
 	const int serial_num = ini.GetInteger("global", "serial_num", 1);
-	const auto serial_rho_evals = ini.GetBoolean("global", "serial_rho_evals", false);
-	const auto serial_lindbladian_evals = ini.GetBoolean("global", "serial_lindbladian_evals", false);
 
 	if (run_type == "regular")
 	{
@@ -48,33 +49,31 @@ int main(int argc, char* argv[])
 	}
 	else if (run_type == "serial")
 	{
-		Model model(ini);
-		
 		std::string format = fmt::format("0:.{:d}f", name_precision);
 		auto suffix = fmt::format(fmt::format("_serial({{{:s}}}", format), serial_start) + fmt::format(fmt::format("_{{{:s}}}", format), serial_shift) + fmt::format("_{:d})", serial_num);
 
 		std::map<std::string, std::vector<double>> features_double;
 		std::map<std::string, std::vector<std::complex<double>>> features_complex;
 
-		ModelProcessor setup_processor;
-		setup_processor.set_strategy(model);
-		setup_processor.set_serial_features(model, features_double, features_complex);
-
-		RunProcessor run_processor;
-		run_processor.set_strategy(model);
-		
 		for (int serial_id = 0; serial_id < serial_num; serial_id++)
 		{
+			Model model(ini);
+
+			ModelProcessor setup_processor;
+			setup_processor.set_strategy(model);
+
+			RunProcessor run_processor;
+			run_processor.set_strategy(model);
+			
+			double serial_state = serial_start + serial_shift * serial_id;
+			model.set_serial_state(serial_state);
+			setup_processor.create_model(model);
+			
 			if (serial_id == 0)
 			{
 				suffix += model.suffix_serial;
+				setup_processor.set_serial_features(model, features_double, features_complex);
 			}
-			
-			double serial_state = serial_start + serial_shift * serial_id;
-
-			model.set_serial_state(serial_state);
-
-			setup_processor.create_model(model);
 			
 			run_processor.process_serial(model, features_double, features_complex);
 		}

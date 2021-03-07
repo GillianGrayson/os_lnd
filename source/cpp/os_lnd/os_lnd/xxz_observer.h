@@ -28,7 +28,7 @@ struct XXZObserver : BaseObserver
 		double vak = model_strategy.get_quantity_vak(model);
 		vaks.push_back(vak);
 
-		if (dump_progress || is_last_time(t))
+		if (is_dump_now(t))
 		{
 			rewrite_observables("znd", znds, t_pre, t);
 			rewrite_observables("vak", vaks, t_pre, t);
