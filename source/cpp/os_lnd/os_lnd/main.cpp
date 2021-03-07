@@ -57,6 +57,13 @@ int main(int argc, char* argv[])
 
 		std::map<std::string, std::vector<double>> features_double;
 		std::map<std::string, std::vector<std::complex<double>>> features_complex;
+
+		ModelProcessor setup_processor;
+		setup_processor.set_strategy(model);
+		setup_processor.set_serial_features(model, features_double, features_complex);
+
+		RunProcessor run_processor;
+		run_processor.set_strategy(model);
 		
 		for (int serial_id = 0; serial_id < serial_num; serial_id++)
 		{
@@ -64,12 +71,8 @@ int main(int argc, char* argv[])
 
 			model.set_serial_state(serial_state);
 
-			ModelProcessor setup_processor;
-			setup_processor.set_strategy(model);
 			setup_processor.create_model(model);
-
-			RunProcessor run_processor;
-			run_processor.set_strategy(model);
+			
 			run_processor.process(model);
 
 			if (serial_id == 0)

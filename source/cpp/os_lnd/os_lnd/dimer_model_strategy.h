@@ -226,4 +226,18 @@ struct DimerModelStrategy : ModelStrategy
 	void release_observables(Model& model) override
 	{
 	}
+
+	void setup_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
+
+	void fill_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
 };

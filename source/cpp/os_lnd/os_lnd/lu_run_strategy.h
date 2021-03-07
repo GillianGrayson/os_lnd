@@ -39,4 +39,11 @@ struct LURunStrategy : RunStrategy
 			save_dense_mtx(model.rho, fn, save_precision);
 		}
 	}
+
+	void run_serial(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
 };

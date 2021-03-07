@@ -628,4 +628,18 @@ struct MBLModelStrategy : ModelStrategy
 		fn = "imbalance" + model.suffix;
 		save_value(imbalance, fn, save_precision);
 	}
+
+	void setup_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
+
+	void fill_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
 };

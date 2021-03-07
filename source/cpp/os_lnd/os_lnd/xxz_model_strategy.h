@@ -61,11 +61,19 @@ struct XXZModelStrategy : ModelStrategy
 
 	void setup_suffix(Model& model) override
 	{
+		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
 		const int name_precision = model.ini.GetInteger("global", "name_precision", 0);
-
 		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 
-		const int seed = model.ini.GetInteger("xxz", "seed", 0);
+		int seed;
+		if (run_type == "serial")
+		{
+			seed = std::round(model.serial_state);
+		}
+		else
+		{
+			seed = model.ini.GetInteger("xxz", "seed", 0);
+		}
 
 		const auto W = model.ini.GetReal("xxz", "W", 0.0);
 		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
@@ -78,12 +86,21 @@ struct XXZModelStrategy : ModelStrategy
 
 		std::stringstream fns;
 		fns << "_ns(" << num_spins << ")";
-		fns << "_seed(" << seed << ")";
 		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << Delta << "_" << W << "_" << mu << "_" << drv_type << "_" << T1 << "_" << T2 << ")";
 		fns << "_j(" << quantity_index << ")";
+
+		std::stringstream serial;
+		serial << fns.rdbuf();
+		if (run_type == "regular")
+		{
+			fns << "_seed(" << seed << ")";
+		}
+
 		fns << ".txt";
+		serial << ".txt";
 
 		model.suffix = fns.str();
+		model.suffix_serial = serial.str();
 	}
 
 	void setup_sys_size(Model& model) override
@@ -216,12 +233,32 @@ struct XXZModelStrategy : ModelStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		std::string fn;
 
-		const double jznd = get_quantity_znd(model);
+		const double znd = get_quantity_znd(model);
 		fn = "znd" + model.suffix;
-		save_value(jznd, fn, save_precision);
+		save_value(znd, fn, save_precision);
 
-		const double jvak = get_quantity_vak(model);
+		const double vak = get_quantity_vak(model);
 		fn = "vak" + model.suffix;
-		save_value(jvak, fn, save_precision);
+		save_value(vak, fn, save_precision);
+	}
+
+	void setup_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		features_double.insert({"znd", {}});
+		features_double.insert({"vak", {}});
+	}
+
+	void fill_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		const double znd = get_quantity_znd(model);
+		const double vak = get_quantity_vak(model);
+		features_double["znd"].push_back(znd);
+		features_double["vak"].push_back(vak);
 	}
 };

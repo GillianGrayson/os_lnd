@@ -191,4 +191,11 @@ struct AllEvalsRunStrategy : RunStrategy
 		model.log_time_duration();
 #endif
 	}
+
+	void run_serial(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+	}
 };

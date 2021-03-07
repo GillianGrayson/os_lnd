@@ -347,4 +347,22 @@ struct SuperDecohModelStrategy : ModelStrategy
 		model.log_time_duration();
 		model.log_message("G eigen done");
 	}
+
+	void setup_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		features_complex.insert({"rho_evals", {}});
+		features_complex.insert({"lindbladian_evals", {}});
+	}
+
+	void fill_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		features_complex["rho_evals"].insert(features_complex["rho_evals"].end(), model.rho_evals.begin(), model.rho_evals.end());
+		features_complex["lindbladian_evals"].insert(features_complex["lindbladian_evals"].end(), model.lindbladian_evals.begin(), model.lindbladian_evals.end());
+	}
 };

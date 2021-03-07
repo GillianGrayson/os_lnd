@@ -6,6 +6,16 @@ struct ModelStrategy
 	virtual ~ModelStrategy() = default;
 
 	virtual void setup_aux_data(Model& model) = 0;
+
+	virtual void setup_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) = 0;
+
+	virtual void fill_serial_data(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) = 0;
 	
 	virtual void setup_suffix(Model& model) = 0;
 	virtual void setup_sys_size(Model& model) = 0;

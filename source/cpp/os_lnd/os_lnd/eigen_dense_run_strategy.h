@@ -6,13 +6,12 @@
 
 struct EigenDenseRunStrategy : RunStrategy
 {
-	void run(Model& model) override
+	void eigen(Model& model)
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto save_lindbladian_evals = model.ini.GetBoolean("global", "save_lindbladian_evals", false);
 		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
 		const auto save_rho_evals = model.ini.GetBoolean("global", "save_rho_evals", false);
-		
 
 		auto is_sp_empty = (model.lindbladian.outerSize() > 0) ? false : true;
 		auto is_ds_empty = (model.lindbladian_dense.outerSize() > 0) ? false : true;
@@ -89,11 +88,30 @@ struct EigenDenseRunStrategy : RunStrategy
 			auto fn = "rho_evals" + model.suffix;
 			save_vector(model.rho_evals, fn, save_precision);
 		}
-
+	}
+	
+	void run(Model& model) override
+	{
+		eigen(model);
+		
 		ModelProcessor model_processor;
 		model_processor.set_strategy(model);
 		model_processor.init_model(model);
 		model_processor.release_observables(model);
+		model.log_time_duration();
+	}
+
+	void run_serial(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
+	{
+		eigen(model);
+		
+		ModelProcessor model_processor;
+		model_processor.set_strategy(model);
+		model_processor.init_model(model);
+		model_processor.fill_serial_features(model, features_double, features_complex);
 		model.log_time_duration();
 	}
 };

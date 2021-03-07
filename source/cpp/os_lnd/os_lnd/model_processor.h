@@ -25,7 +25,7 @@ struct ModelProcessor
 		}
 		else if (system == "xxz")
 		{
-			if (run_type == "regular")
+			if (run_type == "regular" || run_type == "serial")
 			{
 				model_strategy = std::make_unique<XXZModelStrategy>();
 			}
@@ -60,6 +60,22 @@ struct ModelProcessor
 		{
 			model.throw_error("Unsupported model_strategy");
 		}
+	}
+
+	void set_serial_features(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double, 
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex)
+	{
+		model_strategy->setup_serial_data(model, features_double, features_complex);
+	}
+
+	void fill_serial_features(
+		Model& model,
+		std::map<std::string, std::vector<double>>& features_double,
+		std::map<std::string, std::vector<std::complex<double>>>& features_complex)
+	{
+		model_strategy->fill_serial_data(model, features_double, features_complex);
 	}
 
 	void init_model(Model& model) const
