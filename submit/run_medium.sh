@@ -2,7 +2,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=48:00:00
 #SBATCH --partition=medium
-#SBATCH --mem=12000
+#SBATCH --mem=1000
 
 export OMP_NUM_THREADS=1
 
