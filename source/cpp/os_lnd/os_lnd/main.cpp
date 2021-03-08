@@ -5,13 +5,13 @@
 #include "model_processor.h"
 #include "run_processor.h"
 
-#ifdef __linux__ 
+#ifdef USE_SLEPC 
 #include <slepceps.h>
 #endif
 
 int main(int argc, char* argv[])
 {
-#ifdef __linux__ 
+#ifdef USE_SLEPC 
 	PetscErrorCode ierr;
 	static char help[] = "";
 	ierr = SlepcInitialize(&argc, &argv, (char*)0, help); if (ierr) return ierr;
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 	}
 
 	
-#ifdef __linux__ 
+#ifdef USE_SLEPC 
 	ierr = SlepcFinalize();
 #endif
 }

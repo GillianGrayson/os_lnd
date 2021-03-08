@@ -2,7 +2,7 @@
 #include "run_strategy.h"
 #include "save.h"
 
-#ifdef __linux__ 
+#ifdef USE_SLEPC 
 #include <slepceps.h>
 #endif
 
@@ -10,7 +10,7 @@ struct AllEvalsRunStrategy : RunStrategy
 {
 	void run(Model& model) override
 	{
-#ifdef __linux__
+#ifdef USE_SLEPC
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const int max_num_iterations = model.ini.GetInteger("all_evals", "max_num_iterations", 0);
 		const double tolerance = model.ini.GetReal("all_evals", "tolerance", 0.0);
