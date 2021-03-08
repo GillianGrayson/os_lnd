@@ -28,8 +28,6 @@ def get_serial_global_config(system, task, start, shift, num, name_precision=4):
     config_list.append('serial_start = ' + str(start))
     config_list.append('serial_shift = ' + str(shift))
     config_list.append('serial_num = ' + str(num))
-    config_list.append('serial_rho_evals = true')
-    config_list.append('serial_lindbladian_evals = false')
     config_list.append('logger_type = console')
     config_list.append('silent = false')
     config_list.append('system = ' + system)
@@ -50,7 +48,17 @@ def get_serial_global_config(system, task, start, shift, num, name_precision=4):
     return config_list
 
 
-def get_odeint_config(step, num_obser_periods, num_trans_periods, current_num_obser_periods, current_num_obser_time_points, is_continue, continue_path):
+def get_odeint_config(
+        step,
+        num_obser_periods,
+        num_trans_periods,
+        current_num_obser_periods,
+        current_num_obser_time_points,
+        is_continue,
+        continue_path,
+        dump_progress,
+        dump_last_time
+):
     config_list = []
     config_list.append('[odeint]')
     config_list.append('start_state_id = 0')
@@ -60,7 +68,8 @@ def get_odeint_config(step, num_obser_periods, num_trans_periods, current_num_ob
     config_list.append('num_obser_periods = ' + str(num_obser_periods))
     config_list.append('current_num_obser_periods = ' + str(current_num_obser_periods))
     config_list.append('current_num_obser_time_points = ' + str(current_num_obser_time_points))
-    config_list.append('dump_progress = true')
+    config_list.append('dump_progress = ' + str(dump_progress))
+    config_list.append('dump_last_time = ' + str(dump_last_time))
     config_list.append('continue = ' + str(is_continue))
     config_list.append('continue_path = ' + str(continue_path))
     return config_list
