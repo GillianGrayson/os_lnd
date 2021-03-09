@@ -14,6 +14,7 @@ struct ODEIntRK4RunStrategy : RunStrategy
 	
 	void init(Model& model)
 	{
+		const int start_state_type = model.ini.GetInteger("odeint", "start_state_type", 0);
 		const int start_state_id = model.ini.GetInteger("odeint", "start_state_id", 0);
 		bool is_continue = model.ini.GetBoolean("odeint", "continue", false);
 		std::string continue_path = model.ini.Get("odeint", "continue_path", "");
@@ -43,7 +44,21 @@ struct ODEIntRK4RunStrategy : RunStrategy
 			times = get_times_vector(model, 0.0, is_continue);
 
 			start_state = Eigen::VectorXcd::Zero(model.sys_size * model.sys_size);
-			start_state[start_state_id * model.sys_size + start_state_id] = std::complex<double>(1.0, 0.0);
+			if (start_state_type == 0)
+			{
+				start_state[start_state_id * model.sys_size + start_state_id] = std::complex<double>(1.0, 0.0);
+			}
+			else if (start_state_type == 1)
+			{
+				for (auto st_id = 0; st_id < model.sys_size; st_id++)
+				{
+					start_state[st_id * model.sys_size + st_id] = std::complex<double>(1.0 / double(model.sys_size), 0.0);
+				}
+			}
+			else
+			{
+				model.throw_error("Unsupported start_state_type");
+			}
 		}
 	}
 	
