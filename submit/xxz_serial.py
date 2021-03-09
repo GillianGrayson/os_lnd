@@ -11,7 +11,7 @@ system = 'xxz'
 
 task = 'odeint'
 
-num_spins = 2
+num_spins = 6
 mu = 0.001
 drv_type = 0
 T1 = 0.2

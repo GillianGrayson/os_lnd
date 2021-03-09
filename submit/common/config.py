@@ -61,6 +61,7 @@ def get_odeint_config(
 ):
     config_list = []
     config_list.append('[odeint]')
+    config_list.append('start_state_type = 1')
     config_list.append('start_state_id = 0')
     config_list.append('step = ' + str(step))
     config_list.append('dump_type = linear')
