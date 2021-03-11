@@ -40,7 +40,7 @@ struct XXZModelStrategy : ModelStrategy
 		sigma_m_mtxs = get_kronecker_mtxs(num_spins, "sigma_m");
 		sigma_p_mtxs = get_kronecker_mtxs(num_spins, "sigma_p");
 
-		jznd_mtx = (sigma_x_mtxs[quantity_index] * sigma_y_mtxs[quantity_index + 1] - sigma_y_mtxs[quantity_index] * sigma_x_mtxs[quantity_index + 1]);
+		jznd_mtx = 0.25 * (sigma_x_mtxs[quantity_index] * sigma_y_mtxs[quantity_index + 1] - sigma_y_mtxs[quantity_index] * sigma_x_mtxs[quantity_index + 1]);
 
 		jvak_mtx = sp_mtx(model.sys_size, model.sys_size);
 		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
@@ -51,10 +51,10 @@ struct XXZModelStrategy : ModelStrategy
 
 		if (debug_dump)
 		{
-			auto fn = "jznd_mtx" + model.suffix;
+			auto fn = "znd_mtx" + model.suffix;
 			save_sp_mtx(jznd_mtx, fn, save_precision);
 
-			fn = "jvak_mtx" + model.suffix;
+			fn = "vak_mtx" + model.suffix;
 			save_sp_mtx(jvak_mtx, fn, save_precision);
 		}
 	}
@@ -154,13 +154,9 @@ struct XXZModelStrategy : ModelStrategy
 			save_vector(energies, fn, save_precision);
 		}
 
-		for (auto spin_id = 0; spin_id < num_spins; spin_id++)
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
 		{
-			if (spin_id < num_spins - 1)
-			{
-				model.hamiltonian += (sigma_x_mtxs[spin_id] * sigma_x_mtxs[spin_id + 1] + sigma_y_mtxs[spin_id] * sigma_y_mtxs[spin_id + 1] + Delta * sigma_z_mtxs[spin_id] * sigma_z_mtxs[spin_id + 1]);
-			}
-			model.hamiltonian += W * energies[spin_id] * sigma_z_mtxs[spin_id];
+			model.hamiltonian += (0.25 * sigma_x_mtxs[spin_id] * sigma_x_mtxs[spin_id + 1] + 0.25 * sigma_y_mtxs[spin_id] * sigma_y_mtxs[spin_id + 1] + 0.25 * Delta * sigma_z_mtxs[spin_id] * sigma_z_mtxs[spin_id + 1] + 0.25 * W * energies[spin_id] * sigma_z_mtxs[spin_id] + 0.25 * W * energies[spin_id + 1] * sigma_z_mtxs[spin_id + 1]);
 		}
 	}
 
@@ -196,7 +192,7 @@ struct XXZModelStrategy : ModelStrategy
 			sp_mtx diss_tmp_2(diss.adjoint() * diss);
 			sp_mtx diss_tmp_3(diss_tmp_2.transpose());
 
-			model.lindbladian += 0.5 * (2.0 *
+			model.lindbladian += 0.25 * (2.0 *
 				Eigen::kroneckerProduct(eye, diss) *
 				Eigen::kroneckerProduct(diss_tmp_1, eye) -
 				Eigen::kroneckerProduct(diss_tmp_3, eye) -
@@ -216,7 +212,7 @@ struct XXZModelStrategy : ModelStrategy
 			sp_mtx diss_tmp_2(diss.adjoint() * diss);
 			sp_mtx diss_tmp_3(diss_tmp_2.transpose());
 
-			sp_mtx tmp = 0.5 * (2.0 *
+			sp_mtx tmp = 0.25 * (2.0 *
 				Eigen::kroneckerProduct(eye, diss) *
 				Eigen::kroneckerProduct(diss_tmp_1, eye) -
 				Eigen::kroneckerProduct(diss_tmp_3, eye) -

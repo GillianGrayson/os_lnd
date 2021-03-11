@@ -1,12 +1,12 @@
 clear all;
-path = '../../../source/cpp/os_lnd/os_lnd/tmp';
+path = '../../../source/cpp/os_lnd/os_lnd';
 
 serial_start = 1;
 serial_shift = 1;
-serial_num = 1;
+serial_num = 50;
 
 Delta = 1.0;
-W = 0.0;
+W = 0.25;
 
 mu = 0.001;
 
@@ -21,7 +21,7 @@ num_times_per_seed = 3;
 s_time_id = 3;
 f_time_id = 3;
 
-num_spins = [5,6,7]';
+num_spins = [3,4,5,6,7]';
 vars = zeros(size(num_spins, 1), 1);
 
 opacity = 0.7;
@@ -44,7 +44,7 @@ for n_id = 1:size(num_spins, 1)
         T2, ...
         quantity_index);
     
-    fn = sprintf('%s/serial_vak_%s.txt', path, suffix);
+    fn = sprintf('%s/serial_znd_%s.txt', path, suffix);
     data = importdata(fn);
     
     curr_vars = zeros(serial_num, 1);
