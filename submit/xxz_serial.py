@@ -11,14 +11,14 @@ system = 'xxz'
 
 task = 'odeint'
 
-num_spins = 6
+num_spins = 7
 mu = 0.001
 drv_type = 0
 T1 = 0.2
 T2 = 0.4
 quantity_index = 0
-Deltas = list(np.linspace(0.0, 1.0, 11, dtype=float))
-Ws = list(np.linspace(0.0, 1.0, 11, dtype=float))
+Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
+Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
 
 start_state_id = 0
 step = 0.01
