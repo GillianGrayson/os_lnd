@@ -18,12 +18,16 @@ for x_id = 1:size(xs, 1)
     end
 end
 
-xs = xs(500:900);
-pdf = pdf(500:900, :);
+%xs = xs(500:900);
+%pdf = pdf(500:900, :);
 
 f = figure;
 pdf = pdf';
-s = surf(xs, ys, pdf, 'FaceAlpha', 0.8);
+
+xs_tmp = xs;
+pdf_tmp = zeros(size(pdf, 1), size(pdf, 2));
+
+s = surf(xs_tmp, ys, pdf_tmp, 'FaceAlpha', 0.8);
 set(gca, 'FontSize', 30);
 xlabel('$Re(\lambda)$', 'Interpreter', 'latex');
 set(gca, 'FontSize', 30);
