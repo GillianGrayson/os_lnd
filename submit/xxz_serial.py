@@ -14,8 +14,9 @@ task = 'odeint'
 num_spins = 6
 mu = 0.001
 drv_type = 0
-T1 = 0.2
-T2 = 0.4
+ampl = 0.0
+freq = 10 * np.pi
+phase = 0.0
 quantity_index = 0
 Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
 Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
@@ -48,7 +49,7 @@ for W in Ws:
 
         local_path += \
             '/n_' + str(num_spins)  + \
-            '/params_' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(T1, '0.4f')) + '_' + str(format(T2, '0.4f')) + '_' + str(quantity_index) + \
+            '/params_' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + '_' + str(quantity_index) + \
             '/seeds_' + str(serial_start) + '_' + str(serial_shift) + '_' + str(serial_num)
 
         data_path = get_root() + local_path
@@ -62,8 +63,9 @@ for W in Ws:
         config_list.append('W = ' + str(W))
         config_list.append('mu = ' + str(mu))
         config_list.append('drv_type = ' + str(drv_type))
-        config_list.append('T1 = ' + str(T1))
-        config_list.append('T2 = ' + str(T2))
+        config_list.append('ampl = ' + str(ampl))
+        config_list.append('freq = ' + str(freq))
+        config_list.append('phase = ' + str(phase))
         config_list.append('quantity_index = ' + str(quantity_index))
 
         config_list += get_serial_global_config(system, task, serial_start, serial_shift, serial_num, name_precision=4)
@@ -88,7 +90,7 @@ for W in Ws:
         fn_suffix = \
             'serial(' + str(format(serial_start, '0.4f')) + '_' + str(format(serial_shift, '0.4f')) + '_' + str(serial_num) + ')_' + \
             'ns(' + str(num_spins) + ')_' + \
-            'prm(' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(T1, '0.4f')) + '_' + str(format(T2, '0.4f')) + ')_' + \
+            'prm(' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + ')_' + \
             'j(' + str(quantity_index) + ')'
 
         fn_test = data_path + '/serial_vak_' + fn_suffix + '.txt'

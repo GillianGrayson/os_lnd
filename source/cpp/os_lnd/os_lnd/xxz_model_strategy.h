@@ -79,14 +79,15 @@ struct XXZModelStrategy : ModelStrategy
 		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
 		const auto mu = model.ini.GetReal("xxz", "mu", 0.0);
 		const int drv_type = model.ini.GetInteger("xxz", "drv_type", 0);
-		const auto T1 = model.ini.GetReal("xxz", "T1", 0.0);
-		const auto T2 = model.ini.GetReal("xxz", "T2", 0.0);
+		const auto ampl = model.ini.GetReal("xxz", "ampl", 0.0);
+		const auto freq = model.ini.GetReal("xxz", "freq", 0.0);
+		const auto phase = model.ini.GetReal("xxz", "phase", 0.0);
 
 		const int quantity_index = model.ini.GetInteger("xxz", "quantity_index", 0);
 
 		std::stringstream fns;
 		fns << "_ns(" << num_spins << ")";
-		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << Delta << "_" << W << "_" << mu << "_" << drv_type << "_" << T1 << "_" << T2 << ")";
+		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << Delta << "_" << W << "_" << mu << "_" << drv_type << "_" << ampl << "_" << freq << "_" << phase << ")";
 		fns << "_j(" << quantity_index << ")";
 
 		std::stringstream serial;
@@ -109,10 +110,13 @@ struct XXZModelStrategy : ModelStrategy
 
 	void setup_period(Model& model) override
 	{
-		auto T1 = model.ini.GetReal("xxz", "T1", 0.0);
-		auto T2 = model.ini.GetReal("xxz", "T2", 0.0);
+		const auto ampl = model.ini.GetReal("xxz", "ampl", 0.0);
+		const auto freq = model.ini.GetReal("xxz", "freq", 0.0);
+		const auto phase = model.ini.GetReal("xxz", "phase", 0.0);
 
-		model.period = std::max(T1, T2);
+		double pi = std::atan(1.0) * 4.0;
+		
+		model.period = 2.0 * pi / freq;
 	}
 
 	void setup_hamiltonian(Model& model) override
