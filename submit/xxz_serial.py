@@ -11,10 +11,10 @@ system = 'xxz'
 
 task = 'odeint'
 
-num_spins = 6
+num_spins = 7
 mu = 0.001
 drv_type = 0
-ampl = 0.0
+ampl = 0.75
 freq = 10 * np.pi
 phase = 0.0
 quantity_index = 0
@@ -22,12 +22,12 @@ Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
 Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
 
 start_state_id = 0
-step = 0.01
+step = 0.04
 dump_type = 'linear'
-num_trans_periods = 100
+num_trans_periods = 200
 num_obser_periods = 1
 current_num_obser_periods = 1
-current_num_obser_time_points = 2
+current_num_obser_time_points = 101
 dump_progress = 'false'
 dump_last_time = 'false'
 is_continue = 'false'
