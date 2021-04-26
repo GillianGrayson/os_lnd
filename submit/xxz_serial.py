@@ -11,6 +11,8 @@ system = 'xxz'
 
 task = 'odeint'
 
+silent = 'false'
+
 num_spins = 7
 mu = 0.001
 drv_type = 0
@@ -24,7 +26,7 @@ Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
 T = 2.0 * np.pi / freq
 
 start_state_id = 0
-step = T / 20
+step = T / 100
 dump_type = 'linear'
 num_trans_periods = 100
 num_obser_periods = 1
@@ -70,7 +72,7 @@ for W in Ws:
         config_list.append('phase = ' + str(phase))
         config_list.append('quantity_index = ' + str(quantity_index))
 
-        config_list += get_serial_global_config(system, task, serial_start, serial_shift, serial_num, name_precision=4)
+        config_list += get_serial_global_config(system, task, serial_start, serial_shift, serial_num, name_precision=4, silent=silent)
 
         config_list += get_odeint_config(
             step,

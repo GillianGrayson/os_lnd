@@ -1,9 +1,9 @@
-def get_regular_global_config(system, task, save_rho='true', name_precision=4):
+def get_regular_global_config(system, task, save_rho='true', silent='false', name_precision=4):
     config_list = []
     config_list.append('[global]')
     config_list.append('run_type = regular')
     config_list.append('logger_type = console')
-    config_list.append('silent = false')
+    config_list.append('silent = ' + silent)
     config_list.append('system = ' + system)
     config_list.append('task = ' + task)
     config_list.append('debug_dump = false')
@@ -21,7 +21,7 @@ def get_regular_global_config(system, task, save_rho='true', name_precision=4):
     config_list.append('save_precision = 16')
     return config_list
 
-def get_serial_global_config(system, task, start, shift, num, name_precision=4):
+def get_serial_global_config(system, task, start, shift, num, silent='false', name_precision=4):
     config_list = []
     config_list.append('[global]')
     config_list.append('run_type = serial')
@@ -29,7 +29,7 @@ def get_serial_global_config(system, task, start, shift, num, name_precision=4):
     config_list.append('serial_shift = ' + str(shift))
     config_list.append('serial_num = ' + str(num))
     config_list.append('logger_type = console')
-    config_list.append('silent = false')
+    config_list.append('silent = ' + silent)
     config_list.append('system = ' + system)
     config_list.append('task = ' + task)
     config_list.append('debug_dump = false')
