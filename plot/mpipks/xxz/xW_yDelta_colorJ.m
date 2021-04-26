@@ -4,8 +4,8 @@ addpath('../../../source/matlab/lib')
 num_spins = [6, 7]';
 mu = 0.001;
 drv_type = 0;
-ampl = 0.0;
-freq = 10 * pi;
+ampl = 0.5;
+freq = 2 * pi;
 phase = 0.0;
 quantity_index = 0;
 
@@ -24,9 +24,9 @@ serial_start = 1;
 serial_shift = 1;
 serial_num = 100;
 
-num_times_per_seed = 3;
-s_time_id = 3;
-f_time_id = 3;
+num_times_per_seed = 22;
+s_time_id = 2;
+f_time_id = 22;
 
 js = zeros(numWs, numDeltas);
 
@@ -119,7 +119,7 @@ ylabel('$\Delta$', 'Interpreter', 'latex');
 colormap jet;
 h = colorbar;
 set(gca, 'FontSize', 30);
-title(h, '$j / \mu$', 'FontSize', 33, 'interpreter','latex');
+title(h, '$\gamma$', 'FontSize', 33, 'interpreter','latex');
 set(gca,'YDir','normal');
 hold all;
 fn_fig = sprintf('%s/x(W)_y(Delta)_color(j)_%s', figures_path, suffix);
