@@ -52,7 +52,7 @@ for W in Ws:
 
         local_path += \
             '/n_' + str(num_spins)  + \
-            '/params_' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + '_' + str(quantity_index) + \
+            '/params_' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + \
             '/seeds_' + str(serial_start) + '_' + str(serial_shift) + '_' + str(serial_num)
 
         data_path = get_root() + local_path
