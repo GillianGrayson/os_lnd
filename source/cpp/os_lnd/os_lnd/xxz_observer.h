@@ -6,8 +6,8 @@
 struct XXZObserver : BaseObserver
 {
 	XXZModelStrategy model_strategy;
-	std::vector<double> znds;
-	std::vector<double> vaks;
+	std::vector<std::vector<double>> js;
+	int num_spins;
 
 	XXZObserver(
 		Model& model,
@@ -17,21 +17,30 @@ struct XXZObserver : BaseObserver
 	{
 		model_strategy = XXZModelStrategy();
 		model_strategy.setup_aux_data(model);
+
+		num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			js.push_back({});
+		}
 	}
 
 	void operator()(const Eigen::VectorXcd& x, double t) override
 	{
 		process_observables_basic(x, t);
 
-		double znd = model_strategy.get_quantity_znd(model);
-		znds.push_back(znd);
-		double vak = model_strategy.get_quantity_vak(model);
-		vaks.push_back(vak);
+		std::vector<double> quantities = model_strategy.get_quantities(model);
+		for (auto spin_id = 0; spin_id != quantities.size(); spin_id++) 
+		{
+			js[spin_id].push_back(quantities[spin_id]);
+		}
 
 		if (is_dump_now(t))
 		{
-			rewrite_observables("znd", znds, t_pre, t);
-			rewrite_observables("vak", vaks, t_pre, t);
+			for (auto spin_id = 0; spin_id != quantities.size(); spin_id++)
+			{
+				rewrite_observables("j_" + std::to_string(spin_id), js[spin_id], t_pre, t);
+			}
 		}
 	}
 
@@ -39,7 +48,9 @@ struct XXZObserver : BaseObserver
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{
-		features_double["znd"].insert(features_double["znd"].end(), znds.begin(), znds.end());
-		features_double["vak"].insert(features_double["vak"].end(), vaks.begin(), vaks.end());
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			features_double["j_" + std::to_string(spin_id)].insert(features_double["j_" + std::to_string(spin_id)].end(), js[spin_id].begin(), js[spin_id].end());
+		}
 	}
 };

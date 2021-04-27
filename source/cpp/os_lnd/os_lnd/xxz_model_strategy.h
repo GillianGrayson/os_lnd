@@ -21,15 +21,14 @@ struct XXZModelStrategy : ModelStrategy
 	std::vector<sp_mtx> sigma_z_mtxs;
 	std::vector<sp_mtx> sigma_m_mtxs;
 	std::vector<sp_mtx> sigma_p_mtxs;
-	sp_mtx jznd_mtx;
-	sp_mtx jvak_mtx;
+
+	std::vector<sp_mtx> j_mtxs;
 
 	void setup_aux_data(Model& model) override
 	{
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		
-		const int quantity_index = model.ini.GetInteger("xxz", "quantity_index", 0);
 		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 
 		const std::complex<double> i1(0.0, 1.0);
@@ -40,22 +39,15 @@ struct XXZModelStrategy : ModelStrategy
 		sigma_m_mtxs = get_kronecker_mtxs(num_spins, "sigma_m");
 		sigma_p_mtxs = get_kronecker_mtxs(num_spins, "sigma_p");
 
-		jznd_mtx = 0.25 * (sigma_x_mtxs[quantity_index] * sigma_y_mtxs[quantity_index + 1] - sigma_y_mtxs[quantity_index] * sigma_x_mtxs[quantity_index + 1]);
-
-		jvak_mtx = sp_mtx(model.sys_size, model.sys_size);
 		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
 		{
-			jvak_mtx += (sigma_p_mtxs[spin_id] * sigma_m_mtxs[spin_id + 1] - sigma_m_mtxs[spin_id] * sigma_p_mtxs[spin_id + 1]);
-		}
-		jvak_mtx = 2.0 * i1 / double(num_spins - 1) * jvak_mtx;
-
-		if (debug_dump)
-		{
-			auto fn = "znd_mtx" + model.suffix;
-			save_sp_mtx(jznd_mtx, fn, save_precision);
-
-			fn = "vak_mtx" + model.suffix;
-			save_sp_mtx(jvak_mtx, fn, save_precision);
+			sp_mtx j_mtx = 0.25 * (sigma_x_mtxs[spin_id] * sigma_y_mtxs[spin_id + 1] - sigma_y_mtxs[spin_id] * sigma_x_mtxs[spin_id + 1]);
+			j_mtxs.push_back(j_mtx);
+			if (debug_dump)
+			{
+				auto fn = "znd_mtx_" + std::to_string(spin_id) + model.suffix;
+				save_sp_mtx(j_mtx, fn, save_precision);
+			}
 		}
 	}
 
@@ -83,12 +75,9 @@ struct XXZModelStrategy : ModelStrategy
 		const auto freq = model.ini.GetReal("xxz", "freq", 0.0);
 		const auto phase = model.ini.GetReal("xxz", "phase", 0.0);
 
-		const int quantity_index = model.ini.GetInteger("xxz", "quantity_index", 0);
-
 		std::stringstream fns;
 		fns << "_ns(" << num_spins << ")";
 		fns << "_prm(" << std::setprecision(name_precision) << std::fixed << Delta << "_" << W << "_" << mu << "_" << drv_type << "_" << ampl << "_" << freq << "_" << phase << ")";
-		fns << "_j(" << quantity_index << ")";
 
 		std::stringstream serial;
 		serial << fns.rdbuf();
@@ -226,32 +215,32 @@ struct XXZModelStrategy : ModelStrategy
 		}
 	}
 
-	double get_quantity_znd(Model& model)
+	std::vector<double> get_quantities(Model& model)
 	{
-		Eigen::MatrixXcd op = jznd_mtx * model.rho;
-		double quantity = op.trace().real();
-		return quantity;
-	}
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 
-	double get_quantity_vak(Model& model)
-	{
-		Eigen::MatrixXcd op = jvak_mtx * model.rho;
-		double quantity = op.trace().real();
-		return quantity;
+		std::vector<double> quantities;
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			Eigen::MatrixXcd op = j_mtxs[spin_id] * model.rho;
+			double quantity = op.trace().real();
+			quantities.push_back(quantity);
+		}
+		return quantities;
 	}
 
 	void release_observables(Model& model) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
 		std::string fn;
 
-		const double znd = get_quantity_znd(model);
-		fn = "znd" + model.suffix;
-		save_value(znd, fn, save_precision);
-
-		const double vak = get_quantity_vak(model);
-		fn = "vak" + model.suffix;
-		save_value(vak, fn, save_precision);
+		std::vector<double> quantities = get_quantities(model);
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			fn = "j_" + std::to_string(spin_id) + model.suffix;
+			save_value(quantities[spin_id], fn, save_precision);
+		}
 	}
 
 	void setup_serial_data(
@@ -259,8 +248,11 @@ struct XXZModelStrategy : ModelStrategy
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{
-		features_double.insert({"znd", {}});
-		features_double.insert({"vak", {}});
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			features_double.insert({"j_" + std::to_string(spin_id), {}});
+		}
 	}
 
 	void fill_serial_data(
@@ -268,9 +260,11 @@ struct XXZModelStrategy : ModelStrategy
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{
-		const double znd = get_quantity_znd(model);
-		const double vak = get_quantity_vak(model);
-		features_double["znd"].push_back(znd);
-		features_double["vak"].push_back(vak);
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
+		std::vector<double> quantities = get_quantities(model);
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			features_double["j_" + std::to_string(spin_id)].push_back(quantities[spin_id]);
+		}
 	}
 };
