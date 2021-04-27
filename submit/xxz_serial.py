@@ -16,19 +16,18 @@ silent = 'false'
 num_spins = 7
 mu = 0.001
 drv_type = 0
-ampl = 0.50
+ampl = 1.0
 freq = 2 * np.pi
 phase = 0.0
-quantity_index = 0
 Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
 Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
 
 T = 2.0 * np.pi / freq
 
 start_state_id = 0
-step = T / 100
+step = T / 25
 dump_type = 'linear'
-num_trans_periods = 100
+num_trans_periods = 500
 num_obser_periods = 1
 current_num_obser_periods = 1
 current_num_obser_time_points = 21
@@ -70,7 +69,6 @@ for W in Ws:
         config_list.append('ampl = ' + str(ampl))
         config_list.append('freq = ' + str(freq))
         config_list.append('phase = ' + str(phase))
-        config_list.append('quantity_index = ' + str(quantity_index))
 
         config_list += get_serial_global_config(system, task, serial_start, serial_shift, serial_num, name_precision=4, silent=silent)
 
@@ -94,10 +92,9 @@ for W in Ws:
         fn_suffix = \
             'serial(' + str(format(serial_start, '0.4f')) + '_' + str(format(serial_shift, '0.4f')) + '_' + str(serial_num) + ')_' + \
             'ns(' + str(num_spins) + ')_' + \
-            'prm(' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + ')_' + \
-            'j(' + str(quantity_index) + ')'
+            'prm(' + str(format(Delta, '0.4f')) + '_' + str(format(W, '0.4f')) + '_' + str(format(mu, '0.4f')) + '_' + str(drv_type) + '_' + str(format(ampl, '0.4f')) + '_' + str(format(freq, '0.4f')) + '_' + str(format(phase, '0.4f')) + ')'
 
-        fn_test = data_path + '/serial_vak_' + fn_suffix + '.txt'
+        fn_test = data_path + '/serial_j_0_' + fn_suffix + '.txt'
 
         if not os.path.isfile(fn_test):
             # print(fn_test)
