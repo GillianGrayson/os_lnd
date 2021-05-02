@@ -16,7 +16,7 @@ silent = 'false'
 num_spins = 7
 mu = 0.001
 drv_type = 0
-ampl = 1.0
+ampl = 0.0
 freq = 2 * np.pi
 phase = 0.0
 Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
@@ -27,7 +27,7 @@ T = 2.0 * np.pi / freq
 start_state_id = 0
 step = T / 25
 dump_type = 'linear'
-num_trans_periods = 500
+num_trans_periods = 100
 num_obser_periods = 1
 current_num_obser_periods = 1
 current_num_obser_time_points = 21
