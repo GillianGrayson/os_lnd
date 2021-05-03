@@ -13,10 +13,10 @@ task = 'odeint'
 
 silent = 'false'
 
-num_spins = 7
+num_spins = 5
 mu = 0.001
-drv_type = 0
-ampl = 0.0
+drv_type = 3
+ampl = 1.0
 freq = 2 * np.pi
 phase = 0.0
 Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))

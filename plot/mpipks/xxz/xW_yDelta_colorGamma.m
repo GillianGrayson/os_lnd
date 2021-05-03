@@ -3,12 +3,12 @@ addpath('../../../source/matlab/lib')
 
 num_spins = [6, 7]';
 mu = 0.001;
-drv_type = 0;
+drv_type = 3;
 ampl = 1.0;
 freq = 2 * pi;
 phase = 0.0;
 
-j_index = 3;
+j_index = 0;
 
 Deltas = linspace(0.0, 2.0, 51)';
 numDeltas = size(Deltas, 1);

@@ -1,14 +1,14 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-num_spins = 6;
+num_spins = 7;
 mu = 0.001;
 drv_type = 0;
 ampl = 1.0;
 freq = 2 * pi;
 phase = 0.0;
 
-j_index = 3;
+j_index = 0;
 
 Deltas = linspace(0.0, 2.0, 51)';
 numDeltas = size(Deltas, 1);
@@ -77,10 +77,11 @@ for W_id = 1:numWs
     end
 end
 
-suffix = sprintf('serial(%0.4f_%0.4f_%d)_prm(%0.4f_%0.4f_%0.4f_%d_%0.4f_%0.4f_%0.4f)_j(%d)', ...
+suffix = sprintf('serial(%0.4f_%0.4f_%d)_ns(%d)_prm(%0.4f_%0.4f_%0.4f_%d_%0.4f_%0.4f_%0.4f)_j(%d)', ...
     serial_start, ...
     serial_shift, ...
     serial_num, ...
+	num_spins, ...
     Delta, ...
     W, ...
     mu, ...
