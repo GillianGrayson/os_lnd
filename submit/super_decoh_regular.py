@@ -11,13 +11,13 @@ system = 'super_decoh'
 
 task = 'eigen_dense'
 
-method = 'simple'
+method = 'origin'
 G_type = 0
 aux_dim = 0
 reshuffle_type = 0
 
 #ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-ps = [0.8]
+ps = [1.0]
 #Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
 Ns = [100]
 total_num_evals  = 100000
@@ -43,8 +43,8 @@ for N_id, N in enumerate(Ns):
 
             local_path += \
                 '/method_' + str(method) + \
-                '/G_type_' + str(G_type) + '_ad_' + str(aux_dim) + \
-                '/reshuffle_type_' + str(reshuffle_type) + \
+                '/Gt_' + str(G_type) + '_ad_' + str(aux_dim) + \
+                '/rt_' + str(reshuffle_type) + \
                 '/N_' + str(N) + \
                 '/p_' + str(format(p, '0.10f')) + \
                 '/seed_' + str(seed)

@@ -2,6 +2,9 @@ def get_regular_global_config(system, task, save_rho='true', silent='false', nam
     config_list = []
     config_list.append('[global]')
     config_list.append('run_type = regular')
+    config_list.append('serial_start = 1')
+    config_list.append('serial_shift = 1')
+    config_list.append('serial_num = 1')
     config_list.append('logger_type = console')
     config_list.append('silent = ' + silent)
     config_list.append('system = ' + system)
