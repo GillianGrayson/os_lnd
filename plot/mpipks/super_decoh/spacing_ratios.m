@@ -1,20 +1,20 @@
 clear all;
 addpath('../../../source/matlab/lib')
 
-path = '/data/condmat/ivanchen/yusipov/os_lnd/super_decoh/eigen_dense';
-figures_path = '/home/ivanchen/yusipov/os_lnd/figures/super_decoh';
+path = '/data/biophys/denysov/yusipov/os_lnd/regular/super_decoh/eigen_dense';
+figures_path = '/home/denysov/yusipov/os_lnd/figures/super_decoh';
 
-ps = [1.0]';
+ps = [0.0]';
 
 region_eps = 1e-3;
 
 name = 'lindbladian_evals';
 
 method = 'origin';
-reshufle_type = 1;
+reshufle_type = 0;
 G_type = 0;
 N = 100;
-seeds = linspace(1, 1000, 1000)';
+seeds = linspace(1, 500, 500)';
 
 x_num_bins = 301;
 y_num_bins = 301;
@@ -105,15 +105,11 @@ for p_id = 1:size(ps, 1)
         
         seed = seeds(seed_id);
         fprintf('seed = %d\n', seed);
-        
-		if (method == 'origin')
-			suffix = sprintf('reshuffle(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, N, p, seed);
-		else
-			suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
-		end
+
+		suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_ad(0)_p(%0.10f)_seed(%d)', reshufle_type, G_type, N, p, seed);
 		
         evals = zeros(N2, 1);
-        fn_cpp = sprintf('%s/method_%s/G_type_%d/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d/%s_%s.txt', path, method, G_type, reshufle_type, N, p, seed, name, suffix);
+        fn_cpp = sprintf('%s/method_%s/Gt_%d_ad_0/rt_%d/N_%d/p_%0.10f/seed_%d/%s_%s.txt', path, method, G_type, reshufle_type, N, p, seed, name, suffix);
         if ~isfile(fn_cpp)
             fprintf('Warning! seed = %d\n', seed);
         end

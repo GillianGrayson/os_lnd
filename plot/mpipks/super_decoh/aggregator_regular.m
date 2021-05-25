@@ -3,18 +3,18 @@ addpath('../../../source/matlab/lib')
 
 task = 'eigen_dense';
 
-mem_size = 1;
-non_zeros_size = 2;
-run_times_size = 1;
+mem_size = 2;
+non_zeros_size = 1;
+run_times_size = 9;
 
-path = sprintf('/data/condmat/ivanchen/yusipov/os_lnd/regular/super_decoh/%s', task);
+path = sprintf('/data/biophys/denysov/yusipov/os_lnd/regular/super_decoh/%s', task);
 
 method = 'origin';
 G_type = 0;
 reshuffle_type = 0;
 
 %ps = logspace(-3, 0, 31)';
-ps = [1];
+ps = [0.0];
 %Ns = floor(logspace(1, 2, 11)');
 Ns = [100]';
 total_num_evals = 100000;
@@ -26,7 +26,7 @@ for N_id = 1:size(Ns, 1)
     N2 = N * N;
     
     %num_seeds(N_id) = ceil(total_num_evals / (Ns(N_id).^2));
-	num_seeds(N_id) = 1000;
+	num_seeds(N_id) = 500;
     
     fprintf('N = %d\n', N);
     fprintf('num_seeds = %d\n', num_seeds(N_id));
@@ -47,7 +47,7 @@ for N_id = 1:size(Ns, 1)
 
         for seed_id = 1:num_seeds(N_id)
             
-            seed = seed_id;
+            seed = seed_id
             
             suffix = sprintf('reshuffle(%d)_G(%d)_N(%d)_ad(0)_p(%0.10f)_seed(%d)', ...
                 reshuffle_type, ...
@@ -56,7 +56,7 @@ for N_id = 1:size(Ns, 1)
                 p, ...
                 seed);
             
-            prefix = sprintf('%s/method_%s/G_type_%d_ad_0/reshuffle_type_%d/N_%d/p_%0.10f/seed_%d', ...
+            prefix = sprintf('%s/method_%s/Gt_%d_ad_0/rt_%d/N_%d/p_%0.10f/seed_%d', ...
                 path, ...
                 method, ...
                 G_type, ...
@@ -108,7 +108,7 @@ for N_id = 1:size(Ns, 1)
             lind_evals_all((seed_id - 1) * N2 + 1 : seed_id * N2) = evals;
         end
         
-        prefix = sprintf('method_%s/G_type_%d_ad_0/reshuffle_type_%d/N_%d/p_%0.10f', ...
+        prefix = sprintf('method_%s/Gt_%d_ad_0/rt_%d/N_%d/p_%0.10f', ...
             method, ...
             G_type, ...
             reshuffle_type, ...
@@ -128,7 +128,6 @@ for N_id = 1:size(Ns, 1)
             1, ...
             1, ...
             num_seeds(N_id));
-        
         
         fn_txt = sprintf('%s/mem_info_%s.txt', aggr_path, suffix);
         fid = fopen(fn_txt,'wt');

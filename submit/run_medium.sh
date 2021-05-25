@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --cpus-per-task=1
-#SBATCH --time=48:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=medium
-#SBATCH --mem=1000
+#SBATCH --mem=9000
 
 export OMP_NUM_THREADS=1
 

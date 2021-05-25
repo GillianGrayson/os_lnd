@@ -5,7 +5,7 @@ import os.path
 import numpy as np
 import math
 
-segment = 'medium'
+segment = 'short'
 
 system = 'super_decoh'
 
@@ -17,7 +17,7 @@ aux_dim = 0
 reshuffle_type = 0
 
 #ps = list(np.logspace(-3.0, 0.0, num=31, base=10.0))
-ps = [1.0]
+ps = [0.0]
 #Ns = list(np.logspace(1, 2, 11, base=10.0, dtype=int))
 Ns = [100]
 total_num_evals  = 100000
