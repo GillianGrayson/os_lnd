@@ -7,17 +7,20 @@ figures_path = '/home/denysov/yusipov/os_lnd/figures/super_decoh';
 is_calc_bow = 0;
 is_save_files = 0;
 
+imag_lim = 1e-4;
+
 ps = [0.0]';
 
 region_eps = 1e-3;
 
 name = 'lindbladian_evals';
 
-method = 'origin';
+method = 'simple';
 reshuffle_type = 0;
 G_type = 0;
 N = 100;
-num_seeds = 500;
+num_seeds = 20000;
+num_seeds_run = 20000;
 
 x_num_bins = 301;
 y_num_bins = 301;
@@ -89,22 +92,6 @@ for p_id = 1:size(ps, 1)
     pdfangles.x_num_bins = x_num_bins;
     pdfangles.x_label = '$arg(z)$';
     
-	evals_all = zeros((N2 - 1) * num_seeds, 1);
-    zs_all = zeros((N2 - 1) * num_seeds, 1);
-    rs_all = zeros((N2 - 1) * num_seeds, 1);
-    abses_all = zeros((N2 - 1) * num_seeds, 1);
-    angles_all = zeros((N2 - 1) * num_seeds, 1);
-    
-    zs_bow = [];
-    evals_bow = [];
-    
-    zs_bowstring = [];
-    evals_bowstring = [];
-    
-    zs_arrow = [];
-    evals_arrow = [];
-    
-    
     prefix = sprintf('method_%s/Gt_%d_ad_0/rt_%d/N_%d/p_%0.10f', ...
         method, ...
         G_type, ...
@@ -130,12 +117,27 @@ for p_id = 1:size(ps, 1)
 
     lind_evals_all = importdata(fn);
 	
-	num_non_real = sum(abs(lind_evals_all(:,2)) > 1e-10)
+	num_non_real = sum(abs(lind_evals_all(:,2)) >= imag_lim)
     
-    curr_fin_id = 0;
-    curr_fin_slice_id = 0;
+	evals_all = zeros((N2 - 1) * num_seeds_run, 1);
+    zs_all = zeros((N2 - 1) * num_seeds_run, 1);
+    rs_all = zeros((N2 - 1) * num_seeds_run, 1);
+    abses_all = zeros((N2 - 1) * num_seeds_run, 1);
+    angles_all = zeros((N2 - 1) * num_seeds_run, 1);
     
-    for seed_id = 1:num_seeds
+    zs_bow = [];
+    evals_bow = [];
+    
+    zs_bowstring = [];
+    evals_bowstring = [];
+    
+    zs_arrow = [];
+    evals_arrow = [];
+	
+    s_id = 0;
+    f_id = 0;
+    
+    for seed_id = 1:num_seeds_run
         
         fprintf('seed = %d\n', seed_id);
         
@@ -143,17 +145,24 @@ for p_id = 1:size(ps, 1)
         [evals, order] = sort(evals, 'ComparisonMethod', 'abs');
         evals = evals(2:end);
         
-        zs = zeros(N2 - 1, 1);
-        rs = zeros(N2 - 1, 1);
-        abses = zeros(N2 - 1, 1);
-        angles = zeros(N2 - 1, 1);
+        evals = evals(abs(imag(evals)) >= imag_lim);
+        num_passed_evals = size(evals, 1);
+		fprintf('num_passed_evals = %d\n', num_passed_evals);
+		
+        s_id = f_id + 1;
+        f_id = s_id + num_passed_evals - 1;
+        
+        zs = zeros(num_passed_evals, 1);
+        rs = zeros(num_passed_evals, 1);
+        abses = zeros(num_passed_evals, 1);
+        angles = zeros(num_passed_evals, 1);
         neighbours_2D = horzcat(real(evals), imag(evals));
-        for z_id = 1 : N2 - 1
+        for z_id = 1 : num_passed_evals
             target_2D = horzcat(real(evals(z_id)), imag(evals(z_id)));
             target = evals(z_id);
 			distances = sqrt((neighbours_2D(:, 1) - target_2D(:, 1)).^2 + (neighbours_2D(:, 2) - target_2D(:, 2)).^2);
-            % [min_distances, order] = mink(distances, 3);
-            [sorted_distances, order] = sort(distances);
+            [min_distances, order] = mink(distances, 3);
+            %[sorted_distances, order] = sort(distances);
 			nn = evals(order(2));
             nnn = evals(order(3));
             zs(z_id) = (nn - target) / (nnn - target);
@@ -177,7 +186,6 @@ for p_id = 1:size(ps, 1)
                     zs_arrow = vertcat(zs_arrow, zs(z_id));
                     evals_arrow = vertcat(evals_arrow, [target; nn; nnn]);
                 end
-                
             end
             
             rs(z_id) = abs(zs(z_id)) * sign(angle(zs(z_id)));
@@ -185,16 +193,25 @@ for p_id = 1:size(ps, 1)
             angles(z_id) = angle(zs(z_id));
         end
         
-        s_id = (seed_id - 1) * (N2 - 1) + 1;
-        f_id = seed_id * (N2 - 1);
+		num_zero_zs = sum(abs(zs) < 1e-4);
+		fprintf('num_zero_zs = %d\n', num_zero_zs);
+		
 		evals_all(s_id : f_id) = evals;
         zs_all(s_id : f_id) = zs;
         rs_all(s_id : f_id) = rs;
         abses_all(s_id : f_id) = abses;
         angles_all(s_id : f_id) = angles;
     end
+	
+	evals_all = evals_all(1 : f_id);
+    zs_all = zs_all(1 : f_id);
+    rs_all = rs_all(1 : f_id);
+    abses_all = abses_all(1 : f_id);
+	angles_all = angles_all(1 : f_id);
+	
+	total_num_passed_evals = f_id
     
-    suffix = sprintf('%s_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', name, reshuffle_type, N, p, num_seeds);
+    suffix = sprintf('%s_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', name, reshuffle_type, N, p, num_seeds_run);
 	
     if is_save_files == 1
         fn_txt = sprintf('%s/zs_%s.txt', figures_path, suffix);

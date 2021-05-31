@@ -4,7 +4,7 @@ addpath('../../../source/matlab/lib')
 path = '/data/biophys/denysov/yusipov/os_lnd/regular/super_decoh/eigen_dense';
 figures_path = '/home/denysov/yusipov/os_lnd/figures/super_decoh';
 
-ps = [0.0]';
+ps = [1.0]';
 
 region_eps = 1e-3;
 
@@ -14,7 +14,7 @@ method = 'origin';
 reshufle_type = 0;
 G_type = 0;
 N = 100;
-seeds = linspace(1, 500, 500)';
+seeds = linspace(1, 1000, 1000)';
 
 x_num_bins = 301;
 y_num_bins = 301;
