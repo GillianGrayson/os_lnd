@@ -166,3 +166,5 @@ source/cpp/os_lnd/os_lnd/x64/Debug/
 source/cpp/os_lnd/x64/Debug/
 
 *.mat
+
+*.png
