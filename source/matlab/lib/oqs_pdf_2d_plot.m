@@ -10,7 +10,10 @@ colormap hot;
 h = colorbar;
 set(gca, 'FontSize', 30);
 title(h, '$PDF$', 'FontSize', 33, 'interpreter','latex');
+set(h, 'TickLabelInterpreter', 'latex');
 set(gca,'YDir','normal');
+ax = gca;
+set(ax,'TickLabelInterpreter','Latex')
 hold all;
 
 end
