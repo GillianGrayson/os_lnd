@@ -1,7 +1,7 @@
 clear all;
 
-N = 100;
-num_seeds = 20000;
+N = 1000;
+num_seeds = 1000;
 
 imag_lim = 1.3e-1;
 

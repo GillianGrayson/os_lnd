@@ -10,14 +10,13 @@ theory_data_classical = importdata(sprintf('%s/borderline_classical.dat', path_b
 
 pdf2d.x_num_bins = 201;
 pdf2d.y_num_bins = 201;
-pdf2d.x_label = 'Re$(\chi'')$';
-pdf2d.y_label = 'Im$(\chi'')$';
+pdf2d.x_label = '$Re(\chi'')$';
+pdf2d.y_label = '$Im(\chi'')$';
 pdf2d.x_bin_s = -4;
 pdf2d.x_bin_f = 4;
 pdf2d.y_bin_s = -1;
 pdf2d.y_bin_f = 1;
 pdf2d = oqs_pdf_2d_setup(pdf2d);
-all_evals = zeros(N, num_seeds);
 
 zs_all = zeros(N * num_seeds, 1);
 s_id = 0;
@@ -36,7 +35,6 @@ for seed = 1:num_seeds
     end
     K = A - eye(N).*sum(A,2);
     evals = eig(K);
-    all_evals(:, seed) = evals;
     
     evals = evals(2:end);
     evals = sqrt(N) * (real(evals) + 1) + 1i * sqrt(N) * imag(evals);
@@ -87,8 +85,8 @@ oqs_save_fig(fig, fn_fig);
 
 pdf2dzs.x_num_bins = 301;
 pdf2dzs.y_num_bins = 301;
-pdf2dzs.x_label = 'Re$(z)$';
-pdf2dzs.y_label = 'Im$(z)$';
+pdf2dzs.x_label = '$Re(z)$';
+pdf2dzs.y_label = '$Im(z)$';
 
 pdf2dzs.x_bin_s = min(real(zs_all));
 pdf2dzs.x_bin_f = max(real(zs_all));
