@@ -88,10 +88,10 @@ pdf2dzs.y_num_bins = 301;
 pdf2dzs.x_label = '$Re(z)$';
 pdf2dzs.y_label = '$Im(z)$';
 
-pdf2dzs.x_bin_s = min(real(zs_all));
-pdf2dzs.x_bin_f = max(real(zs_all));
-pdf2dzs.y_bin_s = min(imag(zs_all));
-pdf2dzs.y_bin_f = max(imag(zs_all));
+pdf2dzs.x_bin_s = -1;
+pdf2dzs.x_bin_f = 1;
+pdf2dzs.y_bin_s = -1;
+pdf2dzs.y_bin_f = 1;
 pdf2dzs = oqs_pdf_2d_setup(pdf2dzs);
 data2d = horzcat(real(zs_all), imag(zs_all));
 pdf2dzs = oqs_pdf_2d_update(pdf2dzs, data2d);

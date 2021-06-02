@@ -1,6 +1,6 @@
 clear all;
 
-N = 100;
+N = 10;
 num_seeds = 20000;
 
 imag_lim = 1.3e-1;
@@ -23,9 +23,13 @@ for seed = 1:num_seeds
     
     fprintf('seed = %d\n', seed);
     
-    G = Ginibre(seed, N);
+    G = Gen_Lindblad_from_Kolmogorov(seed, N);
     
     evals = eig(G);
+    
+    [evals, order] = sort(evals, 'ComparisonMethod', 'abs');
+    
+    %evals = evals(2:end);
     
     data2d = horzcat(real(evals), imag(evals));
     pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
