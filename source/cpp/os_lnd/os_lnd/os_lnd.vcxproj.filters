@@ -137,5 +137,8 @@
     <ClInclude Include="pimpl_system.h">
       <Filter>Header Files\odeint\system</Filter>
     </ClInclude>
+    <ClInclude Include="lfk_model_strategy.h">
+      <Filter>Header Files\strategy\model</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
