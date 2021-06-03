@@ -116,6 +116,12 @@ struct LFKModelStrategy : ModelStrategy
 		delete[] MR;
 		delete[] MI;
 
+		if (debug_dump)
+		{
+			auto fn = "MS_mtx" + model.suffix;
+			save_dense_mtx(MS, fn, save_precision);
+		}
+		
 		ds_mtx MZ(model.sys_size, model.sys_size);
 		for (auto st_id_1 = 0; st_id_1 < model.sys_size; st_id_1++)
 		{
@@ -144,9 +150,14 @@ struct LFKModelStrategy : ModelStrategy
 				X(st_id_1, st_id_2) = std::complex<double>(disorder_real[index], disorder_imag[index]);
 			}
 		}
-
 		delete[] disorder_real;
 		delete[] disorder_imag;
+
+		if (debug_dump)
+		{
+			auto fn = "X_mtx" + model.suffix;
+			save_dense_mtx(X, fn, save_precision);
+		}
 
 		ds_mtx rho = X * X.adjoint();
 
