@@ -202,6 +202,8 @@ for p_id = 1:size(ps, 1)
         abses_all(s_id : f_id) = abses;
         angles_all(s_id : f_id) = angles;
     end
+    
+    total_num_passed_evals = f_id
 	
 	evals_all = evals_all(1 : f_id);
     zs_all = zs_all(1 : f_id);
@@ -209,8 +211,6 @@ for p_id = 1:size(ps, 1)
     abses_all = abses_all(1 : f_id);
 	angles_all = angles_all(1 : f_id);
 	
-	total_num_passed_evals = f_id
-    
     suffix = sprintf('%s_reshuffle(%d)_N(%d)_p(%0.10f)_numSeeds(%d)', name, reshuffle_type, N, p, num_seeds_run);
 	
     if is_save_files == 1
@@ -228,10 +228,10 @@ for p_id = 1:size(ps, 1)
         fclose(fid)
     end
     
-    pdf2d.x_bin_s = min(real(zs_all));
-    pdf2d.x_bin_f = max(real(zs_all));
-    pdf2d.y_bin_s = min(imag(zs_all));
-    pdf2d.y_bin_f = max(imag(zs_all));
+    pdf2d.x_bin_s = -1;
+    pdf2d.x_bin_f = 1;
+    pdf2d.y_bin_s = -1;
+    pdf2d.y_bin_f = 1;
     pdf2d = oqs_pdf_2d_setup(pdf2d);
     data2d = horzcat(real(zs_all), imag(zs_all));
     pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
@@ -239,22 +239,6 @@ for p_id = 1:size(ps, 1)
     fig = oqs_pdf_2d_plot(pdf2d);
     fn_fig = sprintf('%s/zs_%s', figures_path, suffix);
     oqs_save_fig(fig, fn_fig)
-	
-	fig = figure;
-	imagesc(pdf2d.x_bin_centers, pdf2d.y_bin_centers, log10(pdf2d.pdf' + 1e-16));
-	set(gca, 'FontSize', 30);
-	xlabel(pdf2d.x_label, 'Interpreter', 'latex');
-	set(gca, 'FontSize', 30);
-	ylabel(pdf2d.y_label, 'Interpreter', 'latex');
-	colormap hot;
-	h = colorbar;
-	set(gca, 'FontSize', 30);
-	title(h, '$\log_{10}PDF$', 'FontSize', 33, 'interpreter','latex');
-	set(gca,'YDir','normal');
-	hold all;
-
-	fn_fig = sprintf('%s/zs_log_%s', figures_path, suffix);
-	oqs_save_fig(fig, fn_fig)
     
     if is_save_files == 1
         fn_txt = sprintf('%s/zs_pdf_%s.txt', figures_path, suffix);
