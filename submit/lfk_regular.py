@@ -13,7 +13,7 @@ task = 'eigen_dense'
 
 Ns = [100]
 total_num_evals  = 100000
-all_seeds = [list(np.linspace(1, 10, 10, dtype=int))]
+all_seeds = [list(np.linspace(1, 1000, 1000, dtype=int))]
 
 num_seeds = 1000000
 
