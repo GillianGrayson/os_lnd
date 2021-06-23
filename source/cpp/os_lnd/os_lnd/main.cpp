@@ -39,13 +39,13 @@ int main(int argc, char* argv[])
 	{
 		Model model(ini);
 
-		ModelProcessor setup_processor;
-		setup_processor.set_strategy(model);
-		setup_processor.create_model(model);
+		ModelProcessor model_processor;
+		model_processor.set_strategy(model);
+		model_processor.create_model(model);
 
 		RunProcessor run_processor;
 		run_processor.set_strategy(model);
-		run_processor.process(model);
+		run_processor.process(model, model_processor);
 	}
 	else if (run_type == "serial")
 	{
@@ -59,23 +59,23 @@ int main(int argc, char* argv[])
 		{
 			Model model(ini);
 
-			ModelProcessor setup_processor;
-			setup_processor.set_strategy(model);
+			ModelProcessor model_processor;
+			model_processor.set_strategy(model);
 
 			RunProcessor run_processor;
 			run_processor.set_strategy(model);
 			
 			double serial_state = serial_start + serial_shift * serial_id;
 			model.set_serial_state(serial_state);
-			setup_processor.create_model(model);
+			model_processor.create_model(model);
 			
 			if (serial_id == 0)
 			{
 				suffix += model.suffix_serial;
-				setup_processor.set_serial_features(model, features_double, features_complex);
+				model_processor.set_serial_features(model, features_double, features_complex);
 			}
 			
-			run_processor.process_serial(model, features_double, features_complex);
+			run_processor.process_serial(model, model_processor, features_double, features_complex);
 		}
 
 		for (auto const& x : features_double)

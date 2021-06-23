@@ -5,7 +5,7 @@
 
 struct LURunStrategy : RunStrategy
 {
-	void run(Model& model) override
+	void run(Model& model, ModelProcessor& model_processor) override
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto save_rho = model.ini.GetBoolean("global", "save_rho", false);
@@ -42,6 +42,7 @@ struct LURunStrategy : RunStrategy
 
 	void run_serial(
 		Model& model,
+		ModelProcessor& model_processor,
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{

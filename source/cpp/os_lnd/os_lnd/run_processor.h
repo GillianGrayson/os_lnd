@@ -43,18 +43,19 @@ struct RunProcessor
 		}
 	}
 
-	void process(Model& model) const
+	void process(Model& model, ModelProcessor& model_processor) const
 	{
-		run_strategy->run(model);
+		run_strategy->run(model, model_processor);
 		model.log_memory_usage();
 	}
 
 	void process_serial(
 		Model& model,
+		ModelProcessor& model_processor,
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex)
 	{
-		run_strategy->run_serial(model, features_double, features_complex);
+		run_strategy->run_serial(model, model_processor, features_double, features_complex);
 		model.log_memory_usage();
 	}
 };

@@ -8,7 +8,7 @@
 
 struct SmallestEigenVectorRunStrategy : RunStrategy
 {
-	void run(Model& model) override
+	void run(Model& model, ModelProcessor& model_processor) override
 	{
 #ifdef USE_SLEPC
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
@@ -167,9 +167,6 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 		VecDestroy(&xr);
 		VecDestroy(&xi);
 
-		ModelProcessor model_processor;
-		model_processor.set_strategy(model);
-		model_processor.init_model(model);
 		model_processor.release_observables(model);
 		model.log_time_duration();
 #endif
@@ -177,6 +174,7 @@ struct SmallestEigenVectorRunStrategy : RunStrategy
 
 	void run_serial(
 		Model& model,
+		ModelProcessor& model_processor,
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{

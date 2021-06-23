@@ -49,6 +49,32 @@ struct XXZModelStrategy : ModelStrategy
 				save_sp_mtx(j_mtx, fn, save_precision);
 			}
 		}
+
+
+		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
+		int seed;
+		if (run_type == "serial")
+		{
+			seed = std::round(model.serial_state);
+		}
+		else
+		{
+			seed = model.ini.GetInteger("xxz", "seed", 0);
+		}
+		const int num_seeds = model.ini.GetInteger("xxz", "num_seeds", 0);
+
+		energies = std::vector<double>(num_spins, 0.0);
+
+		VSLStreamStatePtr stream;
+		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
+		vslLeapfrogStream(stream, seed, num_seeds);
+		vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, num_spins, energies.data(), -1.0, 1.0);
+
+		if (debug_dump)
+		{
+			auto fn = "energies" + model.suffix;
+			save_vector(energies, fn, save_precision);
+		}
 	}
 
 	void setup_suffix(Model& model) override
@@ -93,18 +119,13 @@ struct XXZModelStrategy : ModelStrategy
 	void setup_sys_size(Model& model) override
 	{
 		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
-
 		model.sys_size = std::pow(2, num_spins);
 	}
 
 	void setup_period(Model& model) override
 	{
-		const auto ampl = model.ini.GetReal("xxz", "ampl", 0.0);
 		const auto freq = model.ini.GetReal("xxz", "freq", 0.0);
-		const auto phase = model.ini.GetReal("xxz", "phase", 0.0);
-
 		double pi = std::atan(1.0) * 4.0;
-		
 		model.period = 2.0 * pi / freq;
 	}
 

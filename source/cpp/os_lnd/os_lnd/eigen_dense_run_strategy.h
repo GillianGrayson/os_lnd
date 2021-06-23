@@ -90,27 +90,20 @@ struct EigenDenseRunStrategy : RunStrategy
 		}
 	}
 	
-	void run(Model& model) override
+	void run(Model& model, ModelProcessor& model_processor) override
 	{
 		eigen(model);
-		
-		ModelProcessor model_processor;
-		model_processor.set_strategy(model);
-		model_processor.init_model(model);
 		model_processor.release_observables(model);
 		model.log_time_duration();
 	}
 
 	void run_serial(
 		Model& model,
+		ModelProcessor& model_processor,
 		std::map<std::string, std::vector<double>>& features_double,
 		std::map<std::string, std::vector<std::complex<double>>>& features_complex) override
 	{
 		eigen(model);
-		
-		ModelProcessor model_processor;
-		model_processor.set_strategy(model);
-		model_processor.init_model(model);
 		model_processor.fill_serial_features(model, features_double, features_complex);
 		model.log_time_duration();
 	}

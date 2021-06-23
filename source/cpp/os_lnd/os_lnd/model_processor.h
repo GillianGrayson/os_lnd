@@ -91,13 +91,6 @@ struct ModelProcessor
 		model_strategy->fill_serial_data(model, features_double, features_complex);
 	}
 
-	void init_model(Model& model) const
-	{
-		model_strategy->setup_suffix(model);
-		model_strategy->setup_sys_size(model);
-		model_strategy->setup_aux_data(model);
-	}
-
 	void release_observables(Model& model) const
 	{
 		model_strategy->release_observables(model);
