@@ -131,42 +131,11 @@ struct XXZModelStrategy : ModelStrategy
 
 	void setup_hamiltonian(Model& model) override
 	{
-		const std::string run_type = model.ini.Get("global", "run_type", "unknown");
-		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
-		
-		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
-		
 		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
-		
-		int seed;
-		if (run_type == "serial")
-		{
-			seed = std::round(model.serial_state);
-		}
-		else
-		{
-			seed = model.ini.GetInteger("xxz", "seed", 0);
-		}
-		
-		const int num_seeds = model.ini.GetInteger("xxz", "num_seeds", 0);
-
 		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
 		const auto W = model.ini.GetReal("xxz", "W", 0.0);
 
 		model.hamiltonian = sp_mtx(model.sys_size, model.sys_size);
-
-		energies = std::vector<double>(num_spins, 0.0);
-
-		VSLStreamStatePtr stream;
-		vslNewStream(&stream, VSL_BRNG_MCG31, 77778888);
-		vslLeapfrogStream(stream, seed, num_seeds);
-		vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, num_spins, energies.data(), -1.0, 1.0);
-
-		if (debug_dump)
-		{
-			auto fn = "energies" + model.suffix;
-			save_vector(energies, fn, save_precision);
-		}
 
 		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
 		{
@@ -176,7 +145,16 @@ struct XXZModelStrategy : ModelStrategy
 
 	void setup_hamiltonian_drv(Model& model) override
 	{
-		model.log_message("hamiltonian_drv is absent in this model");
+		const int num_spins = model.ini.GetInteger("xxz", "num_spins", 0);
+		const auto Delta = model.ini.GetReal("xxz", "Delta", 0.0);
+		const auto W = model.ini.GetReal("xxz", "W", 0.0);
+		
+		model.hamiltonian_drv = sp_mtx(model.sys_size, model.sys_size);
+
+		for (auto spin_id = 0; spin_id < num_spins - 1; spin_id++)
+		{
+			model.hamiltonian_drv += (0.25 * W * energies[spin_id] * sigma_z_mtxs[spin_id] + 0.25 * W * energies[spin_id + 1] * sigma_z_mtxs[spin_id + 1]);
+		}
 	}
 
 	void setup_dissipators(Model& model) override
@@ -234,6 +212,12 @@ struct XXZModelStrategy : ModelStrategy
 
 			model.lindbladians_drv.push_back(tmp);
 		}
+
+		// The last lindbladian_drv corresponds to the hamiltonian_drv
+		const std::complex<double> i1(0.0, 1.0);
+		const sp_mtx hamiltonian_drv_transposed(model.hamiltonian_drv.transpose());
+		sp_mtx tmp = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_drv) - Eigen::kroneckerProduct(hamiltonian_drv_transposed, eye));
+		model.lindbladians_drv.push_back(tmp);
 	}
 
 	std::vector<double> get_quantities(Model& model)
