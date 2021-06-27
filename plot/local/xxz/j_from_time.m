@@ -3,23 +3,30 @@ path = '../../../source/cpp/os_lnd/os_lnd';
 fig_path = 'E:/YandexDisk/Work/os_lnd/figures/xxz/local';
 
 fontSize = 30;
+opacity = 1;
+lineWidth = 1;
+offLegend = 0;
 
 num_spins = 7;
 
-seed = 1;
+seed = 10;
 
-Delta = 1.0;
-W = 0.5;
+Delta = 1.96;
+W = 0.98;
 
 mu = 0.001;
 
-drv_type = 2;
+drv_type = 0;
 
-ampl = 1.0;
-freq = 6.2831853071795864769;
+ampl = 2.5;
+freq = 1.0;
 phase = 0.0;
 
 j_id = 0;
+
+num_periods = 51;
+T = 2 * pi / freq;
+final_time = T * num_periods;
 
 num_states = 2.^num_spins;
 
@@ -33,18 +40,25 @@ suffix = sprintf('ns(%d)_prm(%0.4f_%0.4f_%0.4f_%d_%0.4f_%0.4f_%0.4f)', ...
     freq, ...
     phase);
 
-fn = sprintf('%s/times_times(0.00e+00_5.00e+02)_%s_seed(%d).txt', path, suffix, seed);
+fn = sprintf('%s/times_times(0.00e+00_%0.2e)_%s_seed(%d).txt', path, final_time, suffix, seed);
 times = importdata(fn);
+times = times / T;
 
 fig_diag = figure;
 propertyeditor('on');
 
 for s_id = 1 : num_spins - 1
-    fn = sprintf('%s/j_%d_times(0.00e+00_5.00e+02)_%s_seed(%d).txt', path, s_id - 1, suffix, seed);
+    fn = sprintf('%s/j_%d_times(0.00e+00_%0.2e)_%s_seed(%d).txt', path, s_id - 1, final_time, suffix, seed);
     var = importdata(fn);
+    %var = log10(var);
     
-    h = plot(times, log10(var), 'LineWidth', 1);
-    legend(h, sprintf('k = %d', s_id - 1));
+    h = plot(times, var, 'LineWidth', lineWidth);
+    h.Color = [h.Color opacity];
+    if (offLegend == 0)
+        legend(h, sprintf('k = %d', s_id - 1));
+    else
+        h.Annotation.LegendInformation.IconDisplayStyle = 'off';
+    end
     set(gca, 'FontSize', fontSize);
     xlabel('$t/T$', 'Interpreter', 'latex');
     ylabel('$\log_{10}j_k$', 'Interpreter', 'latex');
