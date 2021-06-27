@@ -5,7 +5,7 @@ import os.path
 import numpy as np
 import math
 
-segment = 'short'
+segment = 'medium'
 
 system = 'xxz'
 
@@ -13,11 +13,11 @@ task = 'odeint'
 
 silent = 'false'
 
-num_spins = 5
+num_spins = 7
 mu = 0.001
-drv_type = 3
-ampl = 1.0
-freq = 2 * np.pi
+drv_type = 0
+ampl = 2.5
+freq = 1.0
 phase = 0.0
 Deltas = list(np.linspace(0.0, 2.0, 51, dtype=float))
 Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
@@ -25,9 +25,9 @@ Ws = list(np.linspace(0.0, 1.0, 51, dtype=float))
 T = 2.0 * np.pi / freq
 
 start_state_id = 0
-step = T / 25
+step = 0.05
 dump_type = 'linear'
-num_trans_periods = 100
+num_trans_periods = 50
 num_obser_periods = 1
 current_num_obser_periods = 1
 current_num_obser_time_points = 21
