@@ -5,7 +5,7 @@ seed                = 10;
 dissipator_type     = 1;
 alpha               = 0;
 g                   = 0.1;
-W                   = 3;
+W                   = 20;
 U                   = 1;
 J                   = 1;
 
@@ -110,6 +110,16 @@ if(dissipator_type == 1)
                 end
             end
         end
+        
+        cpp_dissipator = zeros(Ns, Ns);
+        file_name_cpp = sprintf('%s/diss_%d_mtx_%s.txt', cpp_path, dissipator_id - 1, file_name_suffix);
+        cpp_dissipator_data = importdata(file_name_cpp);
+        for str_id = 1 : size(cpp_dissipator_data, 1)
+            str = string(cpp_dissipator_data(str_id));
+            data = sscanf(str, '%d\t%d\t(%e,%e)',4);
+            cpp_dissipator(data(1) + 1, data(2) + 1) = data(3) + 1i * data(4);
+        end
+        dissipator_check = max(max(abs(dissipator - cpp_dissipator)))
         
         super_rp_matrix = super_rp_matrix + ...
             g * 0.5 * (2.0 * kron(eye(Ns),dissipator) * kron(transpose(dissipator'),eye(Ns)) - ...
