@@ -1,37 +1,61 @@
 clear all;
 
-N = 100;
-num_seeds = 20000;
+alpha = 10.0;
+N = 10; % system size
+M = N^2-1; % auxiliary size
+num_seeds = 500;
 
-imag_lim = 1.3e-1;
+imag_lim = 5e-3;
 
-pdf2d.x_num_bins = 201;
-pdf2d.y_num_bins = 201;
-pdf2d.x_label = '$Re(\chi'')$';
-pdf2d.y_label = '$Im(\chi'')$';
-pdf2d.x_bin_s = -300;
-pdf2d.x_bin_f = 300;
-pdf2d.y_bin_s = -300;
-pdf2d.y_bin_f = 300;
-pdf2d = oqs_pdf_2d_setup(pdf2d);
+%%% Step 1
+%%% NB: here we complete the F-basis by a normalized identity matrix as
+%%% F{1} - just for the future, but will not actually use it.
+k=1;
+F{1}=sparse(eye(N))/sqrt(N);
+for i=1:N
+    for j=i+1:N
+        k=k+1;
+        F{k}=sparse([i j],[j i],[1 1]/sqrt(2),N,N);
+        k=k+1;
+        F{k}=sparse([i j],[j i],-1i*[1 -1]/sqrt(2),N,N);
+    end
+end
 
-zs_all = zeros(N * num_seeds, 1);
+for i=1:N-1
+    k=k+1;
+    temp=zeros(1,i+1);
+    temp(1:i)=ones(1,i);
+    temp(i+1)=-i;
+    F{k}=sparse([1:i+1],[1:i+1],temp/sqrt(i*(i+1)),N,N);
+end
+
+zs_all = zeros(M * num_seeds, 1);
 s_id = 0;
 f_id = 0;
 for seed = 1:num_seeds
+    fprintf('seed = %d\n', seed);
     tic
     
-    rng(seed)
+    %%% Step 2: calculate G-matrix
+    G = Ggen(seed, M, N);
+
+    %%% Step 3: calculate H-matrix
+    H = alpha * Hgen(seed, N);
+
+    %%% Step 4
+    P=zeros(N^2); %% Initialize superopetator matrix
+    for k1=1:M
+        for k2=1:M
+            P=P+G(k1,k2)/2*(2*kron(eye(N),F{k1+1})*kron(transpose(F{k2+1}'),eye(N))-kron(transpose(F{k2+1}'*F{k1+1}),eye(N))-kron(eye(N),F{k2+1}'*F{k1+1}));
+        end
+    end
+    A = -sqrt(-1)*(kron(eye(N),H)-kron(transpose(H),eye(N)));
+    P = P + A;
+
+    %%% Step 5
+    evals = eig(P);
     
-    fprintf('seed = %d\n', seed);
-    
-    G = Ginibre(seed, N);
-    
-    evals = eig(G);
-    
-    data2d = horzcat(real(evals), imag(evals));
-    pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
-     
+    evals = evals(2:end);
     evals_filtered = evals(abs(imag(evals)) >= imag_lim);
     num_passed_evals = size(evals_filtered, 1);
     fprintf('num_passed_evals = %d\n', num_passed_evals);
@@ -58,17 +82,13 @@ for seed = 1:num_seeds
     
     toc
 end
+
 zs_all = zs_all(1 : f_id);
 
 total_num_passed_evals = f_id
 
-pdf2d = oqs_pdf_2d_release(pdf2d);
-fig = oqs_pdf_2d_plot(pdf2d);
-fn_fig = sprintf('evals_N(%d)_num_seeds(%d)', N, num_seeds);
-oqs_save_fig(fig, fn_fig);
-
-pdf2dzs.x_num_bins = 301;
-pdf2dzs.y_num_bins = 301;
+pdf2dzs.x_num_bins = 101;
+pdf2dzs.y_num_bins = 101;
 pdf2dzs.x_label = '$Re(z)$';
 pdf2dzs.y_label = '$Im(z)$';
 
@@ -81,5 +101,7 @@ data2d = horzcat(real(zs_all), imag(zs_all));
 pdf2dzs = oqs_pdf_2d_update(pdf2dzs, data2d);
 pdf2dzs = oqs_pdf_2d_release(pdf2dzs);
 fig = oqs_pdf_2d_plot(pdf2dzs);
-fn_fig = sprintf('zs_N(%d)_num_seeds(%d)', N, num_seeds);
+fn_fig = sprintf('zs_alpha(%0.2f)_N(%d)_num_seeds(%d)', alpha, N, num_seeds);
 oqs_save_fig(fig, fn_fig)
+
+
