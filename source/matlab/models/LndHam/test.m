@@ -57,7 +57,8 @@ for seed = 1:num_seeds
     evals = eig(P);
     evals = sort(evals,'ComparisonMethod','abs');
     evals = evals(2:end);
-    all_evals((seed - 1) * M + 1 : seed * M) = (evals + 1) * N;
+    evals = (evals + 1) * N;
+    all_evals((seed - 1) * M + 1 : seed * M) = evals;
     
     evals_filtered = evals(abs(imag(evals)) >= imag_lim);
     num_passed_evals = size(evals_filtered, 1);
