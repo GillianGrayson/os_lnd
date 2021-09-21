@@ -1,6 +1,6 @@
 clear all;
 
-alpha = 1.0;
+alpha = 0.5;
 N = 10; % system size
 M = N^2-1; % auxiliary size
 num_seeds = 500;
@@ -57,7 +57,7 @@ for seed = 1:num_seeds
     evals = eig(P);
     evals = sort(evals,'ComparisonMethod','abs');
     evals = evals(2:end);
-    all_evals((seed - 1) * M + 1 : seed * M) = evals;
+    all_evals((seed - 1) * M + 1 : seed * M) = (evals + 1) * N;
     
     evals_filtered = evals(abs(imag(evals)) >= imag_lim);
     num_passed_evals = size(evals_filtered, 1);
