@@ -1,6 +1,6 @@
 clear all;
 
-alpha = 10.0;
+alpha = 1.0;
 N = 10; % system size
 M = N^2-1; % auxiliary size
 num_seeds = 500;
@@ -28,7 +28,8 @@ for i=1:N-1
     temp(i+1)=-i;
     F{k}=sparse([1:i+1],[1:i+1],temp/sqrt(i*(i+1)),N,N);
 end
-
+    
+all_evals = zeros(M * num_seeds, 1);
 zs_all = zeros(M * num_seeds, 1);
 s_id = 0;
 f_id = 0;
@@ -40,7 +41,7 @@ for seed = 1:num_seeds
     G = Ggen(seed, M, N);
 
     %%% Step 3: calculate H-matrix
-    H = alpha * Hgen(seed, N);
+    H = alpha * Hgen(seed, N) / sqrt(N);
 
     %%% Step 4
     P=zeros(N^2); %% Initialize superopetator matrix
@@ -54,8 +55,10 @@ for seed = 1:num_seeds
 
     %%% Step 5
     evals = eig(P);
-    
+    evals = sort(evals,'ComparisonMethod','abs');
     evals = evals(2:end);
+    all_evals((seed - 1) * M + 1 : seed * M) = evals;
+    
     evals_filtered = evals(abs(imag(evals)) >= imag_lim);
     num_passed_evals = size(evals_filtered, 1);
     fprintf('num_passed_evals = %d\n', num_passed_evals);
@@ -104,4 +107,21 @@ fig = oqs_pdf_2d_plot(pdf2dzs);
 fn_fig = sprintf('zs_alpha(%0.2f)_N(%d)_num_seeds(%d)', alpha, N, num_seeds);
 oqs_save_fig(fig, fn_fig)
 
+pdf2d.x_num_bins = 201;
+pdf2d.y_num_bins = 201;
+pdf2d.x_label = '$Re(\lambda)$';
+pdf2d.y_label = '$Im(\lambda)$';
+
+pdf2d.x_bin_s = min(real(all_evals));
+pdf2d.x_bin_f = max(real(all_evals));
+pdf2d.y_bin_s = min(imag(all_evals));
+pdf2d.y_bin_f = max(imag(all_evals));
+
+pdf2d = oqs_pdf_2d_setup(pdf2d);
+data2d = horzcat(real(all_evals), imag(all_evals));
+pdf2d = oqs_pdf_2d_update(pdf2d, data2d);
+pdf2d = oqs_pdf_2d_release(pdf2d);
+fig = oqs_pdf_2d_plot(pdf2d);
+fn_fig = sprintf('Levals_alpha(%0.2f)_N(%d)_num_seeds(%d)', alpha, N, num_seeds);
+oqs_save_fig(fig, fn_fig)
 
