@@ -67,7 +67,7 @@ struct LindHamModelStrategy : ModelStrategy
 
 	void setup_hamiltonian(Model& model) override
 	{
-		model.hamiltonian = get_H_mtx(model, model.sys_size);
+		model.hamiltonian_dense = get_H_mtx(model, model.sys_size);
 	}
 
 	void setup_hamiltonian_drv(Model& model) override
@@ -112,9 +112,9 @@ struct LindHamModelStrategy : ModelStrategy
 
 		const std::complex<double> i1(0.0, 1.0);
 		const sp_mtx eye = get_sp_eye(model.sys_size);
-		const sp_mtx hamiltonian_transposed(model.hamiltonian.transpose());
+		const ds_mtx hamiltonian_transposed(model.hamiltonian_dense.transpose());
 
-		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
+		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
 
 		for (const auto& diss : model.dissipators)
 		{

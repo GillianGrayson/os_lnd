@@ -4,6 +4,7 @@
 #include "super_decoh_model_strategy.h"
 #include "xxz_model_strategy.h"
 #include "lfk_model_strategy.h"
+#include "lind_ham_model_strategy.h"
 
 
 struct ModelProcessor
@@ -19,6 +20,17 @@ struct ModelProcessor
 			if (run_type == "regular")
 			{
 				model_strategy = std::make_unique<MBLModelStrategy>();
+			}
+			else
+			{
+				model.throw_error(fmt::format("Unsupported run_type for {s}", system));
+			}
+		}
+		else if (system == "lind_ham")
+		{
+			if (run_type == "regular" || run_type == "serial")
+			{
+				model_strategy = std::make_unique<LindHamModelStrategy>();
 			}
 			else
 			{
