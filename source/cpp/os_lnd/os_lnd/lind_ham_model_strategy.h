@@ -77,9 +77,18 @@ struct LindHamModelStrategy : ModelStrategy
 
 	void setup_dissipators(Model& model) override
 	{
+		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
+		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+
 		int M = model.sys_size * model.sys_size - 1;
 
 		ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1, model.sys_size * model.sys_size - 1);
+
+		if (debug_dump)
+		{
+			auto fn = "G_mtx" + model.suffix;
+			save_dense_mtx(G, fn, save_precision);
+		}
 
 		model.log_time_duration();
 		model.log_message("G eigen...");
@@ -93,7 +102,7 @@ struct LindHamModelStrategy : ModelStrategy
 
 		for (int k1 = 0; k1 < M; k1++)
 		{
-			sp_mtx diss;
+			sp_mtx diss = sp_mtx(model.sys_size, model.sys_size);
 			for (int k2 = 0; k2 < M; k2++)
 			{
 				diss += evecs(k2, k1) * model.f_basis[k2 + 1];
@@ -114,7 +123,7 @@ struct LindHamModelStrategy : ModelStrategy
 		const sp_mtx eye = get_sp_eye(model.sys_size);
 		const ds_mtx hamiltonian_transposed(model.hamiltonian_dense.transpose());
 
-		model.lindbladian = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
+		model.lindbladian_dense = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
 
 		for (const auto& diss : model.dissipators)
 		{
@@ -122,7 +131,7 @@ struct LindHamModelStrategy : ModelStrategy
 			sp_mtx diss_tmp_2(diss.adjoint() * diss);
 			sp_mtx diss_tmp_3(diss_tmp_2.transpose());
 
-			model.lindbladian += 0.5 * (2.0 *
+			model.lindbladian_dense += 0.5 * (2.0 *
 				Eigen::kroneckerProduct(eye, diss) *
 				Eigen::kroneckerProduct(diss_tmp_1, eye) -
 				Eigen::kroneckerProduct(diss_tmp_3, eye) -
