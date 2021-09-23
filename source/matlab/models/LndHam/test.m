@@ -39,22 +39,40 @@ for seed = 1:num_seeds
     
     %%% Step 2: calculate G-matrix
     G = Ggen(seed, M, N);
+    
+    [Evec,D] = eig(G);
+    for k1=1:M
+        DISS{k1}=0;
+        for k2=1:M
+            DISS{k1}=DISS{k1} + Evec(k2,k1) * F{k2+1};
+        end
+    end
 
     %%% Step 3: calculate H-matrix
     H = alpha * Hgen(seed, N) / sqrt(N);
 
     %%% Step 4
-    P=zeros(N^2); %% Initialize superopetator matrix
+    P_origin = zeros(N^2); %% Initialize superopetator matrix
+    P_diss = zeros(N^2);
     for k1=1:M
+        
+        P_diss=P_diss+D(k1,k1)/2*(2*kron(eye(N),DISS{k1})*kron(transpose(DISS{k1}'),eye(N))-kron(transpose(DISS{k1}'*DISS{k1}),eye(N))-kron(eye(N),DISS{k1}'*DISS{k1}));
+        
         for k2=1:M
-            P=P+G(k1,k2)/2*(2*kron(eye(N),F{k1+1})*kron(transpose(F{k2+1}'),eye(N))-kron(transpose(F{k2+1}'*F{k1+1}),eye(N))-kron(eye(N),F{k2+1}'*F{k1+1}));
+            P_origin=P_origin+G(k1,k2)/2*(2*kron(eye(N),F{k1+1})*kron(transpose(F{k2+1}'),eye(N))-kron(transpose(F{k2+1}'*F{k1+1}),eye(N))-kron(eye(N),F{k2+1}'*F{k1+1}));
         end
     end
-    A = -sqrt(-1)*(kron(eye(N),H)-kron(transpose(H),eye(N)));
-    P = P + A;
+    HamPart = -sqrt(-1)*(kron(eye(N),H)-kron(transpose(H),eye(N)));
+    P_origin = P_origin + HamPart;
+    P_diss = P_diss + HamPart;
+    
+    P_check = norm(P_origin - P_diss);
+    if (abs(P_check) > 1e-12)
+        fprintf("Lindbladians are differ!")
+    end
 
     %%% Step 5
-    evals = eig(P);
+    evals = eig(P_origin);
     evals = sort(evals,'ComparisonMethod','abs');
     evals = evals(2:end);
     evals = (evals + 1) * N;
