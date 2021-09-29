@@ -100,6 +100,7 @@ struct LindHamModelStrategy : ModelStrategy
 		std::vector<std::complex<double>> G_evals(evals_tmp.data(), evals_tmp.data() + evals_tmp.rows() * evals_tmp.cols());
 		auto evecs = es.eigenvectors();
 
+		model.log_message("Dissipators process started...");
 		for (int k1 = 0; k1 < M; k1++)
 		{
 			sp_mtx diss = sp_mtx(model.sys_size, model.sys_size);
@@ -111,6 +112,7 @@ struct LindHamModelStrategy : ModelStrategy
 			
 			model.dissipators.push_back(diss);
 		}
+		model.log_message("Dissipators process finished");
 	}
 
 	void setup_lindbladian(Model& model) override
@@ -125,6 +127,7 @@ struct LindHamModelStrategy : ModelStrategy
 
 		model.lindbladian_dense = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
 
+		model.log_message("Lindbladian generation");
 		for (const auto& diss : model.dissipators)
 		{
 			sp_mtx diss_tmp_1((diss.adjoint()).transpose());
