@@ -36,8 +36,10 @@ struct LindHamModelStrategy : ModelStrategy
 
 		const int N = model.ini.GetInteger("lind_ham", "N", 0);
 		const auto alpha = model.ini.GetReal("lind_ham", "alpha", 0.0);
+		const int gen_type = model.ini.GetInteger("lind_ham", "gen_type", 0);
 
 		std::stringstream fns;
+		fns << "_gen(" << gen_type << ")";
 		fns << "_N(" << N << ")";
 		fns << "_alpha(" << std::setprecision(name_precision) << std::fixed << alpha << ")";
 
@@ -79,40 +81,44 @@ struct LindHamModelStrategy : ModelStrategy
 	{
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
+		const int gen_type = model.ini.GetInteger("lind_ham", "gen_type", 0);
 
-		int M = model.sys_size * model.sys_size - 1;
-
-		ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1, model.sys_size * model.sys_size - 1);
-
-		if (debug_dump)
+		if (gen_type == 0)
 		{
-			auto fn = "G_mtx" + model.suffix;
-			save_dense_mtx(G, fn, save_precision);
-		}
+			int M = model.sys_size * model.sys_size - 1;
 
-		model.log_time_duration();
-		model.log_message("G eigen...");
+			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1, model.sys_size * model.sys_size - 1);
 
-		Eigen::ComplexEigenSolver<ds_mtx> es;
-		es.compute(G, true);
-
-		auto evals_tmp = es.eigenvalues();
-		std::vector<std::complex<double>> G_evals(evals_tmp.data(), evals_tmp.data() + evals_tmp.rows() * evals_tmp.cols());
-		auto evecs = es.eigenvectors();
-
-		model.log_message("Dissipators process started...");
-		for (int k1 = 0; k1 < M; k1++)
-		{
-			sp_mtx diss = sp_mtx(model.sys_size, model.sys_size);
-			for (int k2 = 0; k2 < M; k2++)
+			if (debug_dump)
 			{
-				diss += evecs(k2, k1) * model.f_basis[k2 + 1];
+				auto fn = "G_mtx" + model.suffix;
+				save_dense_mtx(G, fn, save_precision);
 			}
-			diss *= std::sqrt(evals_tmp[k1]);
-			
-			model.dissipators.push_back(diss);
+
+			model.log_time_duration();
+			model.log_message("G eigen...");
+
+			Eigen::ComplexEigenSolver<ds_mtx> es;
+			es.compute(G, true);
+
+			auto evals_tmp = es.eigenvalues();
+			std::vector<std::complex<double>> G_evals(evals_tmp.data(), evals_tmp.data() + evals_tmp.rows() * evals_tmp.cols());
+			auto evecs = es.eigenvectors();
+
+			model.log_message("Dissipators process started...");
+			for (int k1 = 0; k1 < M; k1++)
+			{
+				sp_mtx diss = sp_mtx(model.sys_size, model.sys_size);
+				for (int k2 = 0; k2 < M; k2++)
+				{
+					diss += evecs(k2, k1) * model.f_basis[k2 + 1];
+				}
+				diss *= std::sqrt(evals_tmp[k1]);
+
+				model.dissipators.push_back(diss);
+			}
+			model.log_message("Dissipators process finished");
 		}
-		model.log_message("Dissipators process finished");
 	}
 
 	void setup_lindbladian(Model& model) override
@@ -120,25 +126,55 @@ struct LindHamModelStrategy : ModelStrategy
 		const int save_precision = model.ini.GetInteger("global", "save_precision", 0);
 		const auto debug_dump = model.ini.GetBoolean("global", "debug_dump", false);
 		const auto alpha = model.ini.GetReal("lind_ham", "alpha", 0.0);
+		const int gen_type = model.ini.GetInteger("lind_ham", "gen_type", 0);
 
 		const std::complex<double> i1(0.0, 1.0);
 		const sp_mtx eye = get_sp_eye(model.sys_size);
 		const ds_mtx hamiltonian_transposed(model.hamiltonian_dense.transpose());
 
-		model.lindbladian_dense = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
-
-		model.log_message("Lindbladian generation");
-		for (const auto& diss : model.dissipators)
+		if (gen_type == 0)
 		{
-			sp_mtx diss_tmp_1((diss.adjoint()).transpose());
-			sp_mtx diss_tmp_2(diss.adjoint() * diss);
-			sp_mtx diss_tmp_3(diss_tmp_2.transpose());
+			model.lindbladian_dense = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
 
-			model.lindbladian_dense += 0.5 * (2.0 *
-				Eigen::kroneckerProduct(eye, diss) *
-				Eigen::kroneckerProduct(diss_tmp_1, eye) -
-				Eigen::kroneckerProduct(diss_tmp_3, eye) -
-				Eigen::kroneckerProduct(eye, diss_tmp_2));
+			model.log_message("Lindbladian generation");
+			for (const auto& diss : model.dissipators)
+			{
+				sp_mtx diss_tmp_1((diss.adjoint()).transpose());
+				sp_mtx diss_tmp_2(diss.adjoint() * diss);
+				sp_mtx diss_tmp_3(diss_tmp_2.transpose());
+
+				model.lindbladian_dense += 0.5 * (2.0 *
+					Eigen::kroneckerProduct(eye, diss) *
+					Eigen::kroneckerProduct(diss_tmp_1, eye) -
+					Eigen::kroneckerProduct(diss_tmp_3, eye) -
+					Eigen::kroneckerProduct(eye, diss_tmp_2));
+			}
+		}
+		else
+		{
+			model.lindbladian_dense = -i1 * (Eigen::kroneckerProduct(eye, model.hamiltonian_dense) - Eigen::kroneckerProduct(hamiltonian_transposed, eye)) * alpha / std::sqrt(static_cast<double>(model.sys_size));
+
+			int M = model.sys_size * model.sys_size - 1;
+
+			ds_mtx G = get_G_mtx(model, model.sys_size * model.sys_size - 1, model.sys_size * model.sys_size - 1);
+
+			if (debug_dump)
+			{
+				auto fn = "G_mtx" + model.suffix;
+				save_dense_mtx(G, fn, save_precision);
+			}
+
+			for (auto k1 = 0; k1 < M; k1++)
+			{
+				for (auto k2 = 0; k2 < M; k2++)
+				{
+					sp_mtx term_1 = 2.0 * Eigen::kroneckerProduct(eye, model.f_basis[k1 + 1]) * Eigen::kroneckerProduct(model.f_basis[k2 + 1].conjugate(), eye);
+					sp_mtx mult_k2_k1 = model.f_basis[k2 + 1].adjoint() * model.f_basis[k1 + 1];
+					sp_mtx term_2 = -Eigen::kroneckerProduct(mult_k2_k1.transpose(), eye);
+					sp_mtx term_3 = -Eigen::kroneckerProduct(eye, mult_k2_k1);
+					model.lindbladian_dense += 0.5 * G(k1, k2) * (term_1 + term_2 + term_3);
+				}
+			}
 		}
 	}
 
