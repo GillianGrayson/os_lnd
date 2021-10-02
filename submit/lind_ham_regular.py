@@ -11,6 +11,7 @@ system = 'lind_ham'
 
 task = 'eigen_dense'
 
+gen_type = 1
 N = 100
 alpha = 0.5
 all_seeds = [list(np.linspace(1, 100, 100, dtype=int))]
@@ -24,6 +25,7 @@ for seed in all_seeds:
 
     config_list = []
     config_list.append('[lind_ham]')
+    config_list.append('gen_type = ' + str(gen_type))
     config_list.append('N = ' + str(N))
     config_list.append('alpha = ' + str(alpha))
     config_list.append('seed = ' + str(seed))
@@ -36,7 +38,7 @@ for seed in all_seeds:
     file_config = open(data_path + '/config.ini', 'w')
     file_config.write('\n'.join(config_list))
 
-    fn_suffix = f"N({N})_alpha({alpha:0.4f})_seed({seed})"
+    fn_suffix = f"gen_({gen_type})_N({N})_alpha({alpha:0.4f})_seed({seed})"
 
     fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
 
