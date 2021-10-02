@@ -14,7 +14,7 @@ task = 'eigen_dense'
 gen_type = 1
 N = 100
 alpha = 0.5
-all_seeds = [list(np.linspace(1, 100, 100, dtype=int))]
+all_seeds = list(np.linspace(1, 100, 100, dtype=int))
 num_seeds = 1000000
 
 for seed in all_seeds:
