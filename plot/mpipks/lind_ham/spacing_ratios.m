@@ -3,16 +3,17 @@ clear all;
 addpath('../../../source/matlab/lib')
 
 task = 'eigen_dense';
-path = sprintf('/data/biophys/denysov/yusipov/os_lnd/lind_ham/%s', task);
+path = sprintf('/data/biophys/denysov/yusipov/os_lnd/regular/lind_ham/%s', task);
 figures_path = '/home/denysov/yusipov/os_lnd/figures/lind_ham';
 
 imag_lim = 5e-3;
 
 alpha = 0.5;
 N = 100; % system size
-num_seeds = 100;
+num_seeds = 30;
 
 M = N^2-1; % auxiliary size
+N2 = N * N;
 
 seeds = linspace(1, num_seeds, num_seeds)';
 
@@ -23,7 +24,9 @@ s_id = 0;
 f_id = 0;
 for seed = 1:num_seeds
     
-    prefix = sprintf('N_%d/alpha_%0.4f/seed_%d', ...
+	seed = seed
+	
+    prefix = sprintf('N_%d/alpha_%0.1f/seed_%d', ...
         N, ...
         alpha, ...
         seed);
@@ -33,9 +36,15 @@ for seed = 1:num_seeds
         alpha, ...
         seed);
     
-    fn = sprintf('%s/lindbladian_evals_%s.txt', aggr_path, suffix);
+    fn = sprintf('%s/%s/lindbladian_evals_%s.txt', path, prefix, suffix);
 
-    evals = importdata(fn);
+    evals_data = importdata(fn);
+	evals = zeros(N*N, 1);
+	for str_id = 1:N2
+		str = string(evals_data(str_id));
+		data2d = sscanf(str, '(%e,%e)', 2);
+		evals(str_id) = data2d(1) + 1i * data2d(2);
+	end
     evals = sort(evals,'ComparisonMethod','abs');
     evals = evals(2:end);
     evals = (evals + 1) * N;

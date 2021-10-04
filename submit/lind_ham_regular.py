@@ -19,7 +19,7 @@ num_seeds = 1000000
 
 for seed in all_seeds:
     print("seed = " + str(seed))
-    local_path = f"/regular/{system}/{task}/N_{N}/alpha_{alpha}/seed_{seed}"
+    local_path = f"/regular/{system}/{task}/N_{N}/alpha_{alpha:0.1f}/seed_{seed}"
 
     data_path = get_root() + local_path
 
@@ -38,10 +38,10 @@ for seed in all_seeds:
     file_config = open(data_path + '/config.ini', 'w')
     file_config.write('\n'.join(config_list))
 
-    fn_suffix = f"gen_({gen_type})_N({N})_alpha({alpha:0.4f})_seed({seed})"
+    fn_suffix = f"gen({gen_type})_N({N})_alpha({alpha:0.4f})_seed({seed})"
 
     fn_test = data_path + '/lindbladian_evals_' + fn_suffix + '.txt'
-
+    
     if not os.path.isfile(fn_test):
         print('file does not exist')
         if segment == 'short':
