@@ -122,6 +122,8 @@ for diss_id = 1:size(dissipators, 1)
     Lind = Lind + tmp;
 end
 
+is_Lind_hermitian = ishermitian(Lind)
+
 % =====================================================================
 %                            Evals routines
 % =====================================================================
