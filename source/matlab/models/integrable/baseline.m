@@ -128,3 +128,26 @@ is_Lind_hermitian = ishermitian(Lind)
 %                            Evals routines
 % =====================================================================
 evals = eig(Lind);
+
+
+% =====================================================================
+%                Effective Hamiltonian for quantum jumps 
+% =====================================================================
+H_eff = zeros(num_states);
+for diss_id = 1:N
+    curr_diss = dissipators{diss_id};
+    H_eff = H_eff - 0.5 * 1i * curr_diss' * curr_diss; 
+end
+H_eff = -1i * H_eff;
+
+% =====================================================================
+%                Propagation with Effective Hamiltonian
+% =====================================================================
+time_prop = 1.0;
+psi_old = complex(1/sqrt(num_states) * ones(num_states, 1), zeros(num_states, 1));
+psi_new = expm(H_eff * time_prop) * psi_old;
+coeffs = psi_new./psi_old;
+check = unique(coeffs)
+
+
+
