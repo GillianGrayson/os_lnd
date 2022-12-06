@@ -80,12 +80,12 @@ struct DimerModelStrategy : ModelStrategy
 			rows.push_back(id);
 			cols.push_back(id);
 		}
-		trace /= double(model.sys_size);
+		//trace /= double(model.sys_size);
 
-		for (int id = 0; id < model.sys_size; id++)
-		{
-			vals[id] -= trace;
-		}
+		//for (int id = 0; id < model.sys_size; id++)
+		//{
+		//	vals[id] -= trace;
+		//}
 
 		for (int id = 0; id < (model.sys_size - 1); id++)
 		{

@@ -9,7 +9,7 @@ ylabel(pdf.y_label, 'Interpreter', 'latex');
 colormap hot;
 h = colorbar;
 set(gca, 'FontSize', 30);
-title(h, '$PDF$', 'FontSize', 33, 'interpreter','latex');
+title(h, 'PDF', 'FontSize', 33, 'interpreter','latex');
 set(h, 'TickLabelInterpreter', 'latex');
 set(gca,'YDir','normal');
 ax = gca;
