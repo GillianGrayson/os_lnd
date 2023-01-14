@@ -168,3 +168,11 @@ source/cpp/os_lnd/x64/Debug/
 *.mat
 
 *.png
+
+*.bin
+
+source/cpp/os_lnd/.vs/os_lnd/FileContentIndex/1ac0e111-2ece-4fe6-8b3a-6175252b53e8.vsidx
+
+*.lock
+
+source/cpp/os_lnd/.vs/os_lnd/v17/.suo
